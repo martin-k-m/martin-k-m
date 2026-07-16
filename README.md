@@ -14,7 +14,7 @@ Mostly writing Rust these days.
 ## About
 
 - EE student at UC Santa Cruz
-- Spend most of my time in Rust — systems and dev tooling
+- Spend most of my time in Rust or TS
 - Working on a few projects: `blink`, `flux`, and `killer`
 - Happy to talk low-level programming, embedded, or EE
 
