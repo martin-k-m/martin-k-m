@@ -39,16 +39,6 @@ Mostly writing Rust these days.
 
 </div>
 
-## Stats
-
-<div align="center">
-
-![Stats](https://github-readme-stats.vercel.app/api?username=martin-k-m&show_icons=true&include_all_commits=true&count_private=true&theme=transparent&hide_border=true)
-
-![Languages](https://github-readme-stats.vercel.app/api/top-langs?username=martin-k-m&layout=compact&card_width=320&langs_count=12&theme=transparent&hide_border=true)
-
-</div>
-
 ---
 
 <div align="center">
