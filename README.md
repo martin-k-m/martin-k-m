@@ -26,6 +26,7 @@ Mostly writing Rust these days.
 | [flux](https://github.com/martin-k-m/flux) | A flexible creation and build engine focused on streamlined workflows and extensible tooling. | Rust |
 | [killer](https://github.com/martin-k-m/killer) | A security testing framework to analyze, detect, and improve application vulnerabilities. | Rust |
 | [beacon](https://github.com/martin-k-m/beacon) | A developer analytics platform for monitoring GitHub repository health, metrics, and activity. | TypeScript |
+| [orbit](https://orbit.blinkdev.me) | A local-first, cross-platform developer command center unifying project management, automation, analytics, and tooling into one fast, native desktop app. | Rust / TypeScript |
 
 ## Tools
 
