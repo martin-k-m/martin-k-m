@@ -41,7 +41,7 @@ let martin = Engineer {
 
 ---
 
-## 🛡️ Credda &nbsp;·&nbsp; [credda.io](https://credda.io)
+## 🛡️ Credda &nbsp;·&nbsp; [credda.io](https://credda.io) &nbsp;·&nbsp; [@martin](https://credda.io/profile/martin)
 
 > **Portable trust infrastructure.** Reputation shouldn't reset every time you join a new platform.
 
@@ -124,15 +124,15 @@ brew install martin-k-m/flux/flux       # flux    — automation platform
 
 ---
 
-## 📊 GitHub
-
 <div align="center">
 
-<img height="165" src="https://github-readme-stats.vercel.app/api?username=martin-k-m&show_icons=true&hide_border=true&count_private=true&include_all_commits=true&title_color=7C6CFF&icon_color=4F8CFF&text_color=c9c9d4&bg_color=0A0A0C" alt="GitHub stats" />
-<img height="165" src="https://github-readme-stats.vercel.app/api/top-langs/?username=martin-k-m&layout=compact&hide_border=true&langs_count=8&title_color=7C6CFF&text_color=c9c9d4&bg_color=0A0A0C" alt="Top languages" />
+<a href="https://github.com/martin-k-m?tab=followers"><img src="https://img.shields.io/github/followers/martin-k-m?style=for-the-badge&logo=github&logoColor=white&label=Follow&labelColor=0A0A0C&color=7C6CFF" alt="Followers" /></a>
+<a href="https://github.com/martin-k-m/killer"><img src="https://img.shields.io/github/stars/martin-k-m/killer?style=for-the-badge&logo=github&logoColor=white&label=killer&labelColor=0A0A0C&color=4F8CFF" alt="killer stars" /></a>
+<a href="https://github.com/martin-k-m/orbit"><img src="https://img.shields.io/github/stars/martin-k-m/orbit?style=for-the-badge&logo=github&logoColor=white&label=orbit&labelColor=0A0A0C&color=4F8CFF" alt="orbit stars" /></a>
+<a href="https://github.com/martin-k-m/beacon"><img src="https://img.shields.io/github/stars/martin-k-m/beacon?style=for-the-badge&logo=github&logoColor=white&label=beacon&labelColor=0A0A0C&color=4F8CFF" alt="beacon stars" /></a>
 
-</div>
+<br/><br/>
 
-<div align="center">
 <sub>⚡ Building systems people can trust — deterministic, local-first, private by default.</sub>
+
 </div>
