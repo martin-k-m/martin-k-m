@@ -3,7 +3,7 @@
 # Martin Muskov
 
 Electrical Engineering @ UC Santa Cruz, class of 2029. Brentwood, CA.
-Mostly writing Rust these days.
+Founder of **[Credda](https://credda.io)** · building **[blinkdev.me](https://blinkdev.me)**. Mostly writing Rust.
 
 [martin-k-m.github.io](https://martin-k-m.github.io)
 
@@ -13,13 +13,21 @@ Mostly writing Rust these days.
 
 ## About
 
-- EE student at UC Santa Cruz
-- Spend most of my time in Rust or TS
-- Building [blinkdev.me](https://blinkdev.me) — a suite of local-first developer tools: `blink`, `beacon`, `flux`, `killer`, `orbit`
-- Everything is local-first and offline by default: no accounts, no telemetry
-- Happy to talk low-level programming, embedded, or EE
+- EE student at UC Santa Cruz; most of my time is spent in Rust or TypeScript
+- Founder of **[Credda](https://credda.io)** — portable trust infrastructure: a verified, user-owned reliability score
+- Building **[blinkdev.me](https://blinkdev.me)** — a suite of local-first developer tools: `blink`, `beacon`, `flux`, `killer`, `orbit`
+- I care about software that's honest: deterministic, local-first, private by default — no accounts, no telemetry
+- Happy to talk low-level programming, embedded, EE, developer tooling, or trust infrastructure
 
-## Projects
+## Credda — [credda.io](https://credda.io)
+
+**Portable trust infrastructure.** Reputation shouldn't reset every time you join a new platform. Credda turns real, both-party-confirmed commitment history into a verified **0–100 reliability score** that a person owns and carries across marketplaces, lenders, and clients.
+
+- **Deterministic** — the score is a pure function of an append-only event ledger; no human or AI can move it (AI is advisory only)
+- **Yours to carry** — trust is portable as signed W3C Verifiable Credentials (`did:web`)
+- **Real stack** — a deterministic scoring engine, a platform API, and a web app: TypeScript, Express, Prisma/PostgreSQL, Redis on AWS
+
+## blinkdev.me — local-first developer tools
 
 | Project | About | Stack | Latest |
 | :--- | :--- | :--- | :--- |
@@ -40,6 +48,11 @@ brew install martin-k-m/flux/flux       # flux
 
 Orbit ships prebuilt desktop installers on its [releases page](https://github.com/martin-k-m/orbit/releases/latest).
 
+## Also building
+
+- [atlas](https://github.com/martin-k-m/atlas) — a next-generation local knowledge IDE (Kotlin, native desktop)
+- [datalib](https://github.com/martin-k-m/datalib) — an interactive, animated data-science & ML portfolio (Next.js)
+
 ## Tools
 
 <div align="center">
@@ -57,6 +70,7 @@ Orbit ships prebuilt desktop installers on its [releases page](https://github.co
 
 <div align="center">
 
+[![Credda](https://img.shields.io/badge/Credda-7C6CFF?style=flat-square&logo=verifiedbadge&logoColor=white)](https://credda.io)
 [![Portfolio](https://img.shields.io/badge/Portfolio-0A0A0A?style=flat-square&logo=github&logoColor=white)](https://martin-k-m.github.io)
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-0A66C2?style=flat-square&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/martin-muskov-3a450134b)
 
