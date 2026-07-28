@@ -4,7 +4,7 @@
   <img src="https://readme-typing-svg.demolab.com?font=JetBrains+Mono&weight=600&size=24&pause=1000&color=7C6CFF&width=440&lines=Co-founder+%40+Credda;Student;Rust+developer;Local-first" alt="Co-founder at Credda, student, Rust developer, local-first" />
 </a>
 
-Brentwood, CA. Happy to talk low-level, embedded, EE, dev tooling, or trust.
+Studying @ UC Santa Cruz for Electrical Engineering
 
 [![Credda](https://img.shields.io/badge/Credda-7C6CFF?style=flat-square&logo=verifiedbadge&logoColor=white)](https://credda.io)
 [![Website](https://img.shields.io/badge/martin--k--m.github.io-0A0A0C?style=flat-square&logo=github&logoColor=white)](https://martin-k-m.github.io)
