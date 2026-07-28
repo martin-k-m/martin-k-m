@@ -101,3 +101,19 @@ pip install git+https://github.com/martin-k-m/csvpeek   # csvpeek — CSV profil
 <a href="https://github.com/martin-k-m/orbit"><img src="https://img.shields.io/github/stars/martin-k-m/orbit?style=for-the-badge&logo=github&logoColor=white&label=orbit&labelColor=0A0A0C&color=4F8CFF" alt="orbit stars" /></a>
 
 </div>
+
+<br/>
+
+## Activity
+
+<div align="center">
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/martin-k-m/martin-k-m/output/snake-dark.svg" />
+  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/martin-k-m/martin-k-m/output/snake.svg" />
+  <img alt="My contribution graph, eaten by a snake" src="https://raw.githubusercontent.com/martin-k-m/martin-k-m/output/snake-dark.svg" width="100%" />
+</picture>
+
+<img src="https://github-readme-activity-graph.vercel.app/graph?username=martin-k-m&bg_color=0A0A0C&color=ECEDF1&line=7C6CFF&point=4F8CFF&area=true&area_color=7C6CFF&hide_border=true&custom_title=Contributions" width="100%" alt="Contribution activity graph" />
+
+</div>
