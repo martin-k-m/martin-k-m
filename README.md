@@ -114,13 +114,13 @@ pip install git+https://github.com/martin-k-m/csvpeek   # csvpeek — CSV profil
 
 <img src="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/contrib-cumulative.svg" width="100%" alt="All-time cumulative contributions" />
 
-<sub>All-time total, growing over the account's whole history.</sub>
+<sub>All-time total, growing over the account's whole history</sub>
 
 <br/><br/>
 
 <img src="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/contrib-recent.svg" width="100%" alt="Recent contributions per day" />
 
-<sub>Last 30 days, per day — the rate.</sub>
+<sub>Last 30 days, per day</sub>
 
 </div>
 
