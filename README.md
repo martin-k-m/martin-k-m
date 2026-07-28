@@ -9,7 +9,7 @@ EE student at UC Santa Cruz and co-founder of [Credda](https://credda.io). I bui
 
 ---
 
-## Credda &nbsp;·&nbsp; [credda.io](https://credda.io) &nbsp;·&nbsp; [@martin](https://credda.io/profile/martin)
+## Credda &nbsp;·&nbsp; [credda.io](https://credda.io) &nbsp;·&nbsp; [@martin](https://credda.io/profile/martin) &nbsp;·&nbsp; [GitHub](https://github.com/Credda-io)
 
 > **Portable trust infrastructure.** Reputation shouldn't reset every time you join a new platform.
 
