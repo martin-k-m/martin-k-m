@@ -112,7 +112,15 @@ pip install git+https://github.com/martin-k-m/csvpeek   # csvpeek — CSV profil
 
 <div align="center">
 
-<img src="https://github-readme-activity-graph.vercel.app/graph?username=martin-k-m&bg_color=0A0A0C&color=ECEDF1&line=7C6CFF&point=4F8CFF&area=true&area_color=7C6CFF&hide_border=true&custom_title=Contributions" width="100%" alt="Contribution activity graph" />
+<img src="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/contrib-cumulative.svg" width="100%" alt="All-time cumulative contributions" />
+
+<sub>All-time total, growing over the account's whole history.</sub>
+
+<br/><br/>
+
+<img src="https://github-readme-activity-graph.vercel.app/graph?username=martin-k-m&bg_color=0A0A0C&color=ECEDF1&line=7C6CFF&point=4F8CFF&area=true&area_color=7C6CFF&hide_border=true&custom_title=Recent%20contributions" width="100%" alt="Recent contribution activity" />
+
+<sub>Recent contributions per day — the rate.</sub>
 
 </div>
 
