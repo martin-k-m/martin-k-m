@@ -1,7 +1,7 @@
 # Martin Muskov
 
 <a href="https://github.com/martin-k-m">
-  <img src="https://readme-typing-svg.demolab.com?font=JetBrains+Mono&weight=600&size=20&pause=1200&color=7C6CFF&width=620&lines=Student+%26+co-founder+of+Credda;Electrical+Engineering+%40+UC+Santa+Cruz+%E2%80%9929;Independent+developer+tools%2C+mostly+in+Rust;Deterministic.+Local-first.+Private+by+default." alt="Student and co-founder of Credda; EE at UC Santa Cruz; independent developer tools in Rust" />
+  <img src="https://readme-typing-svg.demolab.com?font=JetBrains+Mono&weight=600&size=24&pause=1000&color=7C6CFF&width=440&lines=Co-founder+%40+Credda;Student;Rust+developer;Local-first" alt="Co-founder at Credda, student, Rust developer, local-first" />
 </a>
 
 Brentwood, CA. Happy to talk low-level, embedded, EE, dev tooling, or trust.
