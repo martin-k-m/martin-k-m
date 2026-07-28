@@ -1,50 +1,20 @@
-<!-- ─────────────────────────────  Martin Muskov  ───────────────────────────── -->
+# Martin Muskov
 
-<div align="center">
+EE student at UC Santa Cruz and co-founder of [Credda](https://credda.io). I build developer tools on the side, mostly in Rust — the standalone, run-on-your-own-machine kind.
 
-<img src="https://capsule-render.vercel.app/api?type=waving&color=0:4f8cff,100:7c6cff&height=200&section=header&text=Martin%20Muskov&fontColor=ffffff&fontSize=54&fontAlignY=38&desc=Founder%20of%20Credda%20%C2%B7%20systems%20people%20can%20trust&descSize=18&descAlignY=60" width="100%" alt="Martin Muskov" />
+[![Credda](https://img.shields.io/badge/Credda-7C6CFF?style=flat-square&logo=verifiedbadge&logoColor=white)](https://credda.io)
+[![Website](https://img.shields.io/badge/martin--k--m.github.io-0A0A0C?style=flat-square&logo=github&logoColor=white)](https://martin-k-m.github.io)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-0A66C2?style=flat-square&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/martin-muskov-3a450134b)
+[![Email](https://img.shields.io/badge/martin@credda.io-EA4335?style=flat-square&logo=gmail&logoColor=white)](mailto:martin@credda.io)
 
-<a href="https://github.com/martin-k-m">
-  <img src="https://readme-typing-svg.demolab.com?font=JetBrains+Mono&weight=600&size=21&pause=1200&color=7C6CFF&center=true&vCenter=true&width=580&lines=Founder+of+Credda+%E2%80%94+portable+trust+infrastructure;Electrical+Engineering+%40+UC+Santa+Cruz+%E2%80%99029;Independent+developer+tools%2C+mostly+in+Rust;Deterministic.+Local-first.+Private+by+default." alt="typing" />
-</a>
-
-<br/>
-
-<a href="https://credda.io"><img src="https://img.shields.io/badge/Credda-7C6CFF?style=for-the-badge&logo=verifiedbadge&logoColor=white" alt="Credda" /></a>
-<a href="https://martin-k-m.github.io"><img src="https://img.shields.io/badge/Website-0A0A0C?style=for-the-badge&logo=github&logoColor=white" alt="Website" /></a>
-<a href="https://www.linkedin.com/in/martin-muskov-3a450134b"><img src="https://img.shields.io/badge/LinkedIn-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn" /></a>
-<a href="mailto:martin@credda.io"><img src="https://img.shields.io/badge/Email-EA4335?style=for-the-badge&logo=gmail&logoColor=white" alt="Email" /></a>
-
-</div>
-
-<br/>
-
-## About
-
-```rust
-let martin = Engineer {
-    role:     "Founder of Credda",
-    school:   "Electrical Engineering @ UC Santa Cruz ('29)",
-    based_in: "Brentwood, California",
-    writes:   ["Rust", "TypeScript", "Python"],
-    believes: "software should be honest — deterministic, local-first, private",
-    open_to:  ["low-level & embedded", "developer tooling", "trust infrastructure"],
-};
-```
-
-I'm building **[Credda](https://credda.io)** — portable trust infrastructure — and a handful of
-**independent developer tools** on the side. They don't share a platform or an account system;
-each one stands alone and runs entirely on your machine. Happy to talk low-level, embedded, EE,
-dev tooling, or trust.
-
-<br/>
+---
 
 ## Credda &nbsp;·&nbsp; [credda.io](https://credda.io) &nbsp;·&nbsp; [@martin](https://credda.io/profile/martin)
 
 > **Portable trust infrastructure.** Reputation shouldn't reset every time you join a new platform.
 
-Credda turns real, both-party-confirmed commitment history into a verified **0–100 reliability
-score** that a person owns and carries across marketplaces, lenders, and clients.
+I'm a co-founder. Credda turns real, both-party-confirmed commitment history into a verified
+**0–100 reliability score** that a person owns and carries across marketplaces, lenders, and clients.
 
 |  |  |
 | :-- | :-- |
@@ -131,5 +101,3 @@ pip install git+https://github.com/martin-k-m/csvpeek   # csvpeek — CSV profil
 <a href="https://github.com/martin-k-m/orbit"><img src="https://img.shields.io/github/stars/martin-k-m/orbit?style=for-the-badge&logo=github&logoColor=white&label=orbit&labelColor=0A0A0C&color=4F8CFF" alt="orbit stars" /></a>
 
 </div>
-
-<img src="https://capsule-render.vercel.app/api?type=waving&color=0:7c6cff,100:4f8cff&height=110&section=footer" width="100%" alt="" />
