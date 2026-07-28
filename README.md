@@ -1,7 +1,7 @@
 # Martin Muskov
 
 <a href="https://github.com/martin-k-m">
-  <img src="https://readme-typing-svg.demolab.com?font=JetBrains+Mono&weight=600&size=24&pause=1000&color=7C6CFF&width=440&lines=Co-founder+%40+Credda;Student;Rust+developer;Local-first" alt="Co-founder at Credda, Studying Electrical Engineering @ UCSC" />
+  <img src="https://readme-typing-svg.demolab.com?font=JetBrains+Mono&weight=600&size=24&pause=1000&color=7C6CFF&width=440&lines=" alt="Co-founder at Credda, Studying Electrical Engineering @ UCSC" />
 </a>
 
 [![Credda](https://img.shields.io/badge/Credda-7C6CFF?style=flat-square&logo=verifiedbadge&logoColor=white)](https://credda.io)
