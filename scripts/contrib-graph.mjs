@@ -1,12 +1,12 @@
-// Generate an all-time *cumulative* contributions chart as an SVG.
+// Generate two matching contribution charts as SVGs, from one renderer:
+//   - dist/contrib-cumulative.svg : running total over the account's whole history (integral)
+//   - dist/contrib-recent.svg     : contributions per day over the last 30 days (the derivative)
 //
-// The github-readme-activity-graph shows contributions per period (a rate).
-// This renders the running total over the account's whole history — the
-// integral of that curve. Data comes from the GitHub GraphQL contributions
-// calendar, queried one year at a time (the API caps each window at 1 year).
+// Both share one theme so the profile reads as a set. Data comes from the GitHub
+// GraphQL contributions calendar, queried one year at a time (the API caps each
+// window at 1 year).
 //
 // Env: GH_LOGIN (user), GITHUB_TOKEN (any token — contribution counts are public).
-// Output: dist/contrib-cumulative.svg
 
 import { mkdir, writeFile } from "node:fs/promises";
 
@@ -49,38 +49,30 @@ for (let y = created.getUTCFullYear(); y <= now.getUTCFullYear(); y++) {
     for (const d of w.contributionDays) byDate.set(d.date, d.contributionCount);
 }
 
-// Sort by date and accumulate.
 const dates = [...byDate.keys()].sort();
 if (dates.length === 0) { console.error("no contribution data"); process.exit(1); }
-let running = 0;
-const series = dates.map((date) => ({ t: new Date(date).getTime(), cum: (running += byDate.get(date)) }));
-const total = running;
 
-// Downsample to at most N points (keep endpoints) for a compact path.
-const N = 180;
-const step = Math.max(1, Math.ceil(series.length / N));
-const pts = series.filter((_, i) => i % step === 0);
-if (pts[pts.length - 1] !== series[series.length - 1]) pts.push(series[series.length - 1]);
-
-// Layout.
-const W = 820, H = 240, padL = 18, padR = 18, padT = 44, padB = 30;
-const plotW = W - padL - padR, plotH = H - padT - padB;
-const t0 = pts[0].t, t1 = pts[pts.length - 1].t;
-const maxCum = total || 1;
-const X = (t) => padL + (t1 === t0 ? 0 : (t - t0) / (t1 - t0)) * plotW;
-const Y = (c) => padT + plotH - (c / maxCum) * plotH;
-
-const line = pts.map((p, i) => `${i ? "L" : "M"}${X(p.t).toFixed(1)} ${Y(p.cum).toFixed(1)}`).join(" ");
-const area = `M${X(t0).toFixed(1)} ${(padT + plotH).toFixed(1)} ` +
-  pts.map((p) => `L${X(p.t).toFixed(1)} ${Y(p.cum).toFixed(1)}`).join(" ") +
-  ` L${X(t1).toFixed(1)} ${(padT + plotH).toFixed(1)} Z`;
-
-const endX = X(t1), endY = Y(total);
-const startYear = new Date(t0).getUTCFullYear();
-const endYear = new Date(t1).getUTCFullYear();
 const fmt = (n) => n.toLocaleString("en-US");
 
-const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="All-time cumulative contributions: ${fmt(total)}">
+// ── Shared renderer ─────────────────────────────────────────────────────────
+// points: [{ t: epochMs, v: number }] (already ordered). Emits one themed SVG.
+function renderChart({ title, valueLabel, points, startLabel, endLabel }) {
+  const W = 820, H = 240, padL = 18, padR = 18, padT = 44, padB = 30;
+  const plotW = W - padL - padR, plotH = H - padT - padB;
+  const t0 = points[0].t, t1 = points[points.length - 1].t;
+  const maxV = Math.max(1, ...points.map((p) => p.v));
+  const X = (t) => padL + (t1 === t0 ? 0 : (t - t0) / (t1 - t0)) * plotW;
+  const Y = (v) => padT + plotH - (v / maxV) * plotH;
+
+  const line = points.map((p, i) => `${i ? "L" : "M"}${X(p.t).toFixed(1)} ${Y(p.v).toFixed(1)}`).join(" ");
+  const area =
+    `M${X(t0).toFixed(1)} ${(padT + plotH).toFixed(1)} ` +
+    points.map((p) => `L${X(p.t).toFixed(1)} ${Y(p.v).toFixed(1)}`).join(" ") +
+    ` L${X(t1).toFixed(1)} ${(padT + plotH).toFixed(1)} Z`;
+
+  const endX = X(t1), endY = Y(points[points.length - 1].v);
+
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="${title}: ${valueLabel}">
   <defs>
     <linearGradient id="area" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0" stop-color="#7C6CFF" stop-opacity="0.38"/>
@@ -92,8 +84,8 @@ const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" wid
     </linearGradient>
   </defs>
   <rect width="${W}" height="${H}" rx="10" fill="#0A0A0C"/>
-  <text x="${padL}" y="26" font-family="'JetBrains Mono',ui-monospace,monospace" font-size="15" font-weight="600" fill="#ECEDF1">All-time contributions</text>
-  <text x="${W - padR}" y="26" text-anchor="end" font-family="'JetBrains Mono',ui-monospace,monospace" font-size="15" font-weight="600" fill="#7C6CFF">${fmt(total)}</text>
+  <text x="${padL}" y="26" font-family="'JetBrains Mono',ui-monospace,monospace" font-size="15" font-weight="600" fill="#ECEDF1">${title}</text>
+  <text x="${W - padR}" y="26" text-anchor="end" font-family="'JetBrains Mono',ui-monospace,monospace" font-size="15" font-weight="600" fill="#7C6CFF">${valueLabel}</text>
   <path d="${area}" fill="url(#area)" opacity="0">
     <animate attributeName="opacity" from="0" to="1" dur="1.4s" begin="0.3s" fill="freeze"/>
   </path>
@@ -103,10 +95,45 @@ const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" wid
   <circle cx="${endX.toFixed(1)}" cy="${endY.toFixed(1)}" r="0" fill="#fff" stroke="#7C6CFF" stroke-width="2">
     <animate attributeName="r" from="0" to="4.5" dur="0.4s" begin="1.9s" fill="freeze"/>
   </circle>
-  <text x="${padL}" y="${H - 10}" font-family="'JetBrains Mono',ui-monospace,monospace" font-size="11" fill="#6D6E79">${startYear}</text>
-  <text x="${W - padR}" y="${H - 10}" text-anchor="end" font-family="'JetBrains Mono',ui-monospace,monospace" font-size="11" fill="#6D6E79">${endYear}</text>
+  <text x="${padL}" y="${H - 10}" font-family="'JetBrains Mono',ui-monospace,monospace" font-size="11" fill="#6D6E79">${startLabel}</text>
+  <text x="${W - padR}" y="${H - 10}" text-anchor="end" font-family="'JetBrains Mono',ui-monospace,monospace" font-size="11" fill="#6D6E79">${endLabel}</text>
 </svg>`;
+}
+
+const monthDay = (t) => new Date(t).toLocaleDateString("en-US", { month: "short", day: "numeric", timeZone: "UTC" });
+
+// ── Cumulative (all-time) ───────────────────────────────────────────────────
+let running = 0;
+const cumulative = dates.map((d) => ({ t: new Date(d).getTime(), v: (running += byDate.get(d)) }));
+const total = running;
+// Downsample to keep the path compact.
+const N = 180;
+const step = Math.max(1, Math.ceil(cumulative.length / N));
+const cumPts = cumulative.filter((_, i) => i % step === 0);
+if (cumPts[cumPts.length - 1] !== cumulative[cumulative.length - 1]) cumPts.push(cumulative[cumulative.length - 1]);
+
+const cumulativeSvg = renderChart({
+  title: "All-time contributions",
+  valueLabel: fmt(total),
+  points: cumPts,
+  startLabel: String(new Date(cumulative[0].t).getUTCFullYear()),
+  endLabel: String(new Date(total ? cumulative[cumulative.length - 1].t : now).getUTCFullYear()),
+});
+
+// ── Recent (last 30 days, per-day) ──────────────────────────────────────────
+const recentDays = dates.slice(-30);
+const recentPts = recentDays.map((d) => ({ t: new Date(d).getTime(), v: byDate.get(d) }));
+const recentTotal = recentPts.reduce((s, p) => s + p.v, 0);
+
+const recentSvg = renderChart({
+  title: "Recent contributions",
+  valueLabel: `${fmt(recentTotal)} · 30d`,
+  points: recentPts,
+  startLabel: monthDay(recentPts[0].t),
+  endLabel: monthDay(recentPts[recentPts.length - 1].t),
+});
 
 await mkdir("dist", { recursive: true });
-await writeFile("dist/contrib-cumulative.svg", svg, "utf8");
-console.log(`Wrote dist/contrib-cumulative.svg — ${fmt(total)} total contributions across ${dates.length} days`);
+await writeFile("dist/contrib-cumulative.svg", cumulativeSvg, "utf8");
+await writeFile("dist/contrib-recent.svg", recentSvg, "utf8");
+console.log(`Wrote contrib-cumulative.svg (${fmt(total)} all-time) and contrib-recent.svg (${fmt(recentTotal)} in last 30d)`);
