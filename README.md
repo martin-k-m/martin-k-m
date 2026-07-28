@@ -1,13 +1,17 @@
 # Martin Muskov
 
-EE student at UC Santa Cruz and co-founder of [Credda](https://credda.io). I build developer tools on the side, mostly in Rust — the standalone, run-on-your-own-machine kind.
+<a href="https://github.com/martin-k-m">
+  <img src="https://readme-typing-svg.demolab.com?font=JetBrains+Mono&weight=600&size=20&pause=1200&color=7C6CFF&width=620&lines=Student+%26+co-founder+of+Credda;Electrical+Engineering+%40+UC+Santa+Cruz+%E2%80%9929;Independent+developer+tools%2C+mostly+in+Rust;Deterministic.+Local-first.+Private+by+default." alt="Student and co-founder of Credda; EE at UC Santa Cruz; independent developer tools in Rust" />
+</a>
+
+Brentwood, CA. Happy to talk low-level, embedded, EE, dev tooling, or trust.
 
 [![Credda](https://img.shields.io/badge/Credda-7C6CFF?style=flat-square&logo=verifiedbadge&logoColor=white)](https://credda.io)
 [![Website](https://img.shields.io/badge/martin--k--m.github.io-0A0A0C?style=flat-square&logo=github&logoColor=white)](https://martin-k-m.github.io)
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-0A66C2?style=flat-square&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/martin-muskov-3a450134b)
 [![Email](https://img.shields.io/badge/martinkmuskov@gmail.com-EA4335?style=flat-square&logo=gmail&logoColor=white)](mailto:martinkmuskov@gmail.com)
 
----
+<img src="https://capsule-render.vercel.app/api?type=waving&color=0:4f8cff,100:7c6cff&height=90&section=footer" width="100%" alt="" />
 
 ## Credda &nbsp;·&nbsp; [credda.io](https://credda.io) &nbsp;·&nbsp; [@martin](https://credda.io/profile/martin) &nbsp;·&nbsp; [GitHub](https://github.com/Credda-io)
 
@@ -102,18 +106,14 @@ pip install git+https://github.com/martin-k-m/csvpeek   # csvpeek — CSV profil
 
 </div>
 
-<br/>
+<img src="https://capsule-render.vercel.app/api?type=waving&color=0:7c6cff,100:4f8cff&height=90&section=footer&reversed=true" width="100%" alt="" />
 
 ## Activity
 
 <div align="center">
 
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/martin-k-m/martin-k-m/output/snake-dark.svg" />
-  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/martin-k-m/martin-k-m/output/snake.svg" />
-  <img alt="My contribution graph, eaten by a snake" src="https://raw.githubusercontent.com/martin-k-m/martin-k-m/output/snake-dark.svg" width="100%" />
-</picture>
-
 <img src="https://github-readme-activity-graph.vercel.app/graph?username=martin-k-m&bg_color=0A0A0C&color=ECEDF1&line=7C6CFF&point=4F8CFF&area=true&area_color=7C6CFF&hide_border=true&custom_title=Contributions" width="100%" alt="Contribution activity graph" />
 
 </div>
+
+<img src="https://capsule-render.vercel.app/api?type=waving&color=0:4f8cff,100:7c6cff&height=110&section=footer" width="100%" alt="" />
