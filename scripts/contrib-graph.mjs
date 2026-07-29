@@ -1,6 +1,6 @@
 // Generate two matching contribution charts as SVGs, from one renderer:
-//   - dist/contrib-cumulative.svg : running total over the past 365 days (integral)
-//   - dist/contrib-recent.svg     : contributions per day over the last 30 days (the derivative)
+//   - dist/contrib-cumulative.svg : all-time running total, year to year (integral)
+//   - dist/contrib-permonth.svg   : contributions per month across all history (derivative)
 //
 // Both share one theme so the profile reads as a set. Data comes from the GitHub
 // GraphQL contributions calendar, queried one year at a time (the API caps each
@@ -104,41 +104,45 @@ function renderChart({ title, valueLabel, points, startLabel, endLabel }) {
 
 const monthDay = (t) => new Date(t).toLocaleDateString("en-US", { month: "short", day: "numeric", timeZone: "UTC" });
 
-// ── Cumulative over the past year ────────────────────────────────────────────
-const yearAgo = now.getTime() - 365 * 24 * 60 * 60 * 1000;
-const yearDates = dates.filter((d) => new Date(d).getTime() >= yearAgo);
+// Both graphs span the full history, year to year.
+
+// ── Cumulative (all-time running total) — the integral ───────────────────────
 let running = 0;
-const cumulative = yearDates.map((d) => ({ t: new Date(d).getTime(), v: (running += byDate.get(d)) }));
+const cumulative = dates.map((d) => ({ t: new Date(d).getTime(), v: (running += byDate.get(d)) }));
 const total = running;
-// Downsample to keep the path compact.
 const N = 180;
 const step = Math.max(1, Math.ceil(cumulative.length / N));
 let cumPts = cumulative.filter((_, i) => i % step === 0);
 if (cumulative.length && cumPts[cumPts.length - 1] !== cumulative[cumulative.length - 1]) cumPts.push(cumulative[cumulative.length - 1]);
-if (!cumPts.length) cumPts = [{ t: yearAgo, v: 0 }, { t: now.getTime(), v: 0 }];
+if (!cumPts.length) cumPts = [{ t: now.getTime(), v: 0 }];
 
 const cumulativeSvg = renderChart({
-  title: "Contributions · past year",
+  title: "All-time contributions",
   valueLabel: fmt(total),
   points: cumPts,
-  startLabel: monthDay(cumPts[0].t),
-  endLabel: monthDay(cumPts[cumPts.length - 1].t),
+  startLabel: String(new Date(cumPts[0].t).getUTCFullYear()),
+  endLabel: String(new Date(cumPts[cumPts.length - 1].t).getUTCFullYear()),
 });
 
-// ── Recent (last 30 days, per-day) ──────────────────────────────────────────
-const recentDays = dates.slice(-30);
-const recentPts = recentDays.map((d) => ({ t: new Date(d).getTime(), v: byDate.get(d) }));
-const recentTotal = recentPts.reduce((s, p) => s + p.v, 0);
+// ── Per-month totals across all history — the derivative ─────────────────────
+const monthMap = new Map();
+for (const d of dates) {
+  const key = d.slice(0, 7); // YYYY-MM
+  monthMap.set(key, (monthMap.get(key) || 0) + byDate.get(d));
+}
+const months = [...monthMap.keys()].sort();
+let monthPts = months.map((m) => ({ t: new Date(`${m}-01T00:00:00Z`).getTime(), v: monthMap.get(m) }));
+if (!monthPts.length) monthPts = [{ t: now.getTime(), v: 0 }];
 
-const recentSvg = renderChart({
-  title: "Recent contributions",
-  valueLabel: `${fmt(recentTotal)} · 30d`,
-  points: recentPts,
-  startLabel: monthDay(recentPts[0].t),
-  endLabel: monthDay(recentPts[recentPts.length - 1].t),
+const perMonthSvg = renderChart({
+  title: "Contributions per month",
+  valueLabel: fmt(total),
+  points: monthPts,
+  startLabel: String(new Date(monthPts[0].t).getUTCFullYear()),
+  endLabel: String(new Date(monthPts[monthPts.length - 1].t).getUTCFullYear()),
 });
 
 await mkdir("dist", { recursive: true });
 await writeFile("dist/contrib-cumulative.svg", cumulativeSvg, "utf8");
-await writeFile("dist/contrib-recent.svg", recentSvg, "utf8");
-console.log(`Wrote contrib-cumulative.svg (${fmt(total)} past year) and contrib-recent.svg (${fmt(recentTotal)} in last 30d), stamped ${stamp}`);
+await writeFile("dist/contrib-permonth.svg", perMonthSvg, "utf8");
+console.log(`Wrote contrib-cumulative.svg and contrib-permonth.svg (${fmt(total)} total, ${months.length} months), stamped ${stamp}`);
