@@ -64,6 +64,12 @@ I'm a co-founder. Credda turns real, both-party-confirmed commitment history int
   <td><a href="https://github.com/martin-k-m/orbit/releases"><img src="https://img.shields.io/github/v/tag/martin-k-m/orbit?sort=semver&label=&style=flat-square&color=7C6CFF"/></a></td>
 </tr>
 <tr>
+  <td><a href="https://github.com/martin-k-m/raster"><b>raster</b></a></td>
+  <td>A programming language for numeric and ML code — tensors are the built-in type, differentiation is part of the language (<code>grad</code>), and a static checker catches shape mistakes before a program runs.</td>
+  <td><img src="https://img.shields.io/badge/Go-00ADD8?style=flat-square&logo=go&logoColor=fff"/></td>
+  <td><a href="https://github.com/martin-k-m/raster/releases"><img src="https://img.shields.io/github/v/release/martin-k-m/raster?sort=semver&label=&style=flat-square&color=7C6CFF"/></a></td>
+</tr>
+<tr>
   <td><a href="https://github.com/martin-k-m/csvpeek"><b>csvpeek</b></a></td>
   <td>A fast, zero-dependency CSV profiler for the terminal — column types, null counts, numeric stats, and top values. Pure Python stdlib.</td>
   <td><img src="https://img.shields.io/badge/Python-3776AB?style=flat-square&logo=python&logoColor=fff"/></td>
@@ -77,6 +83,7 @@ npm install -g @martin-k-m/blink        # blink   — context engine
 npm install -g @martin-k-m/beacon-cli   # beacon  — repo intelligence
 cargo install killer                    # killer  — security testing
 brew install martin-k-m/flux/flux       # flux    — automation platform
+go install github.com/martin-k-m/raster/cmd/raster@latest  # raster — ML language
 pip install git+https://github.com/martin-k-m/csvpeek   # csvpeek — CSV profiler
 # orbit ships prebuilt desktop installers on its releases page
 ```
@@ -93,6 +100,7 @@ pip install git+https://github.com/martin-k-m/csvpeek   # csvpeek — CSV profil
 ![Tauri](https://img.shields.io/badge/Tauri-24C8DB?style=for-the-badge&logo=tauri&logoColor=black)
 ![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)
+![Go](https://img.shields.io/badge/Go-00ADD8?style=for-the-badge&logo=go&logoColor=white)
 ![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
 ![AWS](https://img.shields.io/badge/AWS-232F3E?style=for-the-badge&logo=amazonwebservices&logoColor=white)
 
