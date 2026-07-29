@@ -110,9 +110,9 @@ pip install git+https://github.com/martin-k-m/csvpeek   # csvpeek — CSV profil
 
 <div align="center">
 
-<img src="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/contrib-cumulative.svg" width="100%" alt="All-time cumulative contributions" />
+<img src="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/contrib-cumulative.svg" width="100%" alt="Cumulative contributions over the past year" />
 
-<sub>All-time total, growing over the account's whole history</sub>
+<sub>Running total over the past year</sub>
 
 <br/><br/>
 
