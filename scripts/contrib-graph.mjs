@@ -1,8 +1,8 @@
 // Generate two matching contribution charts as SVGs, from one renderer.
-// Both cover a ROLLING past-year window (last 365 days), so they shift forward
+// Both cover a ROLLING 6-month window (last 183 days), so they shift forward
 // automatically and pick up new commits every time the workflow runs:
-//   - dist/contrib-cumulative.svg : running total over the past year (integral)
-//   - dist/contrib-daily.svg      : contributions per day over the past year (derivative)
+//   - dist/contrib-cumulative.svg : running total over the last 6 months (integral)
+//   - dist/contrib-daily.svg      : contributions per day over the last 6 months (derivative)
 //
 // Env: GH_LOGIN (user), GITHUB_TOKEN (any token — contribution counts are public).
 
@@ -51,9 +51,9 @@ for (let y = created.getUTCFullYear(); y <= now.getUTCFullYear(); y++) {
 const allDates = [...byDate.keys()].sort();
 if (allDates.length === 0) { console.error("no contribution data"); process.exit(1); }
 
-// Rolling window: the last 365 days.
-const yearAgo = now.getTime() - 365 * 24 * 60 * 60 * 1000;
-const dates = allDates.filter((d) => new Date(d).getTime() >= yearAgo);
+// Rolling window: the last 6 months (~183 days).
+const sixMonthsAgo = now.getTime() - 183 * 24 * 60 * 60 * 1000;
+const dates = allDates.filter((d) => new Date(d).getTime() >= sixMonthsAgo);
 const days = (dates.length ? dates : [allDates[allDates.length - 1]])
   .map((d) => ({ t: new Date(d).getTime(), v: byDate.get(d) || 0 }));
 
@@ -136,7 +136,7 @@ function renderChart({ title, valueLabel, points, overlay, markPeak }) {
 </svg>`;
 }
 
-// ── Cumulative (integral) over the past year ─────────────────────────────────
+// ── Cumulative (integral) over the last 6 months ─────────────────────────────────
 let running = 0;
 const cumulative = days.map((d) => ({ t: d.t, v: (running += d.v) }));
 const total = running;
@@ -146,12 +146,12 @@ let cumPts = cumulative.filter((_, i) => i % step === 0);
 if (cumPts[cumPts.length - 1] !== cumulative[cumulative.length - 1]) cumPts.push(cumulative[cumulative.length - 1]);
 
 const cumulativeSvg = renderChart({
-  title: "Contributions · past year",
+  title: "Contributions · 6 months",
   valueLabel: fmt(total),
   points: cumPts,
 });
 
-// ── Daily (derivative) over the past year, with a 7-day moving average ───────
+// ── Daily (derivative) over the last 6 months, with a 7-day moving average ───────
 const vals = days.map((d) => d.v);
 const win = 7;
 const ma = vals.map((_, i) => {
@@ -162,7 +162,7 @@ const ma = vals.map((_, i) => {
 const overlay = days.map((d, i) => ({ t: d.t, v: ma[i] }));
 
 const dailySvg = renderChart({
-  title: "Contributions per day · past year",
+  title: "Contributions per day · 6 months",
   valueLabel: fmt(total),
   points: days,
   overlay,

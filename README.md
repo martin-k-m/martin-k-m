@@ -110,15 +110,15 @@ pip install git+https://github.com/martin-k-m/csvpeek   # csvpeek — CSV profil
 
 <div align="center">
 
-<img src="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/contrib-cumulative.svg" width="100%" alt="Cumulative contributions over the past year" />
+<img src="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/contrib-cumulative.svg" width="100%" alt="Cumulative contributions over the last 6 months" />
 
-<sub>Running total · rolling past year</sub>
+<sub>Running total · rolling 6 months</sub>
 
 <br/><br/>
 
-<img src="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/contrib-daily.svg" width="100%" alt="Contributions per day over the past year" />
+<img src="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/contrib-daily.svg" width="100%" alt="Contributions per day over the last 6 months" />
 
-<sub>Per day, with 7-day average · rolling past year</sub>
+<sub>Per day, with 7-day average · rolling 6 months</sub>
 
 </div>
 
