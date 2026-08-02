@@ -112,6 +112,12 @@ I'm a co-founder. Credda turns real, both-party-confirmed commitment history int
   <td><a href="https://github.com/martin-k-m/joist/releases"><img src="https://img.shields.io/github/v/tag/martin-k-m/joist?sort=semver&label=&style=flat-square&color=7C6CFF"/></a></td>
 </tr>
 <tr>
+  <td><a href="https://github.com/martin-k-m/tandem"><b>tandem</b></a></td>
+  <td>Workflow orchestration for Java. Typed steps with per-step retry policies, saga-style compensation, and durable resume: a step that recorded its output is replayed rather than run twice. No runtime dependencies.</td>
+  <td><img src="https://img.shields.io/badge/Java-ED8B00?style=flat-square&logo=openjdk&logoColor=fff"/></td>
+  <td><a href="https://github.com/martin-k-m/tandem/releases"><img src="https://img.shields.io/github/v/tag/martin-k-m/tandem?sort=semver&label=&style=flat-square&color=7C6CFF"/></a></td>
+</tr>
+<tr>
   <td><a href="https://github.com/martin-k-m/csvpeek"><b>csvpeek</b></a></td>
   <td>A fast, zero-dependency CSV profiler for the terminal: column types, null counts, numeric stats, and top values. Pure Python stdlib.</td>
   <td><img src="https://img.shields.io/badge/Python-3776AB?style=flat-square&logo=python&logoColor=fff"/></td>
