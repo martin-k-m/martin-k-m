@@ -1,3 +1,5 @@
+<img src="https://capsule-render.vercel.app/api?type=waving&color=0:4f8cff,100:7c6cff&height=90&section=header&reversed=true" width="100%" alt="" />
+
 # Martin Muskov
 
 <a href="https://github.com/martin-k-m">
@@ -8,8 +10,6 @@
 [![Website](https://img.shields.io/badge/martin--k--m.github.io-0A0A0C?style=flat-square&logo=github&logoColor=white)](https://martin-k-m.github.io)
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-0A66C2?style=flat-square&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/martin-muskov-3a450134b)
 [![Email](https://img.shields.io/badge/martinkmuskov@gmail.com-EA4335?style=flat-square&logo=gmail&logoColor=white)](mailto:martinkmuskov@gmail.com)
-
-<img src="https://capsule-render.vercel.app/api?type=waving&color=0:4f8cff,100:7c6cff&height=90&section=footer" width="100%" alt="" />
 
 ## Credda &nbsp;·&nbsp; [credda.io](https://credda.io) &nbsp;·&nbsp; [@martin](https://credda.io/profile/martin) &nbsp;·&nbsp; [GitHub](https://github.com/Credda-io)
 
@@ -125,8 +125,6 @@ pip install git+https://github.com/martin-k-m/csvpeek   # csvpeek — CSV profil
 
 </div>
 
-<img src="https://capsule-render.vercel.app/api?type=waving&color=0:7c6cff,100:4f8cff&height=90&section=footer&reversed=true" width="100%" alt="" />
-
 ## Activity
 
 <div align="center">
@@ -143,4 +141,4 @@ pip install git+https://github.com/martin-k-m/csvpeek   # csvpeek — CSV profil
 
 </div>
 
-<img src="https://capsule-render.vercel.app/api?type=waving&color=0:4f8cff,100:7c6cff&height=110&section=footer" width="100%" alt="" />
+<img src="https://capsule-render.vercel.app/api?type=waving&color=0:4f8cff,100:7c6cff&height=90&section=footer" width="100%" alt="" />
