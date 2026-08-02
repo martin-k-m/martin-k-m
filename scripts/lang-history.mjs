@@ -28,6 +28,7 @@ import { execFile } from "node:child_process";
 import { promisify } from "node:util";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import { fetchRepos } from "./repos.mjs";
 
 const exec = promisify(execFile);
 
@@ -91,46 +92,11 @@ function langOf(path) {
 // Same population as languages.svg: not forks, and anything owned, collaborated
 // on, or reached through an org. Colours come from the same place too, so a
 // language is the same colour in both charts.
-async function gql(query, variables) {
-  const res = await fetch("https://api.github.com/graphql", {
-    method: "POST",
-    headers: { Authorization: `bearer ${token}`, "Content-Type": "application/json" },
-    body: JSON.stringify({ query, variables }),
-  });
-  const json = await res.json();
-  if (json.errors) throw new Error(JSON.stringify(json.errors));
-  return json.data;
-}
 
-const QUERY = `
-query($login:String!,$cursor:String){
-  user(login:$login){
-    repositories(first:100, after:$cursor, isFork:false,
-                 ownerAffiliations:[OWNER,COLLABORATOR,ORGANIZATION_MEMBER]){
-      pageInfo{ hasNextPage endCursor }
-      nodes{
-        nameWithOwner
-        isPrivate
-        owner{ login }
-        createdAt
-        defaultBranchRef{ name }
-        languages(first:30){ edges{ node{ name color } } }
-      }
-    }
-  }
-}`;
-
-const repos = [];
-const colors = new Map();
-let cursor = null;
-do {
-  const page = (await gql(QUERY, { login, cursor })).user.repositories;
-  for (const r of page.nodes) {
-    for (const e of r.languages.edges) if (e.node.color) colors.set(e.node.name, e.node.color);
-    if (r.defaultBranchRef) repos.push(r); // an empty repo has no default branch
-  }
-  cursor = page.pageInfo.hasNextPage ? page.pageInfo.endCursor : null;
-} while (cursor);
+const all = await fetchRepos(login, token);
+const colors = all.colors;
+// An empty repository has no default branch and so nothing to walk.
+const repos = all.repos.filter((r) => r.defaultBranchRef);
 
 if (repos.length < 2) {
   console.error(
@@ -174,26 +140,35 @@ async function ensureClone(repo) {
   return dir;
 }
 
-// Month boundaries, oldest first, each the instant that month ended.
-function monthEnds(from, to) {
+// Sample on a rolling cadence rather than at month ends. At month ends a push
+// on the 3rd is invisible until the 1st of the next month, which makes the line
+// look frozen while the work is actually happening. A week is fine-grained
+// enough that a push shows up while it is still recent, and the last point is
+// always the present, so the right-hand edge moves every time the job runs.
+//
+// The step stretches once the history outgrows the target, which keeps both the
+// point count and the number of trees walked bounded as the years accumulate.
+const TARGET_POINTS = 110;
+const MIN_STEP_DAYS = 7;
+const DAY = 86400000;
+
+function samplePoints(from, to, target = TARGET_POINTS) {
+  const stepDays = Math.max(MIN_STEP_DAYS, Math.ceil((to - from) / DAY / target));
   const out = [];
-  const d = new Date(Date.UTC(from.getUTCFullYear(), from.getUTCMonth() + 1, 1));
-  while (d <= to) {
-    out.push(new Date(d));
-    d.setUTCMonth(d.getUTCMonth() + 1);
+  for (let t = from.getTime() + stepDays * DAY; t < to.getTime(); t += stepDays * DAY) {
+    out.push(new Date(t));
   }
-  out.push(to); // the present, so the chart runs to today rather than last month
-  return out;
+  out.push(to); // the present
+  return { marks: out, stepDays };
 }
 
 const now = new Date();
-const earliest = repos.reduce((min, r) => (r.createdAt < min ? r.createdAt : min), repos[0].createdAt);
-const marks = monthEnds(new Date(earliest), now);
 
-// month index -> language -> bytes
-const series = marks.map(() => new Map());
-let measured = 0;
-
+// First pass: clone, and read each repository's commit list in one call rather
+// than a rev-list per sample point. Sampling weekly means over a hundred points
+// per repo, and spawning that many git processes just to be told the tip has
+// not moved would be most of the runtime for no information.
+const cloned = [];
 for (const repo of repos) {
   let dir;
   try {
@@ -202,56 +177,101 @@ for (const repo of repos) {
     console.warn(`  skipped ${repo.nameWithOwner}: ${String(e.message).split("\n")[0]}`);
     continue;
   }
-  const branch = repo.defaultBranchRef.name;
-  const born = new Date(repo.createdAt);
-  let lastSha = null;
-  let lastCounts = new Map();
-
-  for (let i = 0; i < marks.length; i++) {
-    if (marks[i] < born) continue; // the repo did not exist yet
-    let sha;
-    try {
-      sha = (await git(dir, ["rev-list", "-1", `--before=${marks[i].toISOString()}`, branch])).trim();
-    } catch {
-      break; // no such branch locally
-    }
-    if (!sha) continue;
-
-    // Nothing landed this month, so the tree is the one already measured and
-    // there is no reason to walk it again.
-    if (sha === lastSha) {
-      for (const [k, v] of lastCounts) series[i].set(k, (series[i].get(k) || 0) + v);
-      continue;
-    }
-    lastSha = sha;
-
-    const tree = await git(dir, ["ls-tree", "-r", "-l", sha]);
-    lastCounts = new Map();
-    for (const line of tree.split("\n")) {
-      if (!line) continue;
-      // <mode> <type> <sha> <size>\t<path>
-      const tab = line.indexOf("\t");
-      if (tab < 0) continue;
-      const meta = line.slice(0, tab).split(/\s+/);
-      if (meta[1] !== "blob") continue;
-      const size = Number(meta[3]);
-      if (!Number.isFinite(size)) continue;
-      const lang = langOf(line.slice(tab + 1));
-      if (!lang) continue;
-      lastCounts.set(lang, (lastCounts.get(lang) || 0) + size);
-    }
-    for (const [k, v] of lastCounts) series[i].set(k, (series[i].get(k) || 0) + v);
-    measured++;
+  let history;
+  try {
+    history = (await git(dir, ["log", "--format=%H %ct", repo.defaultBranchRef.name]))
+      .trim()
+      .split("\n")
+      .filter(Boolean)
+      .map((l) => {
+        const sp = l.indexOf(" ");
+        return { sha: l.slice(0, sp), t: Number(l.slice(sp + 1)) * 1000 };
+      })
+      .reverse(); // oldest first
+  } catch {
+    continue; // no such branch locally
   }
+  if (history.length) cloned.push({ repo, dir, history });
 }
 
-// Trim the leading stretch where nothing existed yet, so the chart starts where
-// the history does rather than at an arbitrary account creation date.
-let start = series.findIndex((m) => [...m.values()].reduce((a, b) => a + b, 0) > 0);
-if (start < 0) {
-  console.error("no history measured");
+if (!cloned.length) {
+  console.error("no repository history could be read");
   process.exit(1);
 }
+
+// A tree is identified by its commit, and the same commit is the answer for
+// every sample point between one push and the next, so measuring it twice is
+// wasted work. The cache is what makes the two passes below affordable.
+const treeCache = new Map(); // commit sha -> Map(language -> bytes)
+let walked = 0;
+
+async function countsFor(dir, sha) {
+  const hit = treeCache.get(sha);
+  if (hit) return hit;
+
+  const counts = new Map();
+  const tree = await git(dir, ["ls-tree", "-r", "-l", sha]);
+  for (const line of tree.split("\n")) {
+    if (!line) continue;
+    // <mode> <type> <sha> <size>\t<path>
+    const tab = line.indexOf("\t");
+    if (tab < 0) continue;
+    const meta = line.slice(0, tab).split(/\s+/);
+    if (meta[1] !== "blob") continue;
+    const size = Number(meta[3]);
+    if (!Number.isFinite(size)) continue;
+    const lang = langOf(line.slice(tab + 1));
+    if (!lang) continue;
+    counts.set(lang, (counts.get(lang) || 0) + size);
+  }
+  treeCache.set(sha, counts);
+  walked++;
+  return counts;
+}
+
+async function measure(at) {
+  const series = at.map(() => new Map());
+  for (const { dir, history } of cloned) {
+    let p = -1; // index of the newest commit at or before the current point
+    for (let i = 0; i < at.length; i++) {
+      const t = at[i].getTime();
+      while (p + 1 < history.length && history[p + 1].t <= t) p++;
+      if (p < 0) continue; // the repo had no commits yet
+      const counts = await countsFor(dir, history[p].sha);
+      for (const [k, v] of counts) series[i].set(k, (series[i].get(k) || 0) + v);
+    }
+  }
+  return series;
+}
+
+const nonEmpty = (m) => [...m.values()].reduce((a, b) => a + b, 0) > 0;
+
+// The span cannot simply start at the first commit anywhere. A repository can
+// carry years of commits that contain no code this chart counts, and starting
+// there stretches the step out across empty time, coarsening the resolution of
+// the part that actually has something in it. Ember pushed the step from a week
+// to sixteen days that way.
+//
+// So: a cheap coarse pass to find where counted code first appears, then the
+// real grid over just that span. The second pass costs almost nothing extra,
+// because every tree the first pass walked is already in the cache.
+const firstCommit = Math.min(...cloned.map((c) => c.history[0].t));
+const scout = samplePoints(new Date(firstCommit), now, 30);
+const scouted = await measure(scout.marks);
+const firstReal = scouted.findIndex(nonEmpty);
+if (firstReal < 0) {
+  console.error("no counted code in any repository");
+  process.exit(1);
+}
+// Step back one coarse point so the real start is not clipped off.
+const from = scout.marks[Math.max(0, firstReal - 1)];
+
+const { marks, stepDays } = samplePoints(from, now);
+const series = await measure(marks);
+const measured = walked;
+
+let start = series.findIndex(nonEmpty);
+if (start < 0) start = 0;
 const pts = marks.slice(start);
 const data = series.slice(start);
 
@@ -328,14 +348,56 @@ const labelEvery = Math.max(1, Math.round(pts.length / 6));
 
 const strokeOf = (name, C) => (name === "Other" ? C.other : colorOf(name));
 
+// Monotone cubic interpolation, not a plain Catmull-Rom spline.
+//
+// A plain spline overshoots around a sharp change: it would bulge a line above
+// its own peak and, on a chart of percentages, below zero, drawing values that
+// were never measured. The Fritsch-Carlson tangents flatten wherever the data
+// turns, so the curve is smooth but never leaves the range of the points it
+// passes through. Every point on this curve is a value that really happened,
+// which is the only version of smoothing worth having on a chart like this.
+function smoothPath(px, py) {
+  const n = px.length;
+  if (n < 3) return `M ${px.map((v, i) => `${v.toFixed(1)},${py[i].toFixed(1)}`).join(" L ")}`;
+
+  const h = [], slope = [];
+  for (let i = 0; i < n - 1; i++) {
+    h[i] = px[i + 1] - px[i];
+    slope[i] = (py[i + 1] - py[i]) / h[i];
+  }
+
+  const m = new Array(n);
+  m[0] = slope[0];
+  m[n - 1] = slope[n - 2];
+  for (let i = 1; i < n - 1; i++) {
+    // A turning point, so the tangent is flat and the curve cannot overshoot.
+    if (slope[i - 1] * slope[i] <= 0) {
+      m[i] = 0;
+    } else {
+      const w1 = 2 * h[i] + h[i - 1];
+      const w2 = h[i] + 2 * h[i - 1];
+      m[i] = (w1 + w2) / (w1 / slope[i - 1] + w2 / slope[i]);
+    }
+  }
+
+  let d = `M ${px[0].toFixed(1)},${py[0].toFixed(1)}`;
+  for (let i = 0; i < n - 1; i++) {
+    const t = h[i] / 3;
+    d += ` C ${(px[i] + t).toFixed(1)},${(py[i] + m[i] * t).toFixed(1)}` +
+         ` ${(px[i + 1] - t).toFixed(1)},${(py[i + 1] - m[i + 1] * t).toFixed(1)}` +
+         ` ${px[i + 1].toFixed(1)},${py[i + 1].toFixed(1)}`;
+  }
+  return d;
+}
+
 function lines(C) {
+  const px = shares.map((_, i) => x(i));
   return bands
     .map((name) => {
-      const path = shares.map((m, i) => `${x(i).toFixed(1)},${y(m.get(name) || 0).toFixed(1)}`).join(" ");
-      const end = y(shares[shares.length - 1].get(name) || 0);
+      const py = shares.map((m) => y(m.get(name) || 0));
       const s = strokeOf(name, C);
-      return `<polyline points="${path}" fill="none" stroke="${s}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
-  <circle cx="${x(pts.length - 1).toFixed(1)}" cy="${end.toFixed(1)}" r="3.2" fill="${s}" stroke="${C.bg}" stroke-width="1.5"/>`;
+      return `<path d="${smoothPath(px, py)}" fill="none" stroke="${s}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+  <circle cx="${px[px.length - 1].toFixed(1)}" cy="${py[py.length - 1].toFixed(1)}" r="3.2" fill="${s}" stroke="${C.bg}" stroke-width="1.5"/>`;
     })
     .join("\n  ");
 }
@@ -407,7 +469,7 @@ function render(C) {
   <g opacity="0"><animate attributeName="opacity" from="0" to="1" dur="0.4s" begin="1.1s" fill="freeze"/>
   ${endLabels(C)}
   </g>
-  <text x="${padL}" y="${H - 10}" font-family="${MONO}" font-size="10" fill="${C.muted}">${pts.length} months · ${repos.length} repos · ${size(finalTotal)} today · extensions Linguist counts as code</text>
+  <text x="${padL}" y="${H - 10}" font-family="${MONO}" font-size="10" fill="${C.muted}">sampled every ${stepDays} days · ${repos.length} repos · ${size(finalTotal)} today · extensions Linguist counts as code</text>
   <text x="${W - 14}" y="${H - 10}" text-anchor="end" font-family="${MONO}" font-size="10" fill="${C.muted}">updated ${now.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" })}</text>
 </svg>`;
 }
@@ -417,7 +479,7 @@ for (const theme of Object.values(THEMES)) {
   await writeFile(`dist/lang-history${theme.suffix}.svg`, render(theme), "utf8");
 }
 
-console.log(`lang-history.svg · ${pts.length} months · ${repos.length} repos · ${measured} trees measured`);
+console.log(`lang-history.svg · ${pts.length} points every ${stepDays}d · ${repos.length} repos · ${measured} trees measured`);
 console.log(`  ${mon(pts[0])} -> ${mon(pts[pts.length - 1])}  ${size(finalTotal)} today  led by ${leadName}`);
 for (const name of bands) {
   const v = stacks[stacks.length - 1].get(name) || 0;

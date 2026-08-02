@@ -16,6 +16,7 @@
 //   GITHUB_TOKEN  (required) PAT with `repo` scope to include private repos
 
 import { mkdir, writeFile } from "node:fs/promises";
+import { fetchRepos } from "./repos.mjs";
 
 const login = process.env.GH_LOGIN;
 const token = process.env.GITHUB_TOKEN;
@@ -24,64 +25,15 @@ if (!login || !token) {
   process.exit(1);
 }
 
-async function gql(query, variables) {
-  const res = await fetch("https://api.github.com/graphql", {
-    method: "POST",
-    headers: { Authorization: `bearer ${token}`, "Content-Type": "application/json" },
-    body: JSON.stringify({ query, variables }),
-  });
-  const json = await res.json();
-  if (json.errors) throw new Error(JSON.stringify(json.errors));
-  return json.data;
-}
-
-// Forks are excluded: their bytes are someone else's work. Archived repos are
-// kept, the code was still written. COLLABORATOR and ORGANIZATION_MEMBER pull
-// in repos contributed to rather than owned, so work done under an org counts.
-//
-// It must be `ownerAffiliations`, not `affiliations`: the latter filters by the
-// *token's* own relationship to each repo, and the Actions GITHUB_TOKEN is a
-// collaborator on exactly one repository, the one it is running in. Using it
-// silently collapsed this chart to "1 language · 1 repo".
-const QUERY = `
-query($login:String!,$cursor:String){
-  user(login:$login){
-    repositories(first:100, after:$cursor, isFork:false,
-                 ownerAffiliations:[OWNER,COLLABORATOR,ORGANIZATION_MEMBER]){
-      pageInfo{ hasNextPage endCursor }
-      nodes{
-        name
-        isPrivate
-        owner{ login }
-        languages(first:25, orderBy:{field:SIZE, direction:DESC}){
-          edges{ size node{ name color } }
-        }
-      }
-    }
-  }
-}`;
+const { repos, colors, privateCount, contributedCount } = await fetchRepos(login, token);
+const repoCount = repos.length;
 
 const bytes = new Map(); // language -> bytes
-const colors = new Map(); // language -> GitHub's colour
-let repoCount = 0;
-let privateCount = 0;
-let contributedCount = 0;
-let cursor = null;
-
-do {
-  const data = await gql(QUERY, { login, cursor });
-  const page = data.user.repositories;
-  for (const repo of page.nodes) {
-    repoCount++;
-    if (repo.isPrivate) privateCount++;
-    if (repo.owner.login.toLowerCase() !== login.toLowerCase()) contributedCount++;
-    for (const { size, node } of repo.languages.edges) {
-      bytes.set(node.name, (bytes.get(node.name) || 0) + size);
-      if (node.color) colors.set(node.name, node.color);
-    }
+for (const repo of repos) {
+  for (const { size, node } of repo.languages.edges) {
+    bytes.set(node.name, (bytes.get(node.name) || 0) + size);
   }
-  cursor = page.pageInfo.hasNextPage ? page.pageInfo.endCursor : null;
-} while (cursor);
+}
 
 const ranked = [...bytes.entries()].sort((a, b) => b[1] - a[1]);
 if (ranked.length === 0) {
