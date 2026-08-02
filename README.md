@@ -34,31 +34,31 @@ I'm a co-founder. Credda turns real, both-party-confirmed commitment history int
 </thead>
 <tbody>
 <tr>
-  <td><a href="https://github.com/martin-k-m/blink"><b>blink</b></a><br/><sub><a href="https://blinkdev.me">blinkdev.me</a></sub></td>
+  <td><a href="https://github.com/martin-k-m/blink"><b>blink</b></a></td>
   <td>A developer <b>context engine</b> — indexes a codebase into a graph of files, symbols, and dependencies, then answers questions about it. Local, deterministic, no LLM.</td>
   <td><img src="https://img.shields.io/badge/Rust-000?style=flat-square&logo=rust&logoColor=fff"/></td>
   <td><a href="https://github.com/martin-k-m/blink/releases"><img src="https://img.shields.io/github/v/tag/martin-k-m/blink?sort=semver&label=&style=flat-square&color=7C6CFF"/></a></td>
 </tr>
 <tr>
-  <td><a href="https://github.com/martin-k-m/beacon"><b>beacon</b></a><br/><sub><a href="https://beacon.blinkdev.me">beacon.blinkdev.me</a></sub></td>
+  <td><a href="https://github.com/martin-k-m/beacon"><b>beacon</b></a></td>
   <td>Open-source GitHub repository intelligence — turns a repo's activity into an explainable 0–100 <b>Beacon Score</b>, a health summary, and embeddable widgets.</td>
   <td><img src="https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=fff"/></td>
   <td><a href="https://github.com/martin-k-m/beacon/releases"><img src="https://img.shields.io/github/v/tag/martin-k-m/beacon?sort=semver&label=&style=flat-square&color=7C6CFF"/></a></td>
 </tr>
 <tr>
-  <td><a href="https://github.com/martin-k-m/flux"><b>flux</b></a><br/><sub><a href="https://flux.blinkdev.me">flux.blinkdev.me</a></sub></td>
+  <td><a href="https://github.com/martin-k-m/flux"><b>flux</b></a></td>
   <td>A local-first automation platform — one <code>.flux</code> file builds, tests, packages, and deploys, run as a parallel dependency-graph pipeline with caching and encrypted secrets.</td>
   <td><img src="https://img.shields.io/badge/Rust-000?style=flat-square&logo=rust&logoColor=fff"/></td>
   <td><a href="https://github.com/martin-k-m/flux/releases"><img src="https://img.shields.io/github/v/tag/martin-k-m/flux?sort=semver&label=&style=flat-square&color=7C6CFF"/></a></td>
 </tr>
 <tr>
-  <td><a href="https://github.com/martin-k-m/killer"><b>killer</b></a><br/><sub><a href="https://killer.blinkdev.me">killer.blinkdev.me</a></sub></td>
+  <td><a href="https://github.com/martin-k-m/killer"><b>killer</b></a></td>
   <td>A security testing framework with its own <code>.klr</code> rule language — static analysis, fuzz/mutation attacks, scan history, and a CI gate.</td>
   <td><img src="https://img.shields.io/badge/Rust-000?style=flat-square&logo=rust&logoColor=fff"/></td>
   <td><a href="https://github.com/martin-k-m/killer/releases"><img src="https://img.shields.io/github/v/tag/martin-k-m/killer?sort=semver&label=&style=flat-square&color=7C6CFF"/></a></td>
 </tr>
 <tr>
-  <td><a href="https://github.com/martin-k-m/orbit"><b>orbit</b></a><br/><sub><a href="https://orbit.blinkdev.me">orbit.blinkdev.me</a></sub></td>
+  <td><a href="https://github.com/martin-k-m/orbit"><b>orbit</b></a></td>
   <td>A native developer IDE — editor, terminal, source control, tests, and project tooling in one fast desktop app. No server, no account, no telemetry.</td>
   <td><img src="https://img.shields.io/badge/Rust%20·%20Tauri-000?style=flat-square&logo=tauri&logoColor=fff"/></td>
   <td><a href="https://github.com/martin-k-m/orbit/releases"><img src="https://img.shields.io/github/v/tag/martin-k-m/orbit?sort=semver&label=&style=flat-square&color=7C6CFF"/></a></td>
