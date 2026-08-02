@@ -5,17 +5,20 @@
 // Bytes, not repository counts: ten one-file experiments in a language should
 // not outrank the one where the real work lives.
 //
+// Counts every repository the token can see — public and private, owned and
+// contributed to — not just the public ones. How much of that it can actually
+// see is a property of the token: the Actions GITHUB_TOKEN sees only public
+// repos, while a PAT with `repo` scope sees private ones too. The footer states
+// what was really counted rather than claiming a scope it did not have.
+//
 // Env:
-//   GH_LOGIN         (required) user to measure
-//   GITHUB_TOKEN     (required) any token; only public repos are read by default
-//   INCLUDE_PRIVATE  set to "1" to also count private repos (needs a PAT with
-//                    `repo` scope — the Actions GITHUB_TOKEN cannot see them)
+//   GH_LOGIN      (required) user to measure
+//   GITHUB_TOKEN  (required) PAT with `repo` scope to include private repos
 
 import { mkdir, writeFile } from "node:fs/promises";
 
 const login = process.env.GH_LOGIN;
 const token = process.env.GITHUB_TOKEN;
-const includePrivate = process.env.INCLUDE_PRIVATE === "1";
 if (!login || !token) {
   console.error("GH_LOGIN and GITHUB_TOKEN are required");
   process.exit(1);
@@ -33,14 +36,18 @@ async function gql(query, variables) {
 }
 
 // Forks are excluded: their bytes are someone else's work. Archived repos are
-// kept — the code was still written.
+// kept — the code was still written. COLLABORATOR and ORGANIZATION_MEMBER pull
+// in repos contributed to rather than owned, so work done under an org counts.
 const QUERY = `
-query($login:String!,$cursor:String,$privacy:RepositoryPrivacy){
+query($login:String!,$cursor:String){
   user(login:$login){
-    repositories(first:100, after:$cursor, ownerAffiliations:OWNER, isFork:false, privacy:$privacy){
+    repositories(first:100, after:$cursor, isFork:false,
+                 affiliations:[OWNER,COLLABORATOR,ORGANIZATION_MEMBER]){
       pageInfo{ hasNextPage endCursor }
       nodes{
         name
+        isPrivate
+        owner{ login }
         languages(first:25, orderBy:{field:SIZE, direction:DESC}){
           edges{ size node{ name color } }
         }
@@ -52,17 +59,17 @@ query($login:String!,$cursor:String,$privacy:RepositoryPrivacy){
 const bytes = new Map(); // language -> bytes
 const colors = new Map(); // language -> GitHub's colour
 let repoCount = 0;
+let privateCount = 0;
+let contributedCount = 0;
 let cursor = null;
 
 do {
-  const data = await gql(QUERY, {
-    login,
-    cursor,
-    privacy: includePrivate ? null : "PUBLIC",
-  });
+  const data = await gql(QUERY, { login, cursor });
   const page = data.user.repositories;
   for (const repo of page.nodes) {
     repoCount++;
+    if (repo.isPrivate) privateCount++;
+    if (repo.owner.login.toLowerCase() !== login.toLowerCase()) contributedCount++;
     for (const { size, node } of repo.languages.edges) {
       bytes.set(node.name, (bytes.get(node.name) || 0) + size);
       if (node.color) colors.set(node.name, node.color);
@@ -161,22 +168,28 @@ const bars = rows
   })
   .join("\n  ");
 
-const scope = includePrivate ? "repositories" : "public repositories";
-const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="Languages by bytes of code across ${repoCount} ${scope}">
+// State exactly what was counted. If the token could not see private repos this
+// silently says so by reporting none, rather than implying full coverage.
+const scopeParts = [`${ranked.length} languages`, `${repoCount} repos`];
+if (privateCount) scopeParts.push(`${privateCount} private`);
+if (contributedCount) scopeParts.push(`${contributedCount} contributed`);
+const scope = scopeParts.join(" · ");
+
+const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="Languages by bytes of code across ${repoCount} repositories">
   <rect width="${W}" height="${H}" rx="12" fill="${C.bg}"/>
   <rect x="0.5" y="0.5" width="${W - 1}" height="${H - 1}" rx="11.5" fill="none" stroke="${C.text}" stroke-opacity="0.06"/>
   <text x="${padL}" y="27" font-family="${MONO}" font-size="15" font-weight="600" fill="${C.text}">Languages · by bytes of code</text>
   <text x="${W - padR}" y="27" text-anchor="end" font-family="${MONO}" font-size="15" font-weight="600" fill="${C.a2}">${size(total)}</text>
   ${spectrum}
   ${bars}
-  <text x="${padL}" y="${H - 10}" font-family="${MONO}" font-size="11" fill="${C.muted}">${ranked.length} languages · ${repoCount} ${scope}</text>
+  <text x="${padL}" y="${H - 10}" font-family="${MONO}" font-size="11" fill="${C.muted}">${scope}</text>
   <text x="${W - padR}" y="${H - 10}" text-anchor="end" font-family="${MONO}" font-size="11" fill="${C.muted}">updated ${stamp}</text>
 </svg>`;
 
 await mkdir("dist", { recursive: true });
 await writeFile("dist/languages.svg", svg);
 
-console.log(`languages.svg · ${ranked.length} languages across ${repoCount} ${scope}`);
+console.log(`languages.svg · ${scope}`);
 for (const [name, n] of ranked.slice(0, 12)) {
   console.log(`  ${name.padEnd(16)} ${size(n).padStart(9)}  ${pct(n).toFixed(1)}%`);
 }

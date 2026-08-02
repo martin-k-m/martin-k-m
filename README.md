@@ -103,7 +103,7 @@ pip install git+https://github.com/martin-k-m/csvpeek   # csvpeek — CSV profil
 
 <img src="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/languages.svg" width="100%" alt="Languages ranked by bytes of code across my public repositories" />
 
-<sub>Ranked by bytes of code · public repositories · Linguist-attributed</sub>
+<sub>Ranked by bytes of code · public, private and contributed repositories · Linguist-attributed</sub>
 
 <br/><br/>
 

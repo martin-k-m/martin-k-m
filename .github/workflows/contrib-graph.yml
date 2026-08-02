@@ -27,13 +27,14 @@ jobs:
           GH_LOGIN: ${{ github.repository_owner }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: node scripts/contrib-graph.mjs
-      # Counts public repositories only: the Actions GITHUB_TOKEN cannot see
-      # private ones. Set INCLUDE_PRIVATE=1 with a PAT that has `repo` scope to
-      # count those too.
+      # Counts every repo the token can see. The Actions GITHUB_TOKEN only sees
+      # public ones, so add a PROFILE_TOKEN secret — a PAT with `repo` scope —
+      # to include private and org repositories. Without it this still runs and
+      # the chart's footer honestly reports the smaller scope it measured.
       - name: Generate language SVG
         env:
           GH_LOGIN: ${{ github.repository_owner }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.PROFILE_TOKEN || secrets.GITHUB_TOKEN }}
         run: node scripts/lang-graph.mjs
       - name: Publish to the assets branch
         uses: crazy-max/ghaction-github-pages@v4
