@@ -39,7 +39,7 @@
   <img src="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/contrib-light.svg" width="100%" alt="Contributions over the last 6 months, running total and per-day rate" />
 </picture>
 
-<sub>Running total and per-day rate · rolling 6 months</sub>
+<sub>Running total and contributions per day · rolling 6 months</sub>
 
 </div>
 

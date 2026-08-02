@@ -1,10 +1,13 @@
-// Generate two matching contribution charts as SVGs, from one renderer.
-// Both cover a ROLLING 6-month window (last 183 days), so they shift forward
-// automatically and pick up new commits every time the workflow runs:
-//   - dist/contrib-cumulative.svg : running total over the last 6 months (integral)
-//   - dist/contrib-daily.svg      : contributions per day over the last 6 months (derivative)
+// Generate dist/contrib.svg and dist/contrib-light.svg: contributions over a
+// ROLLING 6-month window (the last 183 days), so the chart shifts forward on
+// its own and picks up new commits every time the workflow runs.
 //
-// Env: GH_LOGIN (user), GITHUB_TOKEN (any token — contribution counts are public).
+// Both series are on it. The running total is the filled line, and the per-day
+// count is a dashed line on its own scale, because they are the same data
+// integrated and not, and a reader wants them side by side rather than in two
+// separate pictures.
+//
+// Env: GH_LOGIN (user), GITHUB_TOKEN (any token, contribution counts are public).
 
 import { mkdir, writeFile } from "node:fs/promises";
 
@@ -206,30 +209,21 @@ const step = Math.max(1, Math.ceil(cumulative.length / N));
 let cumPts = cumulative.filter((_, i) => i % step === 0);
 if (cumPts[cumPts.length - 1] !== cumulative[cumulative.length - 1]) cumPts.push(cumulative[cumulative.length - 1]);
 
-// ── The rate, as a 7-day average ────────────────────────────────────────────
-// The raw daily counts are far too spiky to read against the total: a single
-// heavy day is several times its neighbours, so the line becomes a comb and the
-// shape of the six months disappears into it. The week-long average keeps the
-// trend, which is the part worth putting next to the running total.
-const vals = days.map((d) => d.v);
-const win = 7;
-const ma = vals.map((_, i) => {
-  const s = Math.max(0, i - win + 1);
-  const slice = vals.slice(s, i + 1);
-  return slice.reduce((a, b) => a + b, 0) / slice.length;
-});
-const rate = days.map((d, i) => ({ t: d.t, v: ma[i] }));
-
+// ── The rate, one point per day ─────────────────────────────────────────────
+// The actual daily counts, not a moving average. It is spiky, because the work
+// genuinely is: the median day is zero and the busiest is in the hundreds. An
+// average would smooth that into something tidier than what happened.
 const perDay = total / days.length;
+const busiest = Math.max(...days.map((d) => d.v));
 
 const opts = {
   title: "Contributions · 6 months",
   valueLabel: `${fmt(total)} · ${perDay.toFixed(1)}/day`,
   points: cumPts,
   secondary: {
-    points: rate,
-    label: "per day, 7-day average",
-    peakLabel: (v) => `${v.toFixed(1)}/day`,
+    points: days,
+    label: "per day",
+    peakLabel: (v) => `${fmt(v)} in a day`,
   },
   markPeak: true,
 };
@@ -240,5 +234,5 @@ for (const theme of Object.values(THEMES)) {
 }
 console.log(
   `Wrote contrib.svg — ${fmt(total)} over ${days.length} days, ` +
-    `${perDay.toFixed(1)}/day average, peak week ${Math.max(...ma).toFixed(1)}/day, stamped ${stamp}`
+    `${perDay.toFixed(1)}/day average, busiest day ${fmt(busiest)}, stamped ${stamp}`
 );
