@@ -105,11 +105,15 @@ if (repoCount < 2) {
 
 const total = ranked.reduce((sum, [, n]) => sum + n, 0);
 
-// Show the top 8 and fold the tail into one row, so the chart stays readable
-// without silently dropping anything from the total.
-const TOP = 8;
-const shown = ranked.slice(0, TOP);
-const tail = ranked.slice(TOP);
+// Name every language that is actually part of the picture rather than hiding
+// most of them behind one "Other" row. A language is worth its own row at a
+// tenth of a percent; below that the row would read 0.0% and say nothing, and
+// the cap keeps one stray file per language from turning this into a list.
+// Anything folded is still counted in the total.
+const MIN_SHARE = 0.001;
+const MAX_ROWS = 16;
+const shown = ranked.filter(([, n]) => n / total >= MIN_SHARE).slice(0, MAX_ROWS);
+const tail = ranked.slice(shown.length); // ranked is sorted, so what is shown is a prefix
 const rows = shown.map(([name, n]) => ({ name, n, color: colors.get(name) || "#7C6CFF" }));
 if (tail.length) {
   rows.push({
@@ -244,7 +248,8 @@ for (const theme of Object.values(THEMES)) {
   await writeFile(`dist/languages${theme.suffix}.svg`, render(theme));
 }
 
-console.log(`languages.svg · ${scope}`);
-for (const [name, n] of ranked.slice(0, 12)) {
-  console.log(`  ${name.padEnd(16)} ${size(n).padStart(9)}  ${pct(n).toFixed(1)}%`);
+console.log(`languages.svg · ${scope} · ${shown.length} rows`);
+for (const [name, n] of ranked) {
+  const folded = !shown.some(([s]) => s === name);
+  console.log(`  ${folded ? "·" : " "} ${name.padEnd(16)} ${size(n).padStart(9)}  ${pct(n).toFixed(2)}%`);
 }

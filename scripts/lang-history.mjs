@@ -295,13 +295,25 @@ const THEMES = {
 
 const MONO = "'JetBrains Mono',ui-monospace,monospace";
 const W = 820;
-const padL = 44, padR = 16, padT = 78, padB = 46; // padL fits a "100%" tick label
-const H = 400;
+// padL fits a "100%" tick, padR is the label column at the end of each line.
+const padL = 44, padR = 140, padT = 52, padB = 46;
+const H = 380;
 const plotW = W - padL - padR;
 const plotH = H - padT - padB;
 
+// One line per language, each showing that language's own share, rather than
+// bands stacked on each other. Stacking answers "what is the codebase made of",
+// which the snapshot chart already answers; separate lines answer "when did
+// each language take over", which is the only reason to plot time at all. It
+// also means a band no longer moves just because the band under it moved.
+const peakShare = Math.max(...shares.flatMap((m) => [...m.values()]));
+const STEP = [0.05, 0.1, 0.2, 0.25].find((s) => peakShare / s <= 4.5) ?? 0.25;
+const yMax = Math.min(1, Math.ceil((peakShare * 1.06) / STEP) * STEP);
+const gridVals = [];
+for (let v = 0; v <= yMax + 1e-9; v += STEP) gridVals.push(Number(v.toFixed(4)));
+
 const x = (i) => padL + (i / Math.max(1, pts.length - 1)) * plotW;
-const y = (share) => padT + plotH - share * plotH; // share is 0..1
+const y = (share) => padT + plotH - (share / yMax) * plotH; // share is 0..1
 
 function size(n) {
   if (n >= 1024 * 1024) return `${(n / (1024 * 1024)).toFixed(1)} MB`;
@@ -311,43 +323,51 @@ function size(n) {
 const esc = (s) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 const mon = (d) => d.toLocaleDateString("en-US", { month: "short", year: "2-digit", timeZone: "UTC" });
 
-// Quarters: enough to read a share off without the lines competing with the
-// bands they sit behind.
-const gridVals = [0, 0.25, 0.5, 0.75, 1];
-
 // Roughly six labels along the axis, whatever the span turns out to be.
 const labelEvery = Math.max(1, Math.round(pts.length / 6));
 
-function areas(C) {
-  // Bands accumulate from the bottom, so each polygon runs along its own top
-  // edge and back along the one below it.
-  let lower = new Array(pts.length).fill(0);
-  const out = [];
-  for (let b = bands.length - 1; b >= 0; b--) {
-    const name = bands[b];
-    const upper = lower.map((base, i) => base + (shares[i].get(name) || 0));
-    const top = upper.map((v, i) => `${x(i).toFixed(1)},${y(v).toFixed(1)}`).join(" ");
-    const bottom = lower.map((v, i) => `${x(i).toFixed(1)},${y(v).toFixed(1)}`).reverse().join(" ");
-    const fill = name === "Other" ? C.other : colorOf(name);
-    out.push(
-      `<polygon points="${top} ${bottom}" fill="${fill}" fill-opacity="0.85"/>` +
-        `<polyline points="${top}" fill="none" stroke="${fill}" stroke-width="1.25" stroke-linejoin="round"/>`
-    );
-    lower = upper;
-  }
-  return out.reverse().join("\n  ");
-}
+const strokeOf = (name, C) => (name === "Other" ? C.other : colorOf(name));
 
-function legend(C) {
-  let cx = padL;
+function lines(C) {
   return bands
     .map((name) => {
-      const fill = name === "Other" ? C.other : colorOf(name);
-      const label = name === "Other" ? `Other · ${ranked.length - keep.length}` : name;
-      const g = `<g><rect x="${cx}" y="44" width="9" height="9" rx="2.5" fill="${fill}"/>
-    <text x="${cx + 14}" y="52" font-family="${MONO}" font-size="11" fill="${C.muted}">${esc(label)}</text></g>`;
-      cx += 14 + label.length * 6.7 + 16;
-      return g;
+      const path = shares.map((m, i) => `${x(i).toFixed(1)},${y(m.get(name) || 0).toFixed(1)}`).join(" ");
+      const end = y(shares[shares.length - 1].get(name) || 0);
+      const s = strokeOf(name, C);
+      return `<polyline points="${path}" fill="none" stroke="${s}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+  <circle cx="${x(pts.length - 1).toFixed(1)}" cy="${end.toFixed(1)}" r="3.2" fill="${s}" stroke="${C.bg}" stroke-width="1.5"/>`;
+    })
+    .join("\n  ");
+}
+
+// Each line is named where it ends, the way a poll tracker does it, instead of
+// in a legend that makes the reader match colours back to the chart. Lines that
+// finish close together would print on top of each other, so the labels are
+// pushed apart while the dot stays on the real value.
+function endLabels(C) {
+  const rows = bands
+    .map((name) => ({ name, share: shares[shares.length - 1].get(name) || 0 }))
+    .sort((a, b) => b.share - a.share);
+
+  const MIN = 15;
+  const ys = rows.map((r) => y(r.share));
+  for (let i = 1; i < ys.length; i++) if (ys[i] - ys[i - 1] < MIN) ys[i] = ys[i - 1] + MIN;
+  const overflow = ys[ys.length - 1] - (padT + plotH);
+  if (overflow > 0) for (let i = 0; i < ys.length; i++) ys[i] -= overflow;
+
+  const lx = padL + plotW + 12;
+  return rows
+    .map((r, i) => {
+      const label = r.name === "Other" ? `Other · ${ranked.length - keep.length}` : r.name;
+      // A leader line, but only when the label had to move off its own value.
+      const drift = Math.abs(ys[i] - y(r.share));
+      const leader =
+        drift > 2
+          ? `<line x1="${(x(pts.length - 1) + 5).toFixed(1)}" y1="${y(r.share).toFixed(1)}" x2="${lx - 4}" y2="${ys[i].toFixed(1)}" stroke="${strokeOf(r.name, C)}" stroke-opacity="0.45" stroke-width="1"/>`
+          : "";
+      return `${leader}<rect x="${lx}" y="${(ys[i] - 4.5).toFixed(1)}" width="9" height="9" rx="2.5" fill="${strokeOf(r.name, C)}"/>
+  <text x="${lx + 14}" y="${(ys[i] + 3.5).toFixed(1)}" font-family="${MONO}" font-size="11" fill="${C.text}">${esc(label)}</text>
+  <text x="${W - 14}" y="${(ys[i] + 3.5).toFixed(1)}" text-anchor="end" font-family="${MONO}" font-size="11" fill="${C.muted}">${(r.share * 100).toFixed(0)}%</text>`;
     })
     .join("\n  ");
 }
@@ -370,23 +390,25 @@ function render(C) {
     .filter(Boolean)
     .join("\n  ");
 
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="Bytes of code by language over time across ${repos.length} repositories">
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="Share of code by language over time across ${repos.length} repositories">
   <rect width="${W}" height="${H}" rx="12" fill="${C.bg}"/>
   <rect x="0.5" y="0.5" width="${W - 1}" height="${H - 1}" rx="11.5" fill="none" stroke="${C.text}" stroke-opacity="${C.border}"/>
   <text x="${padL}" y="27" font-family="${MONO}" font-size="15" font-weight="600" fill="${C.text}">Languages over time · share of code</text>
-  <text x="${W - padR}" y="27" text-anchor="end" font-family="${MONO}" font-size="15" font-weight="600" fill="${C.accent}">${esc(leadName)} ${(leadShare * 100).toFixed(0)}%</text>
-  ${legend(C)}
+  <text x="${W - 14}" y="27" text-anchor="end" font-family="${MONO}" font-size="15" font-weight="600" fill="${C.accent}">${esc(leadName)} ${(leadShare * 100).toFixed(0)}%</text>
   ${grid}
-  <clipPath id="reveal${C.suffix}"><rect x="${padL}" y="${padT - 4}" width="0" height="${plotH + 8}">
-    <animate attributeName="width" from="0" to="${plotW}" dur="1.1s" begin="0.2s" fill="freeze" calcMode="spline" keySplines="0.22 1 0.36 1" keyTimes="0;1"/>
+  <clipPath id="reveal${C.suffix}"><rect x="${padL - 4}" y="${padT - 8}" width="0" height="${plotH + 16}">
+    <animate attributeName="width" from="0" to="${plotW + 12}" dur="1.1s" begin="0.2s" fill="freeze" calcMode="spline" keySplines="0.22 1 0.36 1" keyTimes="0;1"/>
   </rect></clipPath>
   <g clip-path="url(#reveal${C.suffix})">
-  ${areas(C)}
+  ${lines(C)}
   </g>
   <line x1="${padL}" y1="${padT + plotH}" x2="${W - padR}" y2="${padT + plotH}" stroke="${C.text}" stroke-opacity="${C.border + 0.1}"/>
   ${xLabels}
+  <g opacity="0"><animate attributeName="opacity" from="0" to="1" dur="0.4s" begin="1.1s" fill="freeze"/>
+  ${endLabels(C)}
+  </g>
   <text x="${padL}" y="${H - 10}" font-family="${MONO}" font-size="10" fill="${C.muted}">${pts.length} months · ${repos.length} repos · ${size(finalTotal)} today · extensions Linguist counts as code</text>
-  <text x="${W - padR}" y="${H - 10}" text-anchor="end" font-family="${MONO}" font-size="10" fill="${C.muted}">updated ${now.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" })}</text>
+  <text x="${W - 14}" y="${H - 10}" text-anchor="end" font-family="${MONO}" font-size="10" fill="${C.muted}">updated ${now.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" })}</text>
 </svg>`;
 }
 
