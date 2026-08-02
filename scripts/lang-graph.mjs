@@ -89,6 +89,20 @@ if (ranked.length === 0) {
   process.exit(1);
 }
 
+// The Actions GITHUB_TOKEN is scoped to the repository it runs in, so
+// `user(login:).repositories` returns that one repo and nothing else. Rendering
+// that would publish a confident-looking chart reading "1 language · 1 repo".
+// Refuse instead: a missing chart is honest, a wrong one is not.
+if (repoCount < 2) {
+  console.error(
+    `only ${repoCount} repository visible to this token — refusing to publish a misleading chart.\n` +
+      "Set GITHUB_TOKEN to a personal access token with `repo` scope (in Actions, add it\n" +
+      "as the PROFILE_TOKEN secret). The Actions GITHUB_TOKEN cannot enumerate a user's\n" +
+      "repositories, only the one it is running in."
+  );
+  process.exit(1);
+}
+
 const total = ranked.reduce((sum, [, n]) => sum + n, 0);
 
 // Show the top 8 and fold the tail into one row, so the chart stays readable
