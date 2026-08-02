@@ -115,7 +115,9 @@ if (tail.length) {
   rows.push({
     name: `Other · ${tail.length}`,
     n: tail.reduce((sum, [, n]) => sum + n, 0),
-    color: "#3A3B44",
+    // Colour is chosen per theme: a near-black "other" band vanishes on a white
+    // background, and a pale one vanishes on a dark background.
+    other: true,
   });
 }
 
@@ -134,7 +136,33 @@ function size(n) {
 const pct = (n) => (n / total) * 100;
 const esc = (s) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
-const C = { bg: "#0A0A0C", text: "#ECEDF1", muted: "#6D6E79", a2: "#7C6CFF" };
+// Two palettes, so the README can serve whichever matches the reader's theme.
+// The per-language bar colours are GitHub's own and stay identical in both:
+// they are the thing being identified, so recolouring them would break the
+// association. Only the surface, text and "other" band change.
+const THEMES = {
+  dark: {
+    suffix: "",
+    bg: "#0A0A0C",
+    text: "#ECEDF1",
+    muted: "#6D6E79",
+    accent: "#7C6CFF",
+    other: "#3A3B44",
+    trackOpacity: 0.05,
+    borderOpacity: 0.06,
+  },
+  light: {
+    suffix: "-light",
+    bg: "#FFFFFF",
+    text: "#1F2328",
+    muted: "#59636E",
+    accent: "#7C6CFF",
+    other: "#AFB8C1",
+    trackOpacity: 0.09,
+    borderOpacity: 0.14,
+  },
+};
+
 const MONO = "'JetBrains Mono',ui-monospace,monospace";
 
 // ── Layout ──────────────────────────────────────────────────────────────────
@@ -157,35 +185,39 @@ const barW = W - padR - valW - barX;
 // length and the printed percentage always agree.
 const scale = total;
 
-const spectrum = (() => {
+const barColor = (row, C) => (row.other ? C.other : row.color);
+
+function spectrumFor(C) {
   let x = padL;
   return rows
     .map((r, i) => {
       const w = (r.n / total) * (W - padL - padR);
-      const seg = `<rect x="${x.toFixed(1)}" y="${specY}" width="${Math.max(0, w - (i < rows.length - 1 ? 1.5 : 0)).toFixed(1)}" height="${specH}" rx="3" fill="${r.color}" opacity="0">
+      const seg = `<rect x="${x.toFixed(1)}" y="${specY}" width="${Math.max(0, w - (i < rows.length - 1 ? 1.5 : 0)).toFixed(1)}" height="${specH}" rx="3" fill="${barColor(r, C)}" opacity="0">
       <animate attributeName="opacity" from="0" to="0.95" dur="0.5s" begin="${(0.25 + i * 0.05).toFixed(2)}s" fill="freeze"/>
     </rect>`;
       x += w;
       return seg;
     })
     .join("\n  ");
-})();
+}
 
-const bars = rows
-  .map((r, i) => {
-    const y = rowsY + i * rowH;
-    const w = Math.max(2, (r.n / scale) * barW);
-    const begin = (0.3 + i * 0.07).toFixed(2);
-    return `<g>
+function barsFor(C) {
+  return rows
+    .map((r, i) => {
+      const y = rowsY + i * rowH;
+      const w = Math.max(2, (r.n / scale) * barW);
+      const begin = (0.3 + i * 0.07).toFixed(2);
+      return `<g>
     <text x="${padL}" y="${y + 11}" font-family="${MONO}" font-size="12" fill="${C.text}">${esc(r.name)}</text>
-    <rect x="${barX}" y="${y + 2}" width="${barW}" height="11" rx="5.5" fill="${C.text}" fill-opacity="0.05"/>
-    <rect x="${barX}" y="${y + 2}" width="0" height="11" rx="5.5" fill="${r.color}">
+    <rect x="${barX}" y="${y + 2}" width="${barW}" height="11" rx="5.5" fill="${C.text}" fill-opacity="${C.trackOpacity}"/>
+    <rect x="${barX}" y="${y + 2}" width="0" height="11" rx="5.5" fill="${barColor(r, C)}">
       <animate attributeName="width" from="0" to="${w.toFixed(1)}" dur="0.9s" begin="${begin}s" fill="freeze" calcMode="spline" keySplines="0.22 1 0.36 1" keyTimes="0;1"/>
     </rect>
     <text x="${W - padR}" y="${y + 11}" text-anchor="end" font-family="${MONO}" font-size="11" fill="${C.muted}">${size(r.n)} · ${pct(r.n).toFixed(1)}%</text>
   </g>`;
-  })
-  .join("\n  ");
+    })
+    .join("\n  ");
+}
 
 // State exactly what was counted. If the token could not see private repos this
 // silently says so by reporting none, rather than implying full coverage.
@@ -194,19 +226,23 @@ if (privateCount) scopeParts.push(`${privateCount} private`);
 if (contributedCount) scopeParts.push(`${contributedCount} contributed`);
 const scope = scopeParts.join(" · ");
 
-const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="Languages by bytes of code across ${repoCount} repositories">
+function render(C) {
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="Languages by bytes of code across ${repoCount} repositories">
   <rect width="${W}" height="${H}" rx="12" fill="${C.bg}"/>
-  <rect x="0.5" y="0.5" width="${W - 1}" height="${H - 1}" rx="11.5" fill="none" stroke="${C.text}" stroke-opacity="0.06"/>
+  <rect x="0.5" y="0.5" width="${W - 1}" height="${H - 1}" rx="11.5" fill="none" stroke="${C.text}" stroke-opacity="${C.borderOpacity}"/>
   <text x="${padL}" y="27" font-family="${MONO}" font-size="15" font-weight="600" fill="${C.text}">Languages · by bytes of code</text>
-  <text x="${W - padR}" y="27" text-anchor="end" font-family="${MONO}" font-size="15" font-weight="600" fill="${C.a2}">${size(total)}</text>
-  ${spectrum}
-  ${bars}
+  <text x="${W - padR}" y="27" text-anchor="end" font-family="${MONO}" font-size="15" font-weight="600" fill="${C.accent}">${size(total)}</text>
+  ${spectrumFor(C)}
+  ${barsFor(C)}
   <text x="${padL}" y="${H - 10}" font-family="${MONO}" font-size="11" fill="${C.muted}">${scope}</text>
   <text x="${W - padR}" y="${H - 10}" text-anchor="end" font-family="${MONO}" font-size="11" fill="${C.muted}">updated ${stamp}</text>
 </svg>`;
+}
 
 await mkdir("dist", { recursive: true });
-await writeFile("dist/languages.svg", svg);
+for (const theme of Object.values(THEMES)) {
+  await writeFile(`dist/languages${theme.suffix}.svg`, render(theme));
+}
 
 console.log(`languages.svg · ${scope}`);
 for (const [name, n] of ranked.slice(0, 12)) {

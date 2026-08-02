@@ -60,11 +60,36 @@ const days = (dates.length ? dates : [allDates[allDates.length - 1]])
 const fmt = (n) => n.toLocaleString("en-US");
 const monthYr = (t) => new Date(t).toLocaleDateString("en-US", { month: "short", year: "2-digit", timeZone: "UTC" });
 
-const C = { bg: "#0A0A0C", text: "#ECEDF1", muted: "#6D6E79", a1: "#4F8CFF", a2: "#7C6CFF" };
+// Two palettes so the README can serve whichever matches the reader's theme.
+// The blue-to-purple accent is the brand and stays put; only the surface, the
+// text and the gridline weight change. Gridlines need more contrast on white:
+// 5% black is invisible where 5% white on near-black is not.
+const THEMES = {
+  dark: {
+    suffix: "",
+    bg: "#0A0A0C",
+    text: "#ECEDF1",
+    muted: "#6D6E79",
+    a1: "#4F8CFF",
+    a2: "#7C6CFF",
+    grid: 0.05,
+    border: 0.06,
+  },
+  light: {
+    suffix: "-light",
+    bg: "#FFFFFF",
+    text: "#1F2328",
+    muted: "#59636E",
+    a1: "#4F8CFF",
+    a2: "#7C6CFF",
+    grid: 0.09,
+    border: 0.14,
+  },
+};
 
 // ── Shared renderer ─────────────────────────────────────────────────────────
 // opts: { title, valueLabel, points:[{t,v}], overlay?:[{t,v}], markPeak?, fillFloor? }
-function renderChart({ title, valueLabel, points, overlay, markPeak }) {
+function renderChart({ title, valueLabel, points, overlay, markPeak }, C) {
   const W = 820, H = 240, padL = 16, padR = 16, padT = 46, padB = 30;
   const plotW = W - padL - padR, plotH = H - padT - padB;
   const t0 = points[0].t, t1 = points[points.length - 1].t;
@@ -79,7 +104,7 @@ function renderChart({ title, valueLabel, points, overlay, markPeak }) {
   // Faint horizontal gridlines.
   const grid = [0.25, 0.5, 0.75, 1].map((f) => {
     const y = (padT + plotH * (1 - f)).toFixed(1);
-    return `<line x1="${padL}" y1="${y}" x2="${W - padR}" y2="${y}" stroke="${C.text}" stroke-opacity="0.05"/>`;
+    return `<line x1="${padL}" y1="${y}" x2="${W - padR}" y2="${y}" stroke="${C.text}" stroke-opacity="${C.grid}"/>`;
   }).join("");
 
   const endX = X(t1), endY = Y(points[points.length - 1].v);
@@ -113,7 +138,7 @@ function renderChart({ title, valueLabel, points, overlay, markPeak }) {
     </linearGradient>
   </defs>
   <rect width="${W}" height="${H}" rx="12" fill="${C.bg}"/>
-  <rect x="0.5" y="0.5" width="${W - 1}" height="${H - 1}" rx="11.5" fill="none" stroke="${C.text}" stroke-opacity="0.06"/>
+  <rect x="0.5" y="0.5" width="${W - 1}" height="${H - 1}" rx="11.5" fill="none" stroke="${C.text}" stroke-opacity="${C.border}"/>
   ${grid}
   <text x="${padL}" y="27" font-family="'JetBrains Mono',ui-monospace,monospace" font-size="15" font-weight="600" fill="${C.text}">${title}</text>
   <text x="${W - padR}" y="27" text-anchor="end" font-family="'JetBrains Mono',ui-monospace,monospace" font-size="15" font-weight="600" fill="${C.a2}">${valueLabel}</text>
@@ -127,7 +152,7 @@ function renderChart({ title, valueLabel, points, overlay, markPeak }) {
     <animate attributeName="r" from="4" to="15" dur="1.8s" begin="1.9s" repeatCount="indefinite"/>
     <animate attributeName="opacity" from="0.6" to="0" dur="1.8s" begin="1.9s" repeatCount="indefinite"/>
   </circle>
-  <circle cx="${endX.toFixed(1)}" cy="${endY.toFixed(1)}" r="0" fill="#fff" stroke="${C.a2}" stroke-width="2">
+  <circle cx="${endX.toFixed(1)}" cy="${endY.toFixed(1)}" r="0" fill="${C.bg}" stroke="${C.a2}" stroke-width="2">
     <animate attributeName="r" from="0" to="4.5" dur="0.4s" begin="1.9s" fill="freeze"/>
   </circle>
   <text x="${padL}" y="${H - 10}" font-family="'JetBrains Mono',ui-monospace,monospace" font-size="11" fill="${C.muted}">${monthYr(t0)}</text>
@@ -145,11 +170,11 @@ const step = Math.max(1, Math.ceil(cumulative.length / N));
 let cumPts = cumulative.filter((_, i) => i % step === 0);
 if (cumPts[cumPts.length - 1] !== cumulative[cumulative.length - 1]) cumPts.push(cumulative[cumulative.length - 1]);
 
-const cumulativeSvg = renderChart({
+const cumulativeOpts = {
   title: "Contributions · 6 months",
   valueLabel: fmt(total),
   points: cumPts,
-});
+};
 
 // ── Daily (derivative) over the last 6 months, with a 7-day moving average ───────
 const vals = days.map((d) => d.v);
@@ -161,15 +186,17 @@ const ma = vals.map((_, i) => {
 });
 const overlay = days.map((d, i) => ({ t: d.t, v: ma[i] }));
 
-const dailySvg = renderChart({
+const dailyOpts = {
   title: "Contributions per day · 6 months",
   valueLabel: fmt(total),
   points: days,
   overlay,
   markPeak: true,
-});
+};
 
 await mkdir("dist", { recursive: true });
-await writeFile("dist/contrib-cumulative.svg", cumulativeSvg, "utf8");
-await writeFile("dist/contrib-daily.svg", dailySvg, "utf8");
+for (const theme of Object.values(THEMES)) {
+  await writeFile(`dist/contrib-cumulative${theme.suffix}.svg`, renderChart(cumulativeOpts, theme), "utf8");
+  await writeFile(`dist/contrib-daily${theme.suffix}.svg`, renderChart(dailyOpts, theme), "utf8");
+}
 console.log(`Wrote contrib-cumulative.svg + contrib-daily.svg — ${fmt(total)} in the last ${days.length} days, stamped ${stamp}`);
