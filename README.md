@@ -11,6 +11,26 @@
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-0A66C2?style=flat-square&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/martin-muskov-3a450134b)
 [![Email](https://img.shields.io/badge/martinkmuskov@gmail.com-EA4335?style=flat-square&logo=gmail&logoColor=white)](mailto:martinkmuskov@gmail.com)
 
+<div align="center">
+
+<img src="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/languages.svg" width="100%" alt="Languages ranked by bytes of code" />
+
+<sub>Ranked by bytes of code · public, private and contributed repositories · Linguist-attributed</sub>
+
+<br/><br/>
+
+<img src="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/contrib-cumulative.svg" width="100%" alt="Cumulative contributions over the last 6 months" />
+
+<sub>Running total · rolling 6 months</sub>
+
+<br/><br/>
+
+<img src="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/contrib-daily.svg" width="100%" alt="Contributions per day over the last 6 months" />
+
+<sub>Per day, with 7-day average · rolling 6 months</sub>
+
+</div>
+
 ## Credda &nbsp;·&nbsp; [credda.io](https://credda.io) &nbsp;·&nbsp; [@martin](https://credda.io/profile/martin) &nbsp;·&nbsp; [GitHub](https://github.com/Credda-io)
 
 > **Portable trust infrastructure.** Reputation shouldn't reset every time you join a new platform.
@@ -20,9 +40,13 @@ I'm a co-founder. Credda turns real, both-party-confirmed commitment history int
 
 |  |  |
 | :-- | :-- |
-| **Deterministic** | The score is a pure function of an append-only event ledger — no human or AI can move it. AI is advisory only. |
+| **Deterministic** | The score is a pure function of an append-only event ledger — no human or AI can move it. The AI layer is advisory only, and inert entirely unless a key is configured. |
 | **Yours to carry** | Trust is portable as signed W3C Verifiable Credentials (`did:web`). |
-| **Real stack** | A deterministic scoring engine, a platform API, and a web app — TypeScript · Express · Prisma/PostgreSQL · Redis on AWS. |
+| **Commitments, not reviews** | The primitive is a commitment both parties confirmed — alongside platform verification, disputes, notifications, and billing. |
+| **Built for teams** | Organizations with members, roles, and invitations, so a reputation works for a company as well as a person. |
+| **Real stack** | React 19 · Vite 7 · Tailwind v4 on the front. Express 5 · TypeScript · Prisma/PostgreSQL · Redis on AWS behind it. |
+
+<sub>Early-stage and under active development — anything the site marks <i>coming soon</i> is direction, not a shipped guarantee.</sub>
 
 <br/>
 
@@ -35,13 +59,13 @@ I'm a co-founder. Credda turns real, both-party-confirmed commitment history int
 <tbody>
 <tr>
   <td><a href="https://github.com/martin-k-m/blink"><b>blink</b></a></td>
-  <td>A developer <b>context engine</b> — indexes a codebase into a graph of files, symbols, and dependencies, then answers questions about it. Local, deterministic, no LLM.</td>
+  <td>A developer <b>context engine</b> — indexes a codebase into a graph of files, symbols, and dependencies, then answers questions about it with local deterministic search. Exports to JSON, Markdown, Mermaid or Graphviz. Embeds no LLM.</td>
   <td><img src="https://img.shields.io/badge/Rust-000?style=flat-square&logo=rust&logoColor=fff"/></td>
   <td><a href="https://github.com/martin-k-m/blink/releases"><img src="https://img.shields.io/github/v/tag/martin-k-m/blink?sort=semver&label=&style=flat-square&color=7C6CFF"/></a></td>
 </tr>
 <tr>
   <td><a href="https://github.com/martin-k-m/beacon"><b>beacon</b></a></td>
-  <td>Open-source GitHub repository intelligence — turns a repo's activity into an explainable 0–100 <b>Beacon Score</b>, a health summary, and embeddable widgets.</td>
+  <td>Open-source GitHub repository intelligence — turns a repo's signals into an explainable 0–100 <b>Beacon Score</b> across five weighted pillars, with health trends, recommendations, and embeddable SVG widgets.</td>
   <td><img src="https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=fff"/></td>
   <td><a href="https://github.com/martin-k-m/beacon/releases"><img src="https://img.shields.io/github/v/tag/martin-k-m/beacon?sort=semver&label=&style=flat-square&color=7C6CFF"/></a></td>
 </tr>
@@ -101,12 +125,6 @@ pip install git+https://github.com/martin-k-m/csvpeek   # csvpeek — CSV profil
 
 <div align="center">
 
-<img src="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/languages.svg" width="100%" alt="Languages ranked by bytes of code across my public repositories" />
-
-<sub>Ranked by bytes of code · public, private and contributed repositories · Linguist-attributed</sub>
-
-<br/><br/>
-
 ![Rust](https://img.shields.io/badge/Rust-000000?style=for-the-badge&logo=rust&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
 ![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
@@ -122,22 +140,6 @@ pip install git+https://github.com/martin-k-m/csvpeek   # csvpeek — CSV profil
 <a href="https://github.com/martin-k-m?tab=followers"><img src="https://img.shields.io/github/followers/martin-k-m?style=for-the-badge&logo=github&logoColor=white&label=Follow&labelColor=0A0A0C&color=7C6CFF" alt="Followers" /></a>
 <a href="https://github.com/martin-k-m/killer"><img src="https://img.shields.io/github/stars/martin-k-m/killer?style=for-the-badge&logo=github&logoColor=white&label=killer&labelColor=0A0A0C&color=4F8CFF" alt="killer stars" /></a>
 <a href="https://github.com/martin-k-m/orbit"><img src="https://img.shields.io/github/stars/martin-k-m/orbit?style=for-the-badge&logo=github&logoColor=white&label=orbit&labelColor=0A0A0C&color=4F8CFF" alt="orbit stars" /></a>
-
-</div>
-
-## Activity
-
-<div align="center">
-
-<img src="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/contrib-cumulative.svg" width="100%" alt="Cumulative contributions over the last 6 months" />
-
-<sub>Running total · rolling 6 months</sub>
-
-<br/><br/>
-
-<img src="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/contrib-daily.svg" width="100%" alt="Contributions per day over the last 6 months" />
-
-<sub>Per day, with 7-day average · rolling 6 months</sub>
 
 </div>
 
