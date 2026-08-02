@@ -44,13 +44,38 @@
 I'm a co-founder. Credda turns real, both-party-confirmed commitment history into a verified
 **0–100 reliability score** that a person owns and carries across marketplaces, lenders, and clients.
 
-|  |  |
-| :-- | :-- |
-| **Deterministic** | The score is a pure function of an append-only event ledger. No human or AI can move it. The AI layer is advisory only, and inert entirely unless a key is configured. |
-| **Yours to carry** | Trust is portable as signed W3C Verifiable Credentials (`did:web`). |
-| **Commitments, not reviews** | The primitive is a commitment both parties confirmed, alongside platform verification, disputes, notifications, and billing. |
-| **Built for teams** | Organizations with members, roles, and invitations, so a reputation works for a company as well as a person. |
-| **Real stack** | React 19 · Vite 7 · Tailwind v4 on the front. Express 5 · TypeScript · Prisma/PostgreSQL · Redis on AWS behind it. |
+<table>
+<tbody>
+<tr>
+  <td><b>Deterministic</b></td>
+  <td>The score is a pure function of an append-only event ledger. No human or AI can move it. The AI layer is advisory only, and inert entirely unless a key is configured.</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+  <td><b>Yours to carry</b></td>
+  <td>Trust is portable as signed W3C Verifiable Credentials (<code>did:web</code>).</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+  <td><b>Commitments, not reviews</b></td>
+  <td>The primitive is a commitment both parties confirmed, alongside platform verification, disputes, notifications, and billing.</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+  <td><b>Built for teams</b></td>
+  <td>Organizations with members, roles, and invitations, so a reputation works for a company as well as a person.</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+  <td><b>Real stack</b></td>
+  <td>React 19 · Vite 7 · Tailwind v4 on the front. Express 5 · TypeScript · Prisma/PostgreSQL · Redis on AWS behind it.</td>
+</tr>
+</tbody>
+</table>
 
 <sub>Early-stage and under active development. Anything the site marks <i>coming soon</i> is direction, not a shipped guarantee.</sub>
 
@@ -69,54 +94,72 @@ I'm a co-founder. Credda turns real, both-party-confirmed commitment history int
   <td><img src="https://img.shields.io/badge/Rust-000?style=flat-square&logo=rust&logoColor=fff"/></td>
   <td><a href="https://github.com/martin-k-m/blink/releases"><img src="https://img.shields.io/github/v/release/martin-k-m/blink?sort=semver&display_name=tag&label=&style=flat-square&color=7C6CFF"/></a></td>
 </tr>
+</tbody>
+<tbody>
 <tr>
   <td><a href="https://github.com/martin-k-m/beacon"><b>beacon</b></a></td>
   <td>Open-source GitHub repository intelligence that turns a repo's signals into an explainable 0–100 <b>Beacon Score</b> across five weighted pillars, with health trends, recommendations, and embeddable SVG widgets.</td>
   <td><img src="https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=fff"/></td>
   <td><a href="https://github.com/martin-k-m/beacon/releases"><img src="https://img.shields.io/github/v/release/martin-k-m/beacon?sort=semver&display_name=tag&label=&style=flat-square&color=7C6CFF"/></a></td>
 </tr>
+</tbody>
+<tbody>
 <tr>
   <td><a href="https://github.com/martin-k-m/flux"><b>flux</b></a></td>
   <td>A local-first automation platform. One <code>.flux</code> file builds, tests, packages, and deploys, run as a parallel dependency-graph pipeline with caching and encrypted secrets.</td>
   <td><img src="https://img.shields.io/badge/Rust-000?style=flat-square&logo=rust&logoColor=fff"/></td>
   <td><a href="https://github.com/martin-k-m/flux/releases"><img src="https://img.shields.io/github/v/release/martin-k-m/flux?sort=semver&display_name=tag&label=&style=flat-square&color=7C6CFF"/></a></td>
 </tr>
+</tbody>
+<tbody>
 <tr>
   <td><a href="https://github.com/martin-k-m/killer"><b>killer</b></a></td>
   <td>A security testing framework with its own <code>.klr</code> rule language: static analysis, fuzz/mutation attacks, scan history, and a CI gate.</td>
   <td><img src="https://img.shields.io/badge/Rust-000?style=flat-square&logo=rust&logoColor=fff"/></td>
   <td><a href="https://github.com/martin-k-m/killer/releases"><img src="https://img.shields.io/github/v/release/martin-k-m/killer?sort=semver&display_name=tag&label=&style=flat-square&color=7C6CFF"/></a></td>
 </tr>
+</tbody>
+<tbody>
 <tr>
   <td><a href="https://github.com/martin-k-m/orbit"><b>orbit</b></a></td>
   <td>A native developer IDE with editor, terminal, source control, tests, and project tooling in one fast desktop app. No server, no account, no telemetry.</td>
   <td><img src="https://img.shields.io/badge/Rust%20·%20Tauri-000?style=flat-square&logo=tauri&logoColor=fff"/></td>
   <td><a href="https://github.com/martin-k-m/orbit/releases"><img src="https://img.shields.io/github/v/release/martin-k-m/orbit?sort=semver&display_name=tag&label=&style=flat-square&color=7C6CFF"/></a></td>
 </tr>
+</tbody>
+<tbody>
 <tr>
   <td><a href="https://github.com/martin-k-m/raster"><b>raster</b></a></td>
   <td>A programming language for numeric and ML code. Tensors are the built-in type, differentiation is part of the language (<code>grad</code>), and a static checker catches shape mistakes before a program runs.</td>
   <td><img src="https://img.shields.io/badge/Go-00ADD8?style=flat-square&logo=go&logoColor=fff"/></td>
   <td><a href="https://github.com/martin-k-m/raster/releases"><img src="https://img.shields.io/github/v/release/martin-k-m/raster?sort=semver&display_name=tag&label=&style=flat-square&color=7C6CFF"/></a></td>
 </tr>
+</tbody>
+<tbody>
 <tr>
   <td><a href="https://github.com/martin-k-m/capsule"><b>capsule</b></a></td>
   <td>Lightweight, isolated <b>development environments that disappear</b>. One <code>capsule.toml</code> becomes a container with your project mounted; it is destroyed on exit and keeps only what you named.</td>
   <td><img src="https://img.shields.io/badge/Go-00ADD8?style=flat-square&logo=go&logoColor=fff"/></td>
   <td><a href="https://github.com/martin-k-m/capsule/releases"><img src="https://img.shields.io/github/v/release/martin-k-m/capsule?sort=semver&display_name=tag&label=&style=flat-square&color=7C6CFF"/></a></td>
 </tr>
+</tbody>
+<tbody>
 <tr>
   <td><a href="https://github.com/martin-k-m/joist"><b>joist</b></a></td>
   <td>A <b>backend framework</b> for Rust. Routing, middleware, JSON, config, plugins and a threaded HTTP/1.1 server, with an empty dependency tree, so a clean build downloads nothing and an audit has one crate to read.</td>
   <td><img src="https://img.shields.io/badge/Rust-000?style=flat-square&logo=rust&logoColor=fff"/></td>
   <td><a href="https://github.com/martin-k-m/joist/releases"><img src="https://img.shields.io/github/v/release/martin-k-m/joist?sort=semver&display_name=tag&label=&style=flat-square&color=7C6CFF"/></a></td>
 </tr>
+</tbody>
+<tbody>
 <tr>
   <td><a href="https://github.com/martin-k-m/tandem"><b>tandem</b></a></td>
   <td>Workflow orchestration for Java. Typed steps with per-step retry policies, saga-style compensation, and durable resume: a step that recorded its output is replayed rather than run twice. No runtime dependencies.</td>
   <td><img src="https://img.shields.io/badge/Java-ED8B00?style=flat-square&logo=openjdk&logoColor=fff"/></td>
   <td><a href="https://github.com/martin-k-m/tandem/releases"><img src="https://img.shields.io/github/v/release/martin-k-m/tandem?sort=semver&display_name=tag&label=&style=flat-square&color=7C6CFF"/></a></td>
 </tr>
+</tbody>
+<tbody>
 <tr>
   <td><a href="https://github.com/martin-k-m/csvpeek"><b>csvpeek</b></a></td>
   <td>A fast, zero-dependency CSV profiler for the terminal: column types, null counts, numeric stats, and top values. Pure Python stdlib.</td>
