@@ -38,11 +38,16 @@ async function gql(query, variables) {
 // Forks are excluded: their bytes are someone else's work. Archived repos are
 // kept — the code was still written. COLLABORATOR and ORGANIZATION_MEMBER pull
 // in repos contributed to rather than owned, so work done under an org counts.
+//
+// It must be `ownerAffiliations`, not `affiliations`: the latter filters by the
+// *token's* own relationship to each repo, and the Actions GITHUB_TOKEN is a
+// collaborator on exactly one repository — the one it is running in. Using it
+// silently collapsed this chart to "1 language · 1 repo".
 const QUERY = `
 query($login:String!,$cursor:String){
   user(login:$login){
     repositories(first:100, after:$cursor, isFork:false,
-                 affiliations:[OWNER,COLLABORATOR,ORGANIZATION_MEMBER]){
+                 ownerAffiliations:[OWNER,COLLABORATOR,ORGANIZATION_MEMBER]){
       pageInfo{ hasNextPage endCursor }
       nodes{
         name
