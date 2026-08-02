@@ -26,30 +26,20 @@
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/lang-history.svg" />
   <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/lang-history-light.svg" />
-  <img src="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/lang-history-light.svg" width="100%" alt="Each language's share of the code, month by month" />
+  <img src="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/lang-history-light.svg" width="100%" alt="Each language's share of the code, week by week" />
 </picture>
 
-<sub>Share of code, month by month · reconstructed from each repository's tree at the end of every month</sub>
+<sub>Share of code, sampled weekly · reconstructed from each repository's tree as it stood at each point</sub>
 
 <br/><br/>
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/contrib-cumulative.svg" />
-  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/contrib-cumulative-light.svg" />
-  <img src="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/contrib-cumulative-light.svg" width="100%" alt="Cumulative contributions over the last 6 months" />
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/contrib.svg" />
+  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/contrib-light.svg" />
+  <img src="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/contrib-light.svg" width="100%" alt="Contributions over the last 6 months, running total and per-day rate" />
 </picture>
 
-<sub>Running total · rolling 6 months</sub>
-
-<br/><br/>
-
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/contrib-daily.svg" />
-  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/contrib-daily-light.svg" />
-  <img src="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/contrib-daily-light.svg" width="100%" alt="Contributions per day over the last 6 months" />
-</picture>
-
-<sub>Per day, with 7-day average · rolling 6 months</sub>
+<sub>Running total and per-day rate · rolling 6 months</sub>
 
 </div>
 

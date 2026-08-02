@@ -72,6 +72,9 @@ const THEMES = {
     muted: "#6D6E79",
     a1: "#4F8CFF",
     a2: "#7C6CFF",
+    // Deliberately outside the blue-violet ramp the total uses, so the dashed
+    // line reads as a different quantity rather than a shade of the same one.
+    rate: "#4ECDC4",
     grid: 0.05,
     border: 0.06,
   },
@@ -82,23 +85,37 @@ const THEMES = {
     muted: "#59636E",
     a1: "#4F8CFF",
     a2: "#7C6CFF",
+    rate: "#0F9B90", // darker on white, where #4ECDC4 washes out
     grid: 0.09,
     border: 0.14,
   },
 };
 
 // ── Shared renderer ─────────────────────────────────────────────────────────
-// opts: { title, valueLabel, points:[{t,v}], overlay?:[{t,v}], markPeak?, fillFloor? }
-function renderChart({ title, valueLabel, points, overlay, markPeak }, C) {
-  const W = 820, H = 240, padL = 16, padR = 16, padT = 46, padB = 30;
+// opts: { title, valueLabel, points:[{t,v}], secondary?:{points,label,peakLabel}, markPeak? }
+//
+// The running total and the per-day rate are the same data twice, once
+// integrated and once not, so they belong on one chart rather than two stacked
+// on each other in the README. They cannot share a y-axis, though: the total
+// reaches four figures while a busy day is in the tens, and on a shared scale
+// the daily line would be a flat smear along the bottom. So the second series
+// gets its own scale, drawn dashed and in a different colour so it reads as a
+// different unit, and its peak is labelled with the real number to anchor it.
+function renderChart({ title, valueLabel, points, secondary, markPeak }, C) {
+  const W = 820, H = 260, padL = 16, padR = 16, padT = 66, padB = 30;
   const plotW = W - padL - padR, plotH = H - padT - padB;
   const t0 = points[0].t, t1 = points[points.length - 1].t;
-  const maxV = Math.max(1, ...points.map((p) => p.v), ...(overlay || []).map((p) => p.v));
+  const maxV = Math.max(1, ...points.map((p) => p.v));
   const X = (t) => padL + (t1 === t0 ? 0 : (t - t0) / (t1 - t0)) * plotW;
   const Y = (v) => padT + plotH - (v / maxV) * plotH;
-  const path = (pts) => pts.map((p, i) => `${i ? "L" : "M"}${X(p.t).toFixed(1)} ${Y(p.v).toFixed(1)}`).join(" ");
+  const path = (pts, yf) => pts.map((p, i) => `${i ? "L" : "M"}${X(p.t).toFixed(1)} ${yf(p.v).toFixed(1)}`).join(" ");
 
-  const line = path(points);
+  // The second series keeps a little headroom so its peak does not touch the
+  // title, and never scales below 1 so an empty stretch cannot divide by zero.
+  const maxS = secondary ? Math.max(1, ...secondary.points.map((p) => p.v)) * 1.12 : 1;
+  const Y2 = (v) => padT + plotH - (v / maxS) * plotH;
+
+  const line = path(points, Y);
   const area = `M${X(t0).toFixed(1)} ${(padT + plotH).toFixed(1)} ${points.map((p) => `L${X(p.t).toFixed(1)} ${Y(p.v).toFixed(1)}`).join(" ")} L${X(t1).toFixed(1)} ${(padT + plotH).toFixed(1)} Z`;
 
   // Faint horizontal gridlines.
@@ -109,22 +126,40 @@ function renderChart({ title, valueLabel, points, overlay, markPeak }, C) {
 
   const endX = X(t1), endY = Y(points[points.length - 1].v);
 
-  // Optional smoothed overlay (e.g. moving average).
-  const overlayLine = overlay && overlay.length
-    ? `<path d="${path(overlay)}" fill="none" stroke="${C.text}" stroke-opacity="0.4" stroke-width="1.6" stroke-dasharray="4 4" stroke-linecap="round" pathLength="1000" stroke-dashoffset="0"/>`
+  const MONO = "'JetBrains Mono',ui-monospace,monospace";
+
+  const secondaryLine = secondary
+    ? `<path d="${path(secondary.points, Y2)}" fill="none" stroke="${C.rate}" stroke-width="1.8" stroke-dasharray="5 4" stroke-linecap="round" opacity="0">
+    <animate attributeName="opacity" from="0" to="1" dur="0.8s" begin="0.9s" fill="freeze"/>
+  </path>`
     : "";
 
-  // Optional peak marker (skip if the peak is the final point).
+  // Label the second series at its peak, since a line on an unlabelled scale
+  // is only a shape until one point on it has a number attached.
   let peakMark = "";
-  if (markPeak) {
+  if (markPeak && secondary) {
     let pi = 0;
-    for (let i = 1; i < points.length; i++) if (points[i].v > points[pi].v) pi = i;
-    if (pi !== points.length - 1 && points[pi].v > 0) {
-      const px = X(points[pi].t), py = Y(points[pi].v);
-      peakMark = `<circle cx="${px.toFixed(1)}" cy="${py.toFixed(1)}" r="3" fill="${C.a1}"/>
-      <text x="${px.toFixed(1)}" y="${(py - 8).toFixed(1)}" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="10" fill="${C.muted}">${fmt(points[pi].v)}</text>`;
+    const sp = secondary.points;
+    for (let i = 1; i < sp.length; i++) if (sp[i].v > sp[pi].v) pi = i;
+    if (sp[pi].v > 0) {
+      const px = X(sp[pi].t), py = Y2(sp[pi].v);
+      const anchor = px > W - 90 ? "end" : px < 90 ? "start" : "middle";
+      peakMark = `<g opacity="0"><animate attributeName="opacity" from="0" to="1" dur="0.5s" begin="1.5s" fill="freeze"/>
+    <circle cx="${px.toFixed(1)}" cy="${py.toFixed(1)}" r="3" fill="${C.rate}"/>
+    <text x="${px.toFixed(1)}" y="${(py - 9).toFixed(1)}" text-anchor="${anchor}" font-family="${MONO}" font-size="10" fill="${C.rate}">${secondary.peakLabel(sp[pi].v)}</text>
+  </g>`;
     }
   }
+
+  // Two series on two scales need saying which is which.
+  const legend = secondary
+    ? `<g font-family="${MONO}" font-size="11">
+    <rect x="${padL}" y="40" width="16" height="3" rx="1.5" fill="${C.a2}"/>
+    <text x="${padL + 23}" y="45" fill="${C.muted}">running total</text>
+    <line x1="${padL + 130}" y1="41.5" x2="${padL + 146}" y2="41.5" stroke="${C.rate}" stroke-width="2" stroke-dasharray="5 4"/>
+    <text x="${padL + 153}" y="45" fill="${C.muted}">${secondary.label}</text>
+  </g>`
+    : "";
 
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="${title}: ${valueLabel}">
   <defs>
@@ -142,8 +177,9 @@ function renderChart({ title, valueLabel, points, overlay, markPeak }, C) {
   ${grid}
   <text x="${padL}" y="27" font-family="'JetBrains Mono',ui-monospace,monospace" font-size="15" font-weight="600" fill="${C.text}">${title}</text>
   <text x="${W - padR}" y="27" text-anchor="end" font-family="'JetBrains Mono',ui-monospace,monospace" font-size="15" font-weight="600" fill="${C.a2}">${valueLabel}</text>
+  ${legend}
   <path d="${area}" fill="url(#area)" opacity="0"><animate attributeName="opacity" from="0" to="1" dur="1.4s" begin="0.3s" fill="freeze"/></path>
-  ${overlayLine}
+  ${secondaryLine}
   <path d="${line}" fill="none" stroke="url(#stroke)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" pathLength="1000" stroke-dasharray="1000" stroke-dashoffset="1000">
     <animate attributeName="stroke-dashoffset" from="1000" to="0" dur="1.9s" fill="freeze"/>
   </path>
@@ -170,13 +206,11 @@ const step = Math.max(1, Math.ceil(cumulative.length / N));
 let cumPts = cumulative.filter((_, i) => i % step === 0);
 if (cumPts[cumPts.length - 1] !== cumulative[cumulative.length - 1]) cumPts.push(cumulative[cumulative.length - 1]);
 
-const cumulativeOpts = {
-  title: "Contributions · 6 months",
-  valueLabel: fmt(total),
-  points: cumPts,
-};
-
-// ── Daily (derivative) over the last 6 months, with a 7-day moving average ───────
+// ── The rate, as a 7-day average ────────────────────────────────────────────
+// The raw daily counts are far too spiky to read against the total: a single
+// heavy day is several times its neighbours, so the line becomes a comb and the
+// shape of the six months disappears into it. The week-long average keeps the
+// trend, which is the part worth putting next to the running total.
 const vals = days.map((d) => d.v);
 const win = 7;
 const ma = vals.map((_, i) => {
@@ -184,19 +218,27 @@ const ma = vals.map((_, i) => {
   const slice = vals.slice(s, i + 1);
   return slice.reduce((a, b) => a + b, 0) / slice.length;
 });
-const overlay = days.map((d, i) => ({ t: d.t, v: ma[i] }));
+const rate = days.map((d, i) => ({ t: d.t, v: ma[i] }));
 
-const dailyOpts = {
-  title: "Contributions per day · 6 months",
-  valueLabel: fmt(total),
-  points: days,
-  overlay,
+const perDay = total / days.length;
+
+const opts = {
+  title: "Contributions · 6 months",
+  valueLabel: `${fmt(total)} · ${perDay.toFixed(1)}/day`,
+  points: cumPts,
+  secondary: {
+    points: rate,
+    label: "per day, 7-day average",
+    peakLabel: (v) => `${v.toFixed(1)}/day`,
+  },
   markPeak: true,
 };
 
 await mkdir("dist", { recursive: true });
 for (const theme of Object.values(THEMES)) {
-  await writeFile(`dist/contrib-cumulative${theme.suffix}.svg`, renderChart(cumulativeOpts, theme), "utf8");
-  await writeFile(`dist/contrib-daily${theme.suffix}.svg`, renderChart(dailyOpts, theme), "utf8");
+  await writeFile(`dist/contrib${theme.suffix}.svg`, renderChart(opts, theme), "utf8");
 }
-console.log(`Wrote contrib-cumulative.svg + contrib-daily.svg — ${fmt(total)} in the last ${days.length} days, stamped ${stamp}`);
+console.log(
+  `Wrote contrib.svg — ${fmt(total)} over ${days.length} days, ` +
+    `${perDay.toFixed(1)}/day average, peak week ${Math.max(...ma).toFixed(1)}/day, stamped ${stamp}`
+);
