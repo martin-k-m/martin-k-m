@@ -130,6 +130,7 @@ I'm a co-founder. Credda turns real, both-party-confirmed commitment history int
 npm install -g @martin-k-m/blink        # blink   context engine
 npm install -g @martin-k-m/beacon-cli   # beacon  repo intelligence
 cargo install killer                    # killer  security testing
+cargo add joist                         # joist   backend framework
 brew install martin-k-m/flux/flux       # flux    automation platform
 go install github.com/martin-k-m/raster/cmd/raster@latest  # raster ML language
 docker pull ghcr.io/martin-k-m/capsule  # capsule ephemeral dev environments
