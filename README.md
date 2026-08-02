@@ -26,7 +26,7 @@
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/lang-history.svg" />
   <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/lang-history-light.svg" />
-  <img src="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/lang-history-light.svg" width="100%" alt="Bytes of code by language over time" />
+  <img src="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/lang-history-light.svg" width="100%" alt="Each language's share of the code, month by month" />
 </picture>
 
 <sub>Share of code, month by month · reconstructed from each repository's tree at the end of every month</sub>
