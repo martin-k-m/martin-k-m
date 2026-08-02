@@ -29,7 +29,7 @@
   <img src="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/lang-history-light.svg" width="100%" alt="Bytes of code by language over time" />
 </picture>
 
-<sub>Same measurement, month by month · reconstructed from each repository's tree at the end of every month</sub>
+<sub>Share of code, month by month · reconstructed from each repository's tree at the end of every month</sub>
 
 <br/><br/>
 
