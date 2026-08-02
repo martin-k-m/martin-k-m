@@ -13,19 +13,31 @@
 
 <div align="center">
 
-<img src="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/languages.svg" width="100%" alt="Languages ranked by bytes of code" />
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/languages.svg" />
+  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/languages-light.svg" />
+  <img src="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/languages-light.svg" width="100%" alt="Languages ranked by bytes of code" />
+</picture>
 
 <sub>Ranked by bytes of code · public, private and contributed repositories · Linguist-attributed</sub>
 
 <br/><br/>
 
-<img src="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/contrib-cumulative.svg" width="100%" alt="Cumulative contributions over the last 6 months" />
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/contrib-cumulative.svg" />
+  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/contrib-cumulative-light.svg" />
+  <img src="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/contrib-cumulative-light.svg" width="100%" alt="Cumulative contributions over the last 6 months" />
+</picture>
 
 <sub>Running total · rolling 6 months</sub>
 
 <br/><br/>
 
-<img src="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/contrib-daily.svg" width="100%" alt="Contributions per day over the last 6 months" />
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/contrib-daily.svg" />
+  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/contrib-daily-light.svg" />
+  <img src="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/contrib-daily-light.svg" width="100%" alt="Contributions per day over the last 6 months" />
+</picture>
 
 <sub>Per day, with 7-day average · rolling 6 months</sub>
 
