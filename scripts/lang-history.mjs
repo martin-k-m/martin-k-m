@@ -1,5 +1,5 @@
-// Generate dist/lang-history.svg: the same measurement as languages.svg, but as
-// a stacked area over time instead of a single snapshot.
+// Generate dist/lang-history.svg: the same measurement as languages.svg, but
+// across a rolling six-month window instead of as a single snapshot.
 //
 // GitHub's API only reports what a repository looks like *now*. There is no
 // historical language endpoint, so the history has to be reconstructed from the
@@ -244,30 +244,22 @@ async function measure(at) {
 
 const nonEmpty = (m) => [...m.values()].reduce((a, b) => a + b, 0) > 0;
 
-// The span cannot simply start at the first commit anywhere. A repository can
-// carry years of commits that contain no code this chart counts, and starting
-// there stretches the step out across empty time, coarsening the resolution of
-// the part that actually has something in it. Ember pushed the step from a week
-// to sixteen days that way.
-//
-// So: a cheap coarse pass to find where counted code first appears, then the
-// real grid over just that span. The second pass costs almost nothing extra,
-// because every tree the first pass walked is already in the cache.
-const firstCommit = Math.min(...cloned.map((c) => c.history[0].t));
-const scout = samplePoints(new Date(firstCommit), now, 30);
-const scouted = await measure(scout.marks);
-const firstReal = scouted.findIndex(nonEmpty);
-if (firstReal < 0) {
-  console.error("no counted code in any repository");
-  process.exit(1);
-}
-// Step back one coarse point so the real start is not clipped off.
-const from = scout.marks[Math.max(0, firstReal - 1)];
+// A rolling six-month window, matching the contributions chart, rather than
+// everything since the first commit. All-time answers a different and less
+// useful question: the early years are a thin sliver that never moves, and the
+// composition that is actually shifting gets compressed into the right-hand
+// edge. Six months is the span where the lines have something to say, and it
+// moves forward on its own every time the job runs.
+const WINDOW_DAYS = 183;
+const from = new Date(now.getTime() - WINDOW_DAYS * DAY);
 
 const { marks, stepDays } = samplePoints(from, now);
 const series = await measure(marks);
 const measured = walked;
 
+// Only trims if a repository predates nothing in the window, which a fixed
+// window makes unlikely, but an empty leading run would still plot as a flat
+// zero rather than as "no data".
 let start = series.findIndex(nonEmpty);
 if (start < 0) start = 0;
 const pts = marks.slice(start);
@@ -477,7 +469,7 @@ function render(C) {
   <g opacity="0"><animate attributeName="opacity" from="0" to="1" dur="0.4s" begin="1.1s" fill="freeze"/>
   ${endLabels(C)}
   </g>
-  <text x="${padL}" y="${H - 10}" font-family="${MONO}" font-size="10" fill="${C.muted}">sampled every ${stepDays} days · ${repos.length} repos · ${size(finalTotal)} today · extensions Linguist counts as code</text>
+  <text x="${padL}" y="${H - 10}" font-family="${MONO}" font-size="10" fill="${C.muted}">6 months · sampled every ${stepDays} day${stepDays===1?"":"s"} · ${repos.length} repos · ${size(finalTotal)} today · extensions Linguist counts as code</text>
   <text x="${W - 14}" y="${H - 10}" text-anchor="end" font-family="${MONO}" font-size="10" fill="${C.muted}">updated ${now.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" })}</text>
 </svg>`;
 }

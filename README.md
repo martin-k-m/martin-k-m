@@ -26,10 +26,10 @@
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/lang-history.svg" />
   <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/lang-history-light.svg" />
-  <img src="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/lang-history-light.svg" width="100%" alt="Each language's share of the code, week by week" />
+  <img src="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/lang-history-light.svg" width="100%" alt="Each language's share of the code, day by day over the last 6 months" />
 </picture>
 
-<sub>Share of code, sampled weekly · reconstructed from each repository's tree as it stood at each point</sub>
+<sub>Share of code, one point per day · rolling 6 months · reconstructed from each repository's tree as it stood that day</sub>
 
 <br/><br/>
 
