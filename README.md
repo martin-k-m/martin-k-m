@@ -106,6 +106,12 @@ I'm a co-founder. Credda turns real, both-party-confirmed commitment history int
   <td><a href="https://github.com/martin-k-m/capsule/releases"><img src="https://img.shields.io/github/v/tag/martin-k-m/capsule?sort=semver&label=&style=flat-square&color=7C6CFF"/></a></td>
 </tr>
 <tr>
+  <td><a href="https://github.com/martin-k-m/joist"><b>joist</b></a></td>
+  <td>A <b>backend framework</b> for Rust. Routing, middleware, JSON, config, plugins and a threaded HTTP/1.1 server, with an empty dependency tree, so a clean build downloads nothing and an audit has one crate to read.</td>
+  <td><img src="https://img.shields.io/badge/Rust-000?style=flat-square&logo=rust&logoColor=fff"/></td>
+  <td><a href="https://github.com/martin-k-m/joist/releases"><img src="https://img.shields.io/github/v/tag/martin-k-m/joist?sort=semver&label=&style=flat-square&color=7C6CFF"/></a></td>
+</tr>
+<tr>
   <td><a href="https://github.com/martin-k-m/csvpeek"><b>csvpeek</b></a></td>
   <td>A fast, zero-dependency CSV profiler for the terminal: column types, null counts, numeric stats, and top values. Pure Python stdlib.</td>
   <td><img src="https://img.shields.io/badge/Python-3776AB?style=flat-square&logo=python&logoColor=fff"/></td>
