@@ -140,20 +140,18 @@ async function ensureClone(repo) {
   return dir;
 }
 
-// Sample on a rolling cadence rather than at month ends. At month ends a push
-// on the 3rd is invisible until the 1st of the next month, which makes the line
-// look frozen while the work is actually happening. A week is fine-grained
-// enough that a push shows up while it is still recent, and the last point is
-// always the present, so the right-hand edge moves every time the job runs.
+// One point per day, end to end. At month ends a push on the 3rd stays
+// invisible until the 1st, and even at a week the line reports a change days
+// after it happened. Daily is the finest resolution the underlying data has,
+// since a commit is stamped to the second but the chart's unit is a tree.
 //
-// The step stretches once the history outgrows the target, which keeps both the
-// point count and the number of trees walked bounded as the years accumulate.
-const TARGET_POINTS = 110;
-const MIN_STEP_DAYS = 7;
+// It costs less than it looks. Points are cheap; the expensive part is walking
+// a tree, and that is bounded by how many distinct commits are sampled, not by
+// how many points there are. A day with no push resolves to the same commit as
+// the day before and hits the cache.
 const DAY = 86400000;
 
-function samplePoints(from, to, target = TARGET_POINTS) {
-  const stepDays = Math.max(MIN_STEP_DAYS, Math.ceil((to - from) / DAY / target));
+function samplePoints(from, to, stepDays = 1) {
   const out = [];
   for (let t = from.getTime() + stepDays * DAY; t < to.getTime(); t += stepDays * DAY) {
     out.push(new Date(t));
@@ -359,6 +357,16 @@ const strokeOf = (name, C) => (name === "Other" ? C.other : colorOf(name));
 function smoothPath(px, py) {
   const n = px.length;
   if (n < 3) return `M ${px.map((v, i) => `${v.toFixed(1)},${py[i].toFixed(1)}`).join(" L ")}`;
+
+  // Once the points are closer together than about two pixels there is nothing
+  // left for a curve to do: a cubic segment shorter than a pixel cannot bow
+  // away from the straight line by an amount anyone can see. Sampling daily
+  // puts the points under one pixel apart, so the control points would triple
+  // the file for a difference no display can render. Straight segments at that
+  // density draw the same picture.
+  if ((px[n - 1] - px[0]) / (n - 1) < 2) {
+    return `M ${px.map((v, i) => `${v.toFixed(1)},${py[i].toFixed(1)}`).join(" L ")}`;
+  }
 
   const h = [], slope = [];
   for (let i = 0; i < n - 1; i++) {

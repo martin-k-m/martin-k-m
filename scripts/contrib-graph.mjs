@@ -2,10 +2,10 @@
 // ROLLING 6-month window (the last 183 days), so the chart shifts forward on
 // its own and picks up new commits every time the workflow runs.
 //
-// Both series are on it. The running total is the filled line, and the per-day
-// count is a dashed line on its own scale, because they are the same data
-// integrated and not, and a reader wants them side by side rather than in two
-// separate pictures.
+// Both series are on it, sharing one axis: the running total as the filled
+// line and the per-day count as a dashed line over it. They are the same data
+// integrated and not, in the same unit, so a reader wants them side by side
+// rather than in two separate pictures.
 //
 // Env: GH_LOGIN (user), GITHUB_TOKEN (any token, contribution counts are public).
 
@@ -97,26 +97,25 @@ const THEMES = {
 // ── Shared renderer ─────────────────────────────────────────────────────────
 // opts: { title, valueLabel, points:[{t,v}], secondary?:{points,label,peakLabel}, markPeak? }
 //
-// The running total and the per-day rate are the same data twice, once
+// The running total and the per-day count are the same data twice, once
 // integrated and once not, so they belong on one chart rather than two stacked
-// on each other in the README. They cannot share a y-axis, though: the total
-// reaches four figures while a busy day is in the tens, and on a shared scale
-// the daily line would be a flat smear along the bottom. So the second series
-// gets its own scale, drawn dashed and in a different colour so it reads as a
-// different unit, and its peak is labelled with the real number to anchor it.
+// on each other in the README.
+//
+// One shared y-axis, both in contributions, so the two lines can be compared
+// directly and the daily spikes read as a real fraction of the total rather
+// than being inflated to fill the frame. A second scale would have made the
+// busiest day and the final total look the same height while meaning entirely
+// different things.
 function renderChart({ title, valueLabel, points, secondary, markPeak }, C) {
   const W = 820, H = 260, padL = 16, padR = 16, padT = 66, padB = 30;
   const plotW = W - padL - padR, plotH = H - padT - padB;
   const t0 = points[0].t, t1 = points[points.length - 1].t;
-  const maxV = Math.max(1, ...points.map((p) => p.v));
+  const maxV = Math.max(1, ...points.map((p) => p.v), ...(secondary ? secondary.points.map((p) => p.v) : []));
   const X = (t) => padL + (t1 === t0 ? 0 : (t - t0) / (t1 - t0)) * plotW;
   const Y = (v) => padT + plotH - (v / maxV) * plotH;
   const path = (pts, yf) => pts.map((p, i) => `${i ? "L" : "M"}${X(p.t).toFixed(1)} ${yf(p.v).toFixed(1)}`).join(" ");
 
-  // The second series keeps a little headroom so its peak does not touch the
-  // title, and never scales below 1 so an empty stretch cannot divide by zero.
-  const maxS = secondary ? Math.max(1, ...secondary.points.map((p) => p.v)) * 1.12 : 1;
-  const Y2 = (v) => padT + plotH - (v / maxS) * plotH;
+  const Y2 = Y; // same axis, same unit
 
   const line = path(points, Y);
   const area = `M${X(t0).toFixed(1)} ${(padT + plotH).toFixed(1)} ${points.map((p) => `L${X(p.t).toFixed(1)} ${Y(p.v).toFixed(1)}`).join(" ")} L${X(t1).toFixed(1)} ${(padT + plotH).toFixed(1)} Z`;
@@ -137,8 +136,9 @@ function renderChart({ title, valueLabel, points, secondary, markPeak }, C) {
   </path>`
     : "";
 
-  // Label the second series at its peak, since a line on an unlabelled scale
-  // is only a shape until one point on it has a number attached.
+  // Label the busiest day, which is the one point on the daily line worth
+  // naming and the thing the shared axis makes it easy to place against the
+  // total.
   let peakMark = "";
   if (markPeak && secondary) {
     let pi = 0;
@@ -154,7 +154,7 @@ function renderChart({ title, valueLabel, points, secondary, markPeak }, C) {
     }
   }
 
-  // Two series on two scales need saying which is which.
+  // Two lines need saying which is which.
   const legend = secondary
     ? `<g font-family="${MONO}" font-size="11">
     <rect x="${padL}" y="40" width="16" height="3" rx="1.5" fill="${C.a2}"/>
