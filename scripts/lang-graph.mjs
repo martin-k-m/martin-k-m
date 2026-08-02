@@ -127,10 +127,9 @@ const valW = 116;                // size + percentage column
 const barX = padL + nameW + 12;
 const barW = W - padR - valW - barX;
 
-// Bars are scaled against the largest language, not the total: at these
-// proportions a share-of-total scale would flatten everything below first place
-// into an unreadable sliver.
-const maxN = rows[0].n;
+// Bars are share of total: a language at 50% fills half the track, so the bar
+// length and the printed percentage always agree.
+const scale = total;
 
 const spectrum = (() => {
   let x = padL;
@@ -149,7 +148,7 @@ const spectrum = (() => {
 const bars = rows
   .map((r, i) => {
     const y = rowsY + i * rowH;
-    const w = Math.max(2, (r.n / maxN) * barW);
+    const w = Math.max(2, (r.n / scale) * barW);
     const begin = (0.3 + i * 0.07).toFixed(2);
     return `<g>
     <text x="${padL}" y="${y + 11}" font-family="${MONO}" font-size="12" fill="${C.text}">${esc(r.name)}</text>
