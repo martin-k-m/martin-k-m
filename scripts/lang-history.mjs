@@ -273,8 +273,19 @@ const stacks = data.map((m) => {
 });
 
 const totals = stacks.map((r) => [...r.values()].reduce((a, b) => a + b, 0));
-const peak = Math.max(...totals);
 const finalTotal = totals[totals.length - 1];
+
+// Plotted as share of that month rather than absolute bytes, so the chart is
+// about composition instead of growth. In bytes the early months are a sliver
+// against a codebase several times larger, and the one thing the chart is meant
+// to show, which language was carrying the work at a given time, is exactly
+// what gets squashed.
+const shares = stacks.map((row, i) =>
+  new Map([...row].map(([k, v]) => [k, totals[i] ? v / totals[i] : 0]))
+);
+
+const [leadName, leadBytes] = ranked[0];
+const leadShare = finalTotal ? leadBytes / finalTotal : 0;
 
 // ── Rendering ───────────────────────────────────────────────────────────────
 const THEMES = {
@@ -284,13 +295,13 @@ const THEMES = {
 
 const MONO = "'JetBrains Mono',ui-monospace,monospace";
 const W = 820;
-const padL = 58, padR = 16, padT = 78, padB = 46;
+const padL = 44, padR = 16, padT = 78, padB = 46; // padL fits a "100%" tick label
 const H = 400;
 const plotW = W - padL - padR;
 const plotH = H - padT - padB;
 
 const x = (i) => padL + (i / Math.max(1, pts.length - 1)) * plotW;
-const y = (v) => padT + plotH - (v / (peak || 1)) * plotH;
+const y = (share) => padT + plotH - share * plotH; // share is 0..1
 
 function size(n) {
   if (n >= 1024 * 1024) return `${(n / (1024 * 1024)).toFixed(1)} MB`;
@@ -300,10 +311,9 @@ function size(n) {
 const esc = (s) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 const mon = (d) => d.toLocaleDateString("en-US", { month: "short", year: "2-digit", timeZone: "UTC" });
 
-// Four gridlines is enough to read a value off without the lines competing with
-// the bands they sit behind.
-const ticks = 4;
-const gridVals = Array.from({ length: ticks + 1 }, (_, i) => (peak / ticks) * i);
+// Quarters: enough to read a share off without the lines competing with the
+// bands they sit behind.
+const gridVals = [0, 0.25, 0.5, 0.75, 1];
 
 // Roughly six labels along the axis, whatever the span turns out to be.
 const labelEvery = Math.max(1, Math.round(pts.length / 6));
@@ -315,7 +325,7 @@ function areas(C) {
   const out = [];
   for (let b = bands.length - 1; b >= 0; b--) {
     const name = bands[b];
-    const upper = lower.map((base, i) => base + (stacks[i].get(name) || 0));
+    const upper = lower.map((base, i) => base + (shares[i].get(name) || 0));
     const top = upper.map((v, i) => `${x(i).toFixed(1)},${y(v).toFixed(1)}`).join(" ");
     const bottom = lower.map((v, i) => `${x(i).toFixed(1)},${y(v).toFixed(1)}`).reverse().join(" ");
     const fill = name === "Other" ? C.other : colorOf(name);
@@ -347,7 +357,7 @@ function render(C) {
     .map(
       (v) =>
         `<line x1="${padL}" y1="${y(v).toFixed(1)}" x2="${W - padR}" y2="${y(v).toFixed(1)}" stroke="${C.text}" stroke-opacity="${C.grid}"/>
-  <text x="${padL - 8}" y="${(y(v) + 3.5).toFixed(1)}" text-anchor="end" font-family="${MONO}" font-size="10" fill="${C.muted}">${v > 0 ? size(v) : "0"}</text>`
+  <text x="${padL - 8}" y="${(y(v) + 3.5).toFixed(1)}" text-anchor="end" font-family="${MONO}" font-size="10" fill="${C.muted}">${Math.round(v * 100)}%</text>`
     )
     .join("\n  ");
 
@@ -363,8 +373,8 @@ function render(C) {
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="Bytes of code by language over time across ${repos.length} repositories">
   <rect width="${W}" height="${H}" rx="12" fill="${C.bg}"/>
   <rect x="0.5" y="0.5" width="${W - 1}" height="${H - 1}" rx="11.5" fill="none" stroke="${C.text}" stroke-opacity="${C.border}"/>
-  <text x="${padL}" y="27" font-family="${MONO}" font-size="15" font-weight="600" fill="${C.text}">Languages over time · bytes of code</text>
-  <text x="${W - padR}" y="27" text-anchor="end" font-family="${MONO}" font-size="15" font-weight="600" fill="${C.accent}">${size(finalTotal)}</text>
+  <text x="${padL}" y="27" font-family="${MONO}" font-size="15" font-weight="600" fill="${C.text}">Languages over time · share of code</text>
+  <text x="${W - padR}" y="27" text-anchor="end" font-family="${MONO}" font-size="15" font-weight="600" fill="${C.accent}">${esc(leadName)} ${(leadShare * 100).toFixed(0)}%</text>
   ${legend(C)}
   ${grid}
   <clipPath id="reveal${C.suffix}"><rect x="${padL}" y="${padT - 4}" width="0" height="${plotH + 8}">
@@ -375,7 +385,7 @@ function render(C) {
   </g>
   <line x1="${padL}" y1="${padT + plotH}" x2="${W - padR}" y2="${padT + plotH}" stroke="${C.text}" stroke-opacity="${C.border + 0.1}"/>
   ${xLabels}
-  <text x="${padL}" y="${H - 10}" font-family="${MONO}" font-size="10" fill="${C.muted}">${pts.length} months · ${repos.length} repos · extensions Linguist counts as code</text>
+  <text x="${padL}" y="${H - 10}" font-family="${MONO}" font-size="10" fill="${C.muted}">${pts.length} months · ${repos.length} repos · ${size(finalTotal)} today · extensions Linguist counts as code</text>
   <text x="${W - padR}" y="${H - 10}" text-anchor="end" font-family="${MONO}" font-size="10" fill="${C.muted}">updated ${now.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" })}</text>
 </svg>`;
 }
@@ -386,7 +396,7 @@ for (const theme of Object.values(THEMES)) {
 }
 
 console.log(`lang-history.svg · ${pts.length} months · ${repos.length} repos · ${measured} trees measured`);
-console.log(`  ${mon(pts[0])} -> ${mon(pts[pts.length - 1])}  peak ${size(peak)}  now ${size(finalTotal)}`);
+console.log(`  ${mon(pts[0])} -> ${mon(pts[pts.length - 1])}  ${size(finalTotal)} today  led by ${leadName}`);
 for (const name of bands) {
   const v = stacks[stacks.length - 1].get(name) || 0;
   console.log(`  ${name.padEnd(14)} ${size(v).padStart(9)}  ${((v / finalTotal) * 100).toFixed(1)}%`);
