@@ -9,6 +9,7 @@ on:
     paths:
       - "scripts/contrib-graph.mjs"
       - "scripts/lang-graph.mjs"
+      - "scripts/lang-history.mjs"
       - ".github/workflows/contrib-graph.yml"
 
 permissions:
@@ -39,16 +40,34 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.PROFILE_TOKEN || secrets.GITHUB_TOKEN }}
         run: node scripts/lang-graph.mjs
 
-      # The publish step replaces the whole assets branch, so a skipped language
-      # chart would delete the published one and break the README image. Carry
-      # the last good copy forward instead; the contribution graphs still update.
-      - name: Preserve the last published language chart
-        if: steps.lang.outcome != 'success'
+      # This one clones every repository to read the tree as it stood at each
+      # month end, because the API has no historical language data. It needs the
+      # same PAT, both to enumerate and to clone the private ones.
+      - name: Generate language history SVG
+        id: history
+        continue-on-error: true
+        env:
+          GH_LOGIN: ${{ github.repository_owner }}
+          GITHUB_TOKEN: ${{ secrets.PROFILE_TOKEN || secrets.GITHUB_TOKEN }}
+        run: node scripts/lang-history.mjs
+
+      # The publish step replaces the whole assets branch, so a chart that failed
+      # to regenerate would be deleted rather than left alone, breaking the README
+      # image. Pull the last published copy back down instead; whatever did run
+      # still updates.
+      - name: Preserve the last published charts
+        if: steps.lang.outcome != 'success' || steps.history.outcome != 'success'
         run: |
-          echo "::warning::language chart not regenerated — add a PROFILE_TOKEN secret (PAT with repo scope)"
-          curl -fsSL -o dist/languages.svg \
-            "https://raw.githubusercontent.com/${{ github.repository }}/assets/languages.svg" \
-            || echo "::warning::no published language chart to preserve"
+          echo "::warning::a chart did not regenerate — check the PROFILE_TOKEN secret (PAT with repo scope)"
+          for f in languages languages-light lang-history lang-history-light; do
+            [ -s "dist/$f.svg" ] && continue
+            curl -fsSL -o "dist/$f.svg" \
+              "https://raw.githubusercontent.com/${{ github.repository }}/assets/$f.svg" \
+              || echo "::warning::no published $f.svg to preserve"
+          done
+          # curl writes an empty file on failure, and an empty SVG renders as a
+          # broken image, which is worse than the file being absent.
+          find dist -name '*.svg' -empty -delete
       - name: Publish to the assets branch
         uses: crazy-max/ghaction-github-pages@v4
         with:

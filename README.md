@@ -24,6 +24,16 @@
 <br/><br/>
 
 <picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/lang-history.svg" />
+  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/lang-history-light.svg" />
+  <img src="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/lang-history-light.svg" width="100%" alt="Bytes of code by language over time" />
+</picture>
+
+<sub>Same measurement, month by month · reconstructed from each repository's tree at the end of every month</sub>
+
+<br/><br/>
+
+<picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/contrib-cumulative.svg" />
   <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/contrib-cumulative-light.svg" />
   <img src="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/contrib-cumulative-light.svg" width="100%" alt="Cumulative contributions over the last 6 months" />
