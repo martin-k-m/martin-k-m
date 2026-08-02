@@ -33,6 +33,12 @@
 
 ## Credda &nbsp;·&nbsp; [credda.io](https://credda.io) &nbsp;·&nbsp; [@martin](https://credda.io/profile/martin) &nbsp;·&nbsp; [GitHub](https://github.com/Credda-io)
 
+<div align="center">
+
+<img src="https://raw.githubusercontent.com/Credda-io/.github/main/profile/banner.svg" width="100%" alt="Credda: a portable, verified work record, scored by a public formula" />
+
+</div>
+
 > **Portable trust infrastructure.** Reputation shouldn't reset every time you join a new platform.
 
 I'm a co-founder. Credda turns real, both-party-confirmed commitment history into a verified
