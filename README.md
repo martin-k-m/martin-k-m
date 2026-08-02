@@ -70,6 +70,12 @@ I'm a co-founder. Credda turns real, both-party-confirmed commitment history int
   <td><a href="https://github.com/martin-k-m/raster/releases"><img src="https://img.shields.io/github/v/release/martin-k-m/raster?sort=semver&label=&style=flat-square&color=7C6CFF"/></a></td>
 </tr>
 <tr>
+  <td><a href="https://github.com/martin-k-m/capsule"><b>capsule</b></a></td>
+  <td>Lightweight, isolated <b>development environments that disappear</b> — one <code>capsule.toml</code> becomes a container with your project mounted; it is destroyed on exit and keeps only what you named.</td>
+  <td><img src="https://img.shields.io/badge/Go-00ADD8?style=flat-square&logo=go&logoColor=fff"/></td>
+  <td><a href="https://github.com/martin-k-m/capsule/releases"><img src="https://img.shields.io/github/v/tag/martin-k-m/capsule?sort=semver&label=&style=flat-square&color=7C6CFF"/></a></td>
+</tr>
+<tr>
   <td><a href="https://github.com/martin-k-m/csvpeek"><b>csvpeek</b></a></td>
   <td>A fast, zero-dependency CSV profiler for the terminal — column types, null counts, numeric stats, and top values. Pure Python stdlib.</td>
   <td><img src="https://img.shields.io/badge/Python-3776AB?style=flat-square&logo=python&logoColor=fff"/></td>
@@ -84,6 +90,7 @@ npm install -g @martin-k-m/beacon-cli   # beacon  — repo intelligence
 cargo install killer                    # killer  — security testing
 brew install martin-k-m/flux/flux       # flux    — automation platform
 go install github.com/martin-k-m/raster/cmd/raster@latest  # raster — ML language
+docker pull ghcr.io/martin-k-m/capsule  # capsule — ephemeral dev environments
 pip install git+https://github.com/martin-k-m/csvpeek   # csvpeek — CSV profiler
 # orbit ships prebuilt desktop installers on its releases page
 ```
