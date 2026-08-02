@@ -1,12 +1,12 @@
-// Generate dist/languages.svg — the languages I actually write, ranked by how
+// Generate dist/languages.svg: the languages I actually write, ranked by how
 // much of them exists, measured in bytes of code that GitHub's own Linguist
 // attributes to each language across my repositories.
 //
 // Bytes, not repository counts: ten one-file experiments in a language should
 // not outrank the one where the real work lives.
 //
-// Counts every repository the token can see — public and private, owned and
-// contributed to — not just the public ones. How much of that it can actually
+// Counts every repository the token can see: public and private, owned and
+// contributed to, not just the public ones. How much of that it can actually
 // see is a property of the token: the Actions GITHUB_TOKEN sees only public
 // repos, while a PAT with `repo` scope sees private ones too. The footer states
 // what was really counted rather than claiming a scope it did not have.
@@ -36,12 +36,12 @@ async function gql(query, variables) {
 }
 
 // Forks are excluded: their bytes are someone else's work. Archived repos are
-// kept — the code was still written. COLLABORATOR and ORGANIZATION_MEMBER pull
+// kept, the code was still written. COLLABORATOR and ORGANIZATION_MEMBER pull
 // in repos contributed to rather than owned, so work done under an org counts.
 //
 // It must be `ownerAffiliations`, not `affiliations`: the latter filters by the
 // *token's* own relationship to each repo, and the Actions GITHUB_TOKEN is a
-// collaborator on exactly one repository — the one it is running in. Using it
+// collaborator on exactly one repository, the one it is running in. Using it
 // silently collapsed this chart to "1 language · 1 repo".
 const QUERY = `
 query($login:String!,$cursor:String){
@@ -95,7 +95,7 @@ if (ranked.length === 0) {
 // Refuse instead: a missing chart is honest, a wrong one is not.
 if (repoCount < 2) {
   console.error(
-    `only ${repoCount} repository visible to this token — refusing to publish a misleading chart.\n` +
+    `only ${repoCount} repository visible to this token, refusing to publish a misleading chart.\n` +
       "Set GITHUB_TOKEN to a personal access token with `repo` scope (in Actions, add it\n" +
       "as the PROFILE_TOKEN secret). The Actions GITHUB_TOKEN cannot enumerate a user's\n" +
       "repositories, only the one it is running in."

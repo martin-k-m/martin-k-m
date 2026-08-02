@@ -46,17 +46,17 @@ I'm a co-founder. Credda turns real, both-party-confirmed commitment history int
 
 |  |  |
 | :-- | :-- |
-| **Deterministic** | The score is a pure function of an append-only event ledger — no human or AI can move it. The AI layer is advisory only, and inert entirely unless a key is configured. |
+| **Deterministic** | The score is a pure function of an append-only event ledger. No human or AI can move it. The AI layer is advisory only, and inert entirely unless a key is configured. |
 | **Yours to carry** | Trust is portable as signed W3C Verifiable Credentials (`did:web`). |
-| **Commitments, not reviews** | The primitive is a commitment both parties confirmed — alongside platform verification, disputes, notifications, and billing. |
+| **Commitments, not reviews** | The primitive is a commitment both parties confirmed, alongside platform verification, disputes, notifications, and billing. |
 | **Built for teams** | Organizations with members, roles, and invitations, so a reputation works for a company as well as a person. |
 | **Real stack** | React 19 · Vite 7 · Tailwind v4 on the front. Express 5 · TypeScript · Prisma/PostgreSQL · Redis on AWS behind it. |
 
-<sub>Early-stage and under active development — anything the site marks <i>coming soon</i> is direction, not a shipped guarantee.</sub>
+<sub>Early-stage and under active development. Anything the site marks <i>coming soon</i> is direction, not a shipped guarantee.</sub>
 
 <br/>
 
-## Projects &nbsp;·&nbsp; independent, local-first tools
+## Projects
 
 <table>
 <thead>
@@ -65,49 +65,49 @@ I'm a co-founder. Credda turns real, both-party-confirmed commitment history int
 <tbody>
 <tr>
   <td><a href="https://github.com/martin-k-m/blink"><b>blink</b></a></td>
-  <td>A developer <b>context engine</b> — indexes a codebase into a graph of files, symbols, and dependencies, then answers questions about it with local deterministic search. Exports to JSON, Markdown, Mermaid or Graphviz. Embeds no LLM.</td>
+  <td>A developer <b>context engine</b> that indexes a codebase into a graph of files, symbols, and dependencies, then answers questions about it with local deterministic search. Exports to JSON, Markdown, Mermaid or Graphviz. Embeds no LLM.</td>
   <td><img src="https://img.shields.io/badge/Rust-000?style=flat-square&logo=rust&logoColor=fff"/></td>
   <td><a href="https://github.com/martin-k-m/blink/releases"><img src="https://img.shields.io/github/v/tag/martin-k-m/blink?sort=semver&label=&style=flat-square&color=7C6CFF"/></a></td>
 </tr>
 <tr>
   <td><a href="https://github.com/martin-k-m/beacon"><b>beacon</b></a></td>
-  <td>Open-source GitHub repository intelligence — turns a repo's signals into an explainable 0–100 <b>Beacon Score</b> across five weighted pillars, with health trends, recommendations, and embeddable SVG widgets.</td>
+  <td>Open-source GitHub repository intelligence that turns a repo's signals into an explainable 0–100 <b>Beacon Score</b> across five weighted pillars, with health trends, recommendations, and embeddable SVG widgets.</td>
   <td><img src="https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=fff"/></td>
   <td><a href="https://github.com/martin-k-m/beacon/releases"><img src="https://img.shields.io/github/v/tag/martin-k-m/beacon?sort=semver&label=&style=flat-square&color=7C6CFF"/></a></td>
 </tr>
 <tr>
   <td><a href="https://github.com/martin-k-m/flux"><b>flux</b></a></td>
-  <td>A local-first automation platform — one <code>.flux</code> file builds, tests, packages, and deploys, run as a parallel dependency-graph pipeline with caching and encrypted secrets.</td>
+  <td>A local-first automation platform. One <code>.flux</code> file builds, tests, packages, and deploys, run as a parallel dependency-graph pipeline with caching and encrypted secrets.</td>
   <td><img src="https://img.shields.io/badge/Rust-000?style=flat-square&logo=rust&logoColor=fff"/></td>
   <td><a href="https://github.com/martin-k-m/flux/releases"><img src="https://img.shields.io/github/v/tag/martin-k-m/flux?sort=semver&label=&style=flat-square&color=7C6CFF"/></a></td>
 </tr>
 <tr>
   <td><a href="https://github.com/martin-k-m/killer"><b>killer</b></a></td>
-  <td>A security testing framework with its own <code>.klr</code> rule language — static analysis, fuzz/mutation attacks, scan history, and a CI gate.</td>
+  <td>A security testing framework with its own <code>.klr</code> rule language: static analysis, fuzz/mutation attacks, scan history, and a CI gate.</td>
   <td><img src="https://img.shields.io/badge/Rust-000?style=flat-square&logo=rust&logoColor=fff"/></td>
   <td><a href="https://github.com/martin-k-m/killer/releases"><img src="https://img.shields.io/github/v/tag/martin-k-m/killer?sort=semver&label=&style=flat-square&color=7C6CFF"/></a></td>
 </tr>
 <tr>
   <td><a href="https://github.com/martin-k-m/orbit"><b>orbit</b></a></td>
-  <td>A native developer IDE — editor, terminal, source control, tests, and project tooling in one fast desktop app. No server, no account, no telemetry.</td>
+  <td>A native developer IDE with editor, terminal, source control, tests, and project tooling in one fast desktop app. No server, no account, no telemetry.</td>
   <td><img src="https://img.shields.io/badge/Rust%20·%20Tauri-000?style=flat-square&logo=tauri&logoColor=fff"/></td>
   <td><a href="https://github.com/martin-k-m/orbit/releases"><img src="https://img.shields.io/github/v/tag/martin-k-m/orbit?sort=semver&label=&style=flat-square&color=7C6CFF"/></a></td>
 </tr>
 <tr>
   <td><a href="https://github.com/martin-k-m/raster"><b>raster</b></a></td>
-  <td>A programming language for numeric and ML code — tensors are the built-in type, differentiation is part of the language (<code>grad</code>), and a static checker catches shape mistakes before a program runs.</td>
+  <td>A programming language for numeric and ML code. Tensors are the built-in type, differentiation is part of the language (<code>grad</code>), and a static checker catches shape mistakes before a program runs.</td>
   <td><img src="https://img.shields.io/badge/Go-00ADD8?style=flat-square&logo=go&logoColor=fff"/></td>
   <td><a href="https://github.com/martin-k-m/raster/releases"><img src="https://img.shields.io/github/v/release/martin-k-m/raster?sort=semver&label=&style=flat-square&color=7C6CFF"/></a></td>
 </tr>
 <tr>
   <td><a href="https://github.com/martin-k-m/capsule"><b>capsule</b></a></td>
-  <td>Lightweight, isolated <b>development environments that disappear</b> — one <code>capsule.toml</code> becomes a container with your project mounted; it is destroyed on exit and keeps only what you named.</td>
+  <td>Lightweight, isolated <b>development environments that disappear</b>. One <code>capsule.toml</code> becomes a container with your project mounted; it is destroyed on exit and keeps only what you named.</td>
   <td><img src="https://img.shields.io/badge/Go-00ADD8?style=flat-square&logo=go&logoColor=fff"/></td>
   <td><a href="https://github.com/martin-k-m/capsule/releases"><img src="https://img.shields.io/github/v/tag/martin-k-m/capsule?sort=semver&label=&style=flat-square&color=7C6CFF"/></a></td>
 </tr>
 <tr>
   <td><a href="https://github.com/martin-k-m/csvpeek"><b>csvpeek</b></a></td>
-  <td>A fast, zero-dependency CSV profiler for the terminal — column types, null counts, numeric stats, and top values. Pure Python stdlib.</td>
+  <td>A fast, zero-dependency CSV profiler for the terminal: column types, null counts, numeric stats, and top values. Pure Python stdlib.</td>
   <td><img src="https://img.shields.io/badge/Python-3776AB?style=flat-square&logo=python&logoColor=fff"/></td>
   <td><a href="https://github.com/martin-k-m/csvpeek/releases"><img src="https://img.shields.io/github/v/tag/martin-k-m/csvpeek?sort=semver&label=&style=flat-square&color=7C6CFF"/></a></td>
 </tr>
@@ -115,13 +115,13 @@ I'm a co-founder. Credda turns real, both-party-confirmed commitment history int
 </table>
 
 ```sh
-npm install -g @martin-k-m/blink        # blink   — context engine
-npm install -g @martin-k-m/beacon-cli   # beacon  — repo intelligence
-cargo install killer                    # killer  — security testing
-brew install martin-k-m/flux/flux       # flux    — automation platform
-go install github.com/martin-k-m/raster/cmd/raster@latest  # raster — ML language
-docker pull ghcr.io/martin-k-m/capsule  # capsule — ephemeral dev environments
-pip install git+https://github.com/martin-k-m/csvpeek   # csvpeek — CSV profiler
+npm install -g @martin-k-m/blink        # blink   context engine
+npm install -g @martin-k-m/beacon-cli   # beacon  repo intelligence
+cargo install killer                    # killer  security testing
+brew install martin-k-m/flux/flux       # flux    automation platform
+go install github.com/martin-k-m/raster/cmd/raster@latest  # raster ML language
+docker pull ghcr.io/martin-k-m/capsule  # capsule ephemeral dev environments
+pip install git+https://github.com/martin-k-m/csvpeek   # csvpeek CSV profiler
 # orbit ships prebuilt desktop installers on its releases page
 ```
 
