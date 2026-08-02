@@ -1,0 +1,183 @@
+// Generate dist/languages.svg — the languages I actually write, ranked by how
+// much of them exists, measured in bytes of code that GitHub's own Linguist
+// attributes to each language across my repositories.
+//
+// Bytes, not repository counts: ten one-file experiments in a language should
+// not outrank the one where the real work lives.
+//
+// Env:
+//   GH_LOGIN         (required) user to measure
+//   GITHUB_TOKEN     (required) any token; only public repos are read by default
+//   INCLUDE_PRIVATE  set to "1" to also count private repos (needs a PAT with
+//                    `repo` scope — the Actions GITHUB_TOKEN cannot see them)
+
+import { mkdir, writeFile } from "node:fs/promises";
+
+const login = process.env.GH_LOGIN;
+const token = process.env.GITHUB_TOKEN;
+const includePrivate = process.env.INCLUDE_PRIVATE === "1";
+if (!login || !token) {
+  console.error("GH_LOGIN and GITHUB_TOKEN are required");
+  process.exit(1);
+}
+
+async function gql(query, variables) {
+  const res = await fetch("https://api.github.com/graphql", {
+    method: "POST",
+    headers: { Authorization: `bearer ${token}`, "Content-Type": "application/json" },
+    body: JSON.stringify({ query, variables }),
+  });
+  const json = await res.json();
+  if (json.errors) throw new Error(JSON.stringify(json.errors));
+  return json.data;
+}
+
+// Forks are excluded: their bytes are someone else's work. Archived repos are
+// kept — the code was still written.
+const QUERY = `
+query($login:String!,$cursor:String,$privacy:RepositoryPrivacy){
+  user(login:$login){
+    repositories(first:100, after:$cursor, ownerAffiliations:OWNER, isFork:false, privacy:$privacy){
+      pageInfo{ hasNextPage endCursor }
+      nodes{
+        name
+        languages(first:25, orderBy:{field:SIZE, direction:DESC}){
+          edges{ size node{ name color } }
+        }
+      }
+    }
+  }
+}`;
+
+const bytes = new Map(); // language -> bytes
+const colors = new Map(); // language -> GitHub's colour
+let repoCount = 0;
+let cursor = null;
+
+do {
+  const data = await gql(QUERY, {
+    login,
+    cursor,
+    privacy: includePrivate ? null : "PUBLIC",
+  });
+  const page = data.user.repositories;
+  for (const repo of page.nodes) {
+    repoCount++;
+    for (const { size, node } of repo.languages.edges) {
+      bytes.set(node.name, (bytes.get(node.name) || 0) + size);
+      if (node.color) colors.set(node.name, node.color);
+    }
+  }
+  cursor = page.pageInfo.hasNextPage ? page.pageInfo.endCursor : null;
+} while (cursor);
+
+const ranked = [...bytes.entries()].sort((a, b) => b[1] - a[1]);
+if (ranked.length === 0) {
+  console.error("no language data");
+  process.exit(1);
+}
+
+const total = ranked.reduce((sum, [, n]) => sum + n, 0);
+
+// Show the top 8 and fold the tail into one row, so the chart stays readable
+// without silently dropping anything from the total.
+const TOP = 8;
+const shown = ranked.slice(0, TOP);
+const tail = ranked.slice(TOP);
+const rows = shown.map(([name, n]) => ({ name, n, color: colors.get(name) || "#7C6CFF" }));
+if (tail.length) {
+  rows.push({
+    name: `Other · ${tail.length}`,
+    n: tail.reduce((sum, [, n]) => sum + n, 0),
+    color: "#3A3B44",
+  });
+}
+
+const stamp = new Date().toLocaleDateString("en-US", {
+  month: "short",
+  day: "numeric",
+  year: "numeric",
+  timeZone: "UTC",
+});
+
+function size(n) {
+  if (n >= 1024 * 1024) return `${(n / (1024 * 1024)).toFixed(1)} MB`;
+  if (n >= 1024) return `${Math.round(n / 1024)} KB`;
+  return `${n} B`;
+}
+const pct = (n) => (n / total) * 100;
+const esc = (s) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+const C = { bg: "#0A0A0C", text: "#ECEDF1", muted: "#6D6E79", a2: "#7C6CFF" };
+const MONO = "'JetBrains Mono',ui-monospace,monospace";
+
+// ── Layout ──────────────────────────────────────────────────────────────────
+const W = 820;
+const padL = 16, padR = 16;
+const padT = 46;   // title row
+const specY = 60;  // stacked proportion bar
+const specH = 10;
+const rowsY = specY + specH + 22;
+const rowH = 26;
+const padB = 30;
+const H = rowsY + rows.length * rowH + padB;
+
+const nameW = 132;               // language name column
+const valW = 116;                // size + percentage column
+const barX = padL + nameW + 12;
+const barW = W - padR - valW - barX;
+
+// Bars are scaled against the largest language, not the total: at these
+// proportions a share-of-total scale would flatten everything below first place
+// into an unreadable sliver.
+const maxN = rows[0].n;
+
+const spectrum = (() => {
+  let x = padL;
+  return rows
+    .map((r, i) => {
+      const w = (r.n / total) * (W - padL - padR);
+      const seg = `<rect x="${x.toFixed(1)}" y="${specY}" width="${Math.max(0, w - (i < rows.length - 1 ? 1.5 : 0)).toFixed(1)}" height="${specH}" rx="3" fill="${r.color}" opacity="0">
+      <animate attributeName="opacity" from="0" to="0.95" dur="0.5s" begin="${(0.25 + i * 0.05).toFixed(2)}s" fill="freeze"/>
+    </rect>`;
+      x += w;
+      return seg;
+    })
+    .join("\n  ");
+})();
+
+const bars = rows
+  .map((r, i) => {
+    const y = rowsY + i * rowH;
+    const w = Math.max(2, (r.n / maxN) * barW);
+    const begin = (0.3 + i * 0.07).toFixed(2);
+    return `<g>
+    <text x="${padL}" y="${y + 11}" font-family="${MONO}" font-size="12" fill="${C.text}">${esc(r.name)}</text>
+    <rect x="${barX}" y="${y + 2}" width="${barW}" height="11" rx="5.5" fill="${C.text}" fill-opacity="0.05"/>
+    <rect x="${barX}" y="${y + 2}" width="0" height="11" rx="5.5" fill="${r.color}">
+      <animate attributeName="width" from="0" to="${w.toFixed(1)}" dur="0.9s" begin="${begin}s" fill="freeze" calcMode="spline" keySplines="0.22 1 0.36 1" keyTimes="0;1"/>
+    </rect>
+    <text x="${W - padR}" y="${y + 11}" text-anchor="end" font-family="${MONO}" font-size="11" fill="${C.muted}">${size(r.n)} · ${pct(r.n).toFixed(1)}%</text>
+  </g>`;
+  })
+  .join("\n  ");
+
+const scope = includePrivate ? "repositories" : "public repositories";
+const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="Languages by bytes of code across ${repoCount} ${scope}">
+  <rect width="${W}" height="${H}" rx="12" fill="${C.bg}"/>
+  <rect x="0.5" y="0.5" width="${W - 1}" height="${H - 1}" rx="11.5" fill="none" stroke="${C.text}" stroke-opacity="0.06"/>
+  <text x="${padL}" y="27" font-family="${MONO}" font-size="15" font-weight="600" fill="${C.text}">Languages · by bytes of code</text>
+  <text x="${W - padR}" y="27" text-anchor="end" font-family="${MONO}" font-size="15" font-weight="600" fill="${C.a2}">${size(total)}</text>
+  ${spectrum}
+  ${bars}
+  <text x="${padL}" y="${H - 10}" font-family="${MONO}" font-size="11" fill="${C.muted}">${ranked.length} languages · ${repoCount} ${scope}</text>
+  <text x="${W - padR}" y="${H - 10}" text-anchor="end" font-family="${MONO}" font-size="11" fill="${C.muted}">updated ${stamp}</text>
+</svg>`;
+
+await mkdir("dist", { recursive: true });
+await writeFile("dist/languages.svg", svg);
+
+console.log(`languages.svg · ${ranked.length} languages across ${repoCount} ${scope}`);
+for (const [name, n] of ranked.slice(0, 12)) {
+  console.log(`  ${name.padEnd(16)} ${size(n).padStart(9)}  ${pct(n).toFixed(1)}%`);
+}

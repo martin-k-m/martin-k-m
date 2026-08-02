@@ -94,6 +94,12 @@ pip install git+https://github.com/martin-k-m/csvpeek   # csvpeek — CSV profil
 
 <div align="center">
 
+<img src="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/languages.svg" width="100%" alt="Languages ranked by bytes of code across my public repositories" />
+
+<sub>Ranked by bytes of code · public repositories · Linguist-attributed</sub>
+
+<br/><br/>
+
 ![Rust](https://img.shields.io/badge/Rust-000000?style=for-the-badge&logo=rust&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
 ![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)

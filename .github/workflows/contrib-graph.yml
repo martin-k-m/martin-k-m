@@ -1,4 +1,4 @@
-name: Cumulative contributions graph
+name: Profile graphs
 
 on:
   schedule:
@@ -8,6 +8,7 @@ on:
     branches: [main]
     paths:
       - "scripts/contrib-graph.mjs"
+      - "scripts/lang-graph.mjs"
       - ".github/workflows/contrib-graph.yml"
 
 permissions:
@@ -21,11 +22,19 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "20"
-      - name: Generate SVG
+      - name: Generate contribution SVGs
         env:
           GH_LOGIN: ${{ github.repository_owner }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: node scripts/contrib-graph.mjs
+      # Counts public repositories only: the Actions GITHUB_TOKEN cannot see
+      # private ones. Set INCLUDE_PRIVATE=1 with a PAT that has `repo` scope to
+      # count those too.
+      - name: Generate language SVG
+        env:
+          GH_LOGIN: ${{ github.repository_owner }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: node scripts/lang-graph.mjs
       - name: Publish to the assets branch
         uses: crazy-max/ghaction-github-pages@v4
         with:
