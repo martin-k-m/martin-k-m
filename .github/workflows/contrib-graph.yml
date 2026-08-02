@@ -19,10 +19,10 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
-          node-version: "20"
+          node-version: "24"
       - name: Generate contribution SVGs
         env:
           GH_LOGIN: ${{ github.repository_owner }}
@@ -69,7 +69,7 @@ jobs:
           # broken image, which is worse than the file being absent.
           find dist -name '*.svg' -empty -delete
       - name: Publish to the assets branch
-        uses: crazy-max/ghaction-github-pages@v4
+        uses: crazy-max/ghaction-github-pages@v5
         with:
           target_branch: assets
           build_dir: dist
