@@ -26,20 +26,20 @@
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/lang-history.svg" />
   <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/lang-history-light.svg" />
-  <img src="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/lang-history-light.svg" width="100%" alt="Each language's share of the code, day by day over the last 6 months" />
+  <img src="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/lang-history-light.svg" width="100%" alt="Each language's share of the code, day by day over the last 3 months" />
 </picture>
 
-<sub>Share of code, one point per day · rolling 6 months · reconstructed from each repository's tree as it stood that day</sub>
+<sub>Share of code, one point per day · rolling 3 months · reconstructed from each repository's tree as it stood that day</sub>
 
 <br/><br/>
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/contrib.svg" />
   <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/contrib-light.svg" />
-  <img src="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/contrib-light.svg" width="100%" alt="Contributions over the last 6 months, running total and per-day rate" />
+  <img src="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/contrib-light.svg" width="100%" alt="Contributions over the last 3 months, running total and per-day rate" />
 </picture>
 
-<sub>Running total and contributions per day · rolling 6 months</sub>
+<sub>Running total and contributions per day · rolling 3 months</sub>
 
 </div>
 

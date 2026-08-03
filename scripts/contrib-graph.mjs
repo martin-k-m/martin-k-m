@@ -1,5 +1,5 @@
 // Generate dist/contrib.svg and dist/contrib-light.svg: contributions over a
-// ROLLING 6-month window (the last 183 days), so the chart shifts forward on
+// ROLLING 3-month window (the last 92 days), so the chart shifts forward on
 // its own and picks up new commits every time the workflow runs.
 //
 // Both series are on it, sharing one axis: the running total as the filled
@@ -54,9 +54,9 @@ for (let y = created.getUTCFullYear(); y <= now.getUTCFullYear(); y++) {
 const allDates = [...byDate.keys()].sort();
 if (allDates.length === 0) { console.error("no contribution data"); process.exit(1); }
 
-// Rolling window: the last 6 months (~183 days).
-const sixMonthsAgo = now.getTime() - 183 * 24 * 60 * 60 * 1000;
-const dates = allDates.filter((d) => new Date(d).getTime() >= sixMonthsAgo);
+// Rolling window: the last 3 months (~92 days).
+const threeMonthsAgo = now.getTime() - 92 * 24 * 60 * 60 * 1000;
+const dates = allDates.filter((d) => new Date(d).getTime() >= threeMonthsAgo);
 const days = (dates.length ? dates : [allDates[allDates.length - 1]])
   .map((d) => ({ t: new Date(d).getTime(), v: byDate.get(d) || 0 }));
 
@@ -211,7 +211,7 @@ function renderChart({ title, valueLabel, points, secondary, markPeak }, C) {
 </svg>`;
 }
 
-// ── Cumulative (integral) over the last 6 months ─────────────────────────────────
+// ── Cumulative (integral) over the last 3 months ─────────────────────────────────
 let running = 0;
 const cumulative = days.map((d) => ({ t: d.t, v: (running += d.v) }));
 const total = running;
@@ -228,7 +228,7 @@ const perDay = total / days.length;
 const busiest = Math.max(...days.map((d) => d.v));
 
 const opts = {
-  title: "Contributions · 6 months",
+  title: "Contributions · 3 months",
   valueLabel: `${fmt(total)} · ${perDay.toFixed(1)}/day`,
   points: cumPts,
   secondary: {
