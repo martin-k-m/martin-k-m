@@ -531,6 +531,48 @@ for (const theme of Object.values(THEMES)) {
   await writeFile(`dist/lang-history${theme.suffix}.svg`, render(theme), "utf8");
 }
 
+// ── The daily series, for the snapshot chart's arrows ────────────────────────
+// languages.svg marks which way each language moved since the previous day. The
+// GitHub API it is built from only ever reports what exists now, so on its own
+// it has to record a total, wait a day, and compare — which means the arrows
+// show nothing at all until the job has run across a midnight.
+//
+// This script already knows the answer. Reconstructing the history is the whole
+// point of it: every sample point here is a real tree walked at a real commit,
+// so the difference between the last two is a measured day of work rather than
+// a guess. Writing it out lets the arrows be right on the first run.
+//
+// It is deliberately *not* mixed with the Linguist byte counts the bars are
+// drawn from. Those two measurements are close but not identical (26.0 MB
+// against 26.2 MB on the run this was written), and subtracting one from the
+// other would report the gap between two counting methods as if it were a day
+// of work. Both ends of the comparison come from this file or neither does.
+const DAILY_KEEP = 14;
+const dayKey = (d) => d.toISOString().slice(0, 10);
+
+// One entry per day. Sampling is daily, so collisions only happen at the tail
+// where the final point is "now" on a day already recorded; last write wins,
+// which is the more current measurement of the two.
+const daily = {};
+for (let i = Math.max(0, pts.length - DAILY_KEEP); i < pts.length; i++) {
+  daily[dayKey(pts[i])] = Object.fromEntries(data[i]);
+}
+await writeFile(
+  "dist/lang-daily.json",
+  JSON.stringify(
+    {
+      updated: now.toISOString(),
+      source: "git-tree",
+      note: "Bytes by extension, reconstructed by walking each repository's tree. Not Linguist's numbers; see lang-graph.mjs.",
+      repos: repos.length,
+      days: daily,
+    },
+    null,
+    2
+  ),
+  "utf8"
+);
+
 console.log(`lang-history.svg · ${pts.length} points every ${stepDays}d · ${repos.length} repos · ${measured} trees measured`);
 console.log(`  ${mon(pts[0])} -> ${mon(pts[pts.length - 1])}  ${size(finalTotal)} today  led by ${leadName}`);
 for (const name of bands) {

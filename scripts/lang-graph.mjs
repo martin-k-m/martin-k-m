@@ -19,7 +19,7 @@
 //                 at a local file server to exercise the arrows without waiting
 //                 a day for real history to accumulate.
 
-import { mkdir, writeFile } from "node:fs/promises";
+import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { fetchRepos } from "./repos.mjs";
 
 const login = process.env.GH_LOGIN;
@@ -40,48 +40,103 @@ for (const repo of repos) {
 }
 
 // ── Day-over-day movement ───────────────────────────────────────────────────
-// The API answers "how much is there now" and nothing else, so the only way to
-// say whether a language grew since yesterday is to have written down what it
-// was. dist/languages.json rides along to the assets branch with the SVGs, and
-// each run reads the published copy back as the previous state.
+// Each row is marked with which way that language moved since the previous day:
+// a green triangle up, a red one down, a blue bar for no change.
 //
-// Keyed by UTC date rather than by run, because the job fires hourly and the
-// arrow is a day-over-day claim: comparing 14:00 against 13:00 would leave
-// every row flat almost every time and call that "constant", which is a
-// different and much less interesting statement than the one being made.
+// The bars are Linguist's byte counts, and the API behind them only ever
+// reports what exists *now*. Deriving a change from it alone means recording a
+// total, waiting a day, and comparing, which is what this did at first — and it
+// meant the arrows showed nothing at all until the job had run across a
+// midnight. Shipping a feature that renders nothing for a day is not shipping
+// it.
+//
+// lang-history.mjs already has the answer. It reconstructs the history by
+// walking every repository's tree at every day boundary, so the gap between its
+// last two samples is a measured day rather than a wait. It now writes that out
+// as dist/lang-daily.json and runs first, so the arrows are right on run one.
+//
+// The two measurements are NOT mixed. Tree-walk bytes and Linguist bytes are
+// close but not equal — 26.0 MB against 26.2 MB on the run this was written —
+// so subtracting one from the other would publish the gap between two counting
+// methods as if it were a day of work. Both ends of the comparison come from
+// the same source or there is no arrow. That source is named in the footer,
+// because a reader subtracting the printed byte totals would otherwise get a
+// different number from the one the arrow is based on.
 const HISTORY_DAYS = 14;
 const today = new Date().toISOString().slice(0, 10);
 const repo = process.env.GITHUB_REPOSITORY || `${login}/${login}`;
 
+const readJson = async (url, init) => {
+  const res = await fetch(url, init);
+  if (res.ok) return await res.json();
+  if (res.status !== 404) console.warn(`  ${url}: HTTP ${res.status}, treating as absent`);
+  return null;
+};
+
 let history = {};
+let basis = null; // which measurement the arrows are computed from
+
+// First choice: this run's reconstruction, written moments ago by lang-history.
 try {
-  const res = await fetch(
-    process.env.HISTORY_URL || `https://raw.githubusercontent.com/${repo}/assets/languages.json`,
-    { headers: { "Cache-Control": "no-cache" } }
-  );
-  if (res.ok) {
-    const prior = await res.json();
-    if (prior && typeof prior.days === "object") history = prior.days;
-  } else if (res.status !== 404) {
-    console.warn(`  previous totals: HTTP ${res.status}, treating as absent`);
+  const local = JSON.parse(await readFile("dist/lang-daily.json", "utf8"));
+  if (local && typeof local.days === "object" && Object.keys(local.days).length > 1) {
+    history = local.days;
+    basis = "tree";
   }
-} catch (err) {
-  // A chart with no arrows is fine; a failed build over a missing history file
-  // is not. This is the first run's normal path too.
-  console.warn(`  previous totals unavailable (${err.message}), rendering without arrows`);
+} catch {
+  // Absent whenever lang-history did not run or could not finish — it is
+  // continue-on-error in CI because it needs a PAT. Fall through.
+}
+
+// Fallback: the totals this script published on previous runs. Same measurement
+// as the bars, but only useful once it has spanned a midnight.
+if (!basis) {
+  try {
+    const prior = await readJson(
+      process.env.HISTORY_URL || `https://raw.githubusercontent.com/${repo}/assets/languages.json`,
+      { headers: { "Cache-Control": "no-cache" } }
+    );
+    if (prior && typeof prior.days === "object") {
+      history = prior.days;
+      basis = "linguist";
+    }
+  } catch (err) {
+    // A chart with no arrows is fine; a failed build over a missing history
+    // file is not.
+    console.warn(`  previous totals unavailable (${err.message}), rendering without arrows`);
+  }
 }
 
 // The most recent record from a day that is not today. Yesterday usually, but
-// the job can be down for a weekend and comparing against the last day there
-// is data for beats showing nothing.
+// the job can be down for a weekend and comparing against the last day there is
+// data for beats showing nothing.
 const priorDates = Object.keys(history).filter((d) => d < today).sort();
 const priorDate = priorDates[priorDates.length - 1];
 const previous = priorDate ? history[priorDate] : null;
 
-/** Bytes moved since `priorDate`, or null when there is nothing to compare to. */
+// The "now" side of the comparison has to match the "then" side. Against the
+// tree reconstruction that is its own latest sample, not the Linguist totals.
+const latestDates = Object.keys(history).sort();
+const current =
+  basis === "tree" && latestDates.length ? history[latestDates[latestDates.length - 1]] : null;
+
+// Every language the comparison source has ever had a number for. Linguist
+// classifies things the tree walk does not — HCL, Dockerfile, Makefile, PLpgSQL
+// and so on are recognised by the API but are not in that script's extension
+// table — and those rows would otherwise come out as `0 - 0`, drawing a blue
+// "did not move" bar over a language nothing measured. Absent from the source
+// is a different statement from flat, and it gets no marker.
+const measuredLangs = new Set();
+if (basis === "tree") {
+  for (const day of Object.values(history)) for (const k of Object.keys(day)) measuredLangs.add(k);
+}
+
+/** Bytes moved since `priorDate`; null when nothing measured this language. */
 function delta(name) {
   if (!previous) return null;
-  return (bytes.get(name) || 0) - (previous[name] || 0);
+  if (basis === "tree" && !measuredLangs.has(name)) return null;
+  const nowBytes = current ? current[name] || 0 : bytes.get(name) || 0;
+  return nowBytes - (previous[name] || 0);
 }
 
 const ranked = [...bytes.entries()].sort((a, b) => b[1] - a[1]);
@@ -126,8 +181,13 @@ if (tail.length) {
     name: `Other · ${tail.length}`,
     n: tail.reduce((sum, [, n]) => sum + n, 0),
     // The folded row moves if anything inside it moved, so its arrow is the sum
-    // of the parts rather than any one language's direction.
-    d: previous ? tail.reduce((sum, [name]) => sum + delta(name), 0) : null,
+    // of the parts rather than any one language's direction. Only the parts the
+    // source actually measured count toward it; if it measured none of them the
+    // row gets no marker, rather than a flat one summed out of nothing.
+    d: (() => {
+      const seen = tail.map(([name]) => delta(name)).filter((v) => v !== null);
+      return seen.length ? seen.reduce((a, b) => a + b, 0) : null;
+    })(),
     // Colour is chosen per theme: a near-black "other" band vanishes on a white
     // background, and a pale one vanishes on a dark background.
     other: true,
@@ -281,7 +341,14 @@ if (privateCount) scopeParts.push(`${privateCount} private`);
 if (contributedCount) scopeParts.push(`${contributedCount} contributed`);
 // Name the day the arrows are measured against. "since yesterday" would be a
 // guess on any run that follows a gap in the schedule.
-if (priorDate) scopeParts.push(`▲▼ vs ${priorDate}`);
+//
+// And name the measurement when it is not the one the bars are drawn from, so
+// nobody subtracts two printed totals and wonders why the arrow disagrees.
+if (priorDate) {
+  scopeParts.push(
+    basis === "tree" ? `▲▼ vs ${priorDate} by tree walk` : `▲▼ vs ${priorDate}`
+  );
+}
 const scope = scopeParts.join(" · ");
 
 function render(C) {

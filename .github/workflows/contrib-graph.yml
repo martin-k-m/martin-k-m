@@ -61,21 +61,16 @@ jobs:
           GH_LOGIN: ${{ github.repository_owner }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: node scripts/contrib-graph.mjs
-      # Needs a PROFILE_TOKEN secret — a PAT with `repo` scope. The Actions
-      # GITHUB_TOKEN is scoped to this repository alone and cannot enumerate the
-      # owner's repositories, so without the secret the script refuses to render
-      # rather than publish a chart reading "1 language · 1 repo".
-      - name: Generate language SVG
-        id: lang
-        continue-on-error: true
-        env:
-          GH_LOGIN: ${{ github.repository_owner }}
-          GITHUB_TOKEN: ${{ secrets.PROFILE_TOKEN || secrets.GITHUB_TOKEN }}
-        run: node scripts/lang-graph.mjs
-
       # This one clones every repository to read the tree as it stood at each
-      # month end, because the API has no historical language data. It needs the
-      # same PAT, both to enumerate and to clone the private ones.
+      # day boundary, because the API has no historical language data. It needs
+      # a PROFILE_TOKEN secret — a PAT with `repo` scope — both to enumerate and
+      # to clone the private ones.
+      #
+      # It runs BEFORE the snapshot chart, which is the opposite of the order it
+      # was in and is not cosmetic. It writes dist/lang-daily.json, the day-over-
+      # day series the snapshot chart's arrows are computed from. Run the other
+      # way round the arrows are always a run behind, which on the first run
+      # means no arrows at all.
       - name: Generate language history SVG
         id: history
         continue-on-error: true
@@ -83,6 +78,18 @@ jobs:
           GH_LOGIN: ${{ github.repository_owner }}
           GITHUB_TOKEN: ${{ secrets.PROFILE_TOKEN || secrets.GITHUB_TOKEN }}
         run: node scripts/lang-history.mjs
+
+      # Same PAT, same reason: the Actions GITHUB_TOKEN is scoped to this
+      # repository alone and cannot enumerate the owner's repositories, so
+      # without the secret the script refuses to render rather than publish a
+      # chart reading "1 language · 1 repo".
+      - name: Generate language SVG
+        id: lang
+        continue-on-error: true
+        env:
+          GH_LOGIN: ${{ github.repository_owner }}
+          GITHUB_TOKEN: ${{ secrets.PROFILE_TOKEN || secrets.GITHUB_TOKEN }}
+        run: node scripts/lang-graph.mjs
 
       # The publish step replaces the whole assets branch, so a chart that failed
       # to regenerate would be deleted rather than left alone, breaking the README
@@ -104,12 +111,13 @@ jobs:
           # languages.json is the only state these charts carry between runs: it
           # is what the day-over-day arrows are measured against. Publishing
           # without it would silently reset every arrow and lose the history.
-          if [ ! -s dist/languages.json ]; then
-            curl -fsSL -o dist/languages.json \
-              "https://raw.githubusercontent.com/${{ github.repository }}/assets/languages.json" \
-              || echo "::warning::no published languages.json to preserve"
-            [ -s dist/languages.json ] || rm -f dist/languages.json
-          fi
+          for j in languages lang-daily; do
+            [ -s "dist/$j.json" ] && continue
+            curl -fsSL -o "dist/$j.json" \
+              "https://raw.githubusercontent.com/${{ github.repository }}/assets/$j.json" \
+              || echo "::warning::no published $j.json to preserve"
+            [ -s "dist/$j.json" ] || rm -f "dist/$j.json"
+          done
       - name: Publish to the assets branch
         uses: crazy-max/ghaction-github-pages@v5
         with:
