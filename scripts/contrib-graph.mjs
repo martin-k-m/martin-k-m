@@ -61,7 +61,18 @@ const days = (dates.length ? dates : [allDates[allDates.length - 1]])
   .map((d) => ({ t: new Date(d).getTime(), v: byDate.get(d) || 0 }));
 
 const fmt = (n) => n.toLocaleString("en-US");
-const monthYr = (t) => new Date(t).toLocaleDateString("en-US", { month: "short", year: "2-digit", timeZone: "UTC" });
+// "Aug 26" reads as a day of the month rather than a year, which is how it was
+// misread. The apostrophe fixes it.
+const monthYr = (t) => {
+  const d = new Date(t);
+  return `${d.toLocaleDateString("en-US", { month: "short", timeZone: "UTC" })} '${String(
+    d.getUTCFullYear()
+  ).slice(-2)}`;
+};
+
+// The window ends today, so the right-hand label says so.
+const dayLabel = (t) =>
+  new Date(t).toLocaleDateString("en-US", { month: "short", day: "numeric", timeZone: "UTC" });
 
 // Two palettes so the README can serve whichever matches the reader's theme.
 // The blue-to-purple accent is the brand and stays put; only the surface, the
@@ -196,7 +207,7 @@ function renderChart({ title, valueLabel, points, secondary, markPeak }, C) {
   </circle>
   <text x="${padL}" y="${H - 10}" font-family="'JetBrains Mono',ui-monospace,monospace" font-size="11" fill="${C.muted}">${monthYr(t0)}</text>
   <text x="${W / 2}" y="${H - 10}" text-anchor="middle" font-family="'JetBrains Mono',ui-monospace,monospace" font-size="11" fill="${C.muted}">updated ${stamp}</text>
-  <text x="${W - padR}" y="${H - 10}" text-anchor="end" font-family="'JetBrains Mono',ui-monospace,monospace" font-size="11" fill="${C.muted}">${monthYr(t1)}</text>
+  <text x="${W - padR}" y="${H - 10}" text-anchor="end" font-family="'JetBrains Mono',ui-monospace,monospace" font-size="11" fill="${C.muted}">${dayLabel(t1)}</text>
 </svg>`;
 }
 

@@ -331,7 +331,17 @@ function size(n) {
   return `${n} B`;
 }
 const esc = (s) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-const mon = (d) => d.toLocaleDateString("en-US", { month: "short", year: "2-digit", timeZone: "UTC" });
+// "Aug 26" reads as the 26th of August, not August 2026, which is exactly how
+// it was misread. The apostrophe is what makes it a year.
+const mon = (d) =>
+  `${d.toLocaleDateString("en-US", { month: "short", timeZone: "UTC" })} '${String(
+    d.getUTCFullYear()
+  ).slice(-2)}`;
+
+// The right-hand edge is today, so it says today rather than naming the month
+// it happens to fall in.
+const dayLabel = (d) =>
+  d.toLocaleDateString("en-US", { month: "short", day: "numeric", timeZone: "UTC" });
 
 // Roughly six labels along the axis, whatever the span turns out to be.
 const labelEvery = Math.max(1, Math.round(pts.length / 6));
@@ -446,7 +456,7 @@ function render(C) {
   const xLabels = pts
     .map((d, i) =>
       i % labelEvery === 0 || i === pts.length - 1
-        ? `<text x="${x(i).toFixed(1)}" y="${H - padB + 18}" text-anchor="middle" font-family="${MONO}" font-size="10" fill="${C.muted}">${mon(d)}</text>`
+        ? `<text x="${x(i).toFixed(1)}" y="${H - padB + 18}" text-anchor="${i === pts.length - 1 ? "end" : "middle"}" font-family="${MONO}" font-size="10" fill="${C.muted}">${i === pts.length - 1 ? dayLabel(d) : mon(d)}</text>`
         : ""
     )
     .filter(Boolean)
