@@ -2,7 +2,7 @@ name: Profile graphs
 
 on:
   schedule:
-    # Hourly. The charts are a rolling six-month window ending today, so the
+    # Hourly. The charts are a rolling three-month window ending today, so the
     # left edge drops a day and the right edge gains one every day on its own;
     # the hourly tick is what keeps the last point current within the day.
     # The clone cache below means the expensive part, cloning every repository
@@ -93,6 +93,15 @@ jobs:
           # curl writes an empty file on failure, and an empty SVG renders as a
           # broken image, which is worse than the file being absent.
           find dist -name '*.svg' -empty -delete
+          # languages.json is the only state these charts carry between runs: it
+          # is what the day-over-day arrows are measured against. Publishing
+          # without it would silently reset every arrow and lose the history.
+          if [ ! -s dist/languages.json ]; then
+            curl -fsSL -o dist/languages.json \
+              "https://raw.githubusercontent.com/${{ github.repository }}/assets/languages.json" \
+              || echo "::warning::no published languages.json to preserve"
+            [ -s dist/languages.json ] || rm -f dist/languages.json
+          fi
       - name: Publish to the assets branch
         uses: crazy-max/ghaction-github-pages@v5
         with:

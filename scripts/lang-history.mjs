@@ -1,5 +1,5 @@
 // Generate dist/lang-history.svg: the same measurement as languages.svg, but
-// across a rolling six-month window instead of as a single snapshot.
+// across a rolling three-month window instead of as a single snapshot.
 //
 // GitHub's API only reports what a repository looks like *now*. There is no
 // historical language endpoint, so the history has to be reconstructed from the
@@ -244,13 +244,13 @@ async function measure(at) {
 
 const nonEmpty = (m) => [...m.values()].reduce((a, b) => a + b, 0) > 0;
 
-// A rolling six-month window, matching the contributions chart, rather than
+// A rolling three-month window, matching the contributions chart, rather than
 // everything since the first commit. All-time answers a different and less
 // useful question: the early years are a thin sliver that never moves, and the
 // composition that is actually shifting gets compressed into the right-hand
-// edge. Half a year is the span where the lines have something to say, and both
+// edge. A quarter is the span where the lines have something to say, and both
 // edges move forward a day every day the job runs.
-const WINDOW_DAYS = 183;
+const WINDOW_DAYS = 92;
 const from = new Date(now.getTime() - WINDOW_DAYS * DAY);
 
 const { marks, stepDays } = samplePoints(from, now);
@@ -520,7 +520,7 @@ function render(C) {
   <g opacity="0"><animate attributeName="opacity" from="0" to="1" dur="0.4s" begin="1.1s" fill="freeze"/>
   ${endLabels(C)}
   </g>
-  <text x="${padL}" y="${H - 10}" font-family="${MONO}" font-size="10" fill="${C.muted}">6 months · sampled every ${stepDays} day${stepDays===1?"":"s"} · ${repos.length} repos · ${size(finalTotal)} today · extensions Linguist counts as code</text>
+  <text x="${padL}" y="${H - 10}" font-family="${MONO}" font-size="10" fill="${C.muted}">3 months · sampled every ${stepDays} day${stepDays===1?"":"s"} · ${repos.length} repos · ${size(finalTotal)} today · extensions Linguist counts as code</text>
   <text x="${W - 14}" y="${H - 10}" text-anchor="end" font-family="${MONO}" font-size="10" fill="${C.muted}">updated ${now.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" })}</text>
   ${hoverLayer(C)}
 </svg>`;
