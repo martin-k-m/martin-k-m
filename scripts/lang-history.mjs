@@ -416,6 +416,13 @@ function lines(C) {
 // in a legend that makes the reader match colours back to the chart. Lines that
 // finish close together would print on top of each other, so the labels are
 // pushed apart while the dot stays on the real value.
+//
+// One decimal, not whole percent. The top two languages sit within a point of
+// each other, so rounding printed "42%" against "42%" for two lines the chart
+// is drawing at visibly different heights — the label contradicted the picture
+// next to it. The gridline ticks stay whole because those are chosen round
+// values (STEP is 0.05 to 0.25), not measurements, and "20.0%" on an axis is
+// false precision about a number nobody measured.
 function endLabels(C) {
   const rows = bands
     .map((name) => ({ name, share: shares[shares.length - 1].get(name) || 0 }))
@@ -439,7 +446,7 @@ function endLabels(C) {
           : "";
       return `${leader}<rect x="${lx}" y="${(ys[i] - 4.5).toFixed(1)}" width="9" height="9" rx="2.5" fill="${strokeOf(r.name, C)}"/>
   <text x="${lx + 14}" y="${(ys[i] + 3.5).toFixed(1)}" font-family="${MONO}" font-size="11" fill="${C.text}">${esc(label)}</text>
-  <text x="${W - 14}" y="${(ys[i] + 3.5).toFixed(1)}" text-anchor="end" font-family="${MONO}" font-size="11" fill="${C.muted}">${(r.share * 100).toFixed(0)}%</text>`;
+  <text x="${W - 14}" y="${(ys[i] + 3.5).toFixed(1)}" text-anchor="end" font-family="${MONO}" font-size="11" fill="${C.muted}">${(r.share * 100).toFixed(1)}%</text>`;
     })
     .join("\n  ");
 }
@@ -493,12 +500,20 @@ function render(C) {
     )
     .join("\n  ");
 
+  // The last point is always labelled with its date, and the regular ticks land
+  // wherever the modulo puts them — which at 92 points was i=90 immediately
+  // before i=91, printing "Aug '26" and "Aug 3" about nine pixels apart, on top
+  // of each other. A regular tick is dropped when it is too close to the end
+  // label to sit beside it; the end of the window is the more useful of the two
+  // to keep, since it is the only one naming a day.
+  const END_GAP = 52;
+  const endX = x(pts.length - 1);
   const xLabels = pts
-    .map((d, i) =>
-      i % labelEvery === 0 || i === pts.length - 1
-        ? `<text x="${x(i).toFixed(1)}" y="${H - padB + 18}" text-anchor="${i === pts.length - 1 ? "end" : "middle"}" font-family="${MONO}" font-size="10" fill="${C.muted}">${i === pts.length - 1 ? dayLabel(d) : mon(d)}</text>`
-        : ""
-    )
+    .map((d, i) => {
+      const last = i === pts.length - 1;
+      if (!last && (i % labelEvery !== 0 || endX - x(i) < END_GAP)) return "";
+      return `<text x="${x(i).toFixed(1)}" y="${H - padB + 18}" text-anchor="${last ? "end" : "middle"}" font-family="${MONO}" font-size="10" fill="${C.muted}">${last ? dayLabel(d) : mon(d)}</text>`;
+    })
     .filter(Boolean)
     .join("\n  ");
 
@@ -507,7 +522,7 @@ function render(C) {
   <rect width="${W}" height="${H}" rx="12" fill="${C.bg}"/>
   <rect x="0.5" y="0.5" width="${W - 1}" height="${H - 1}" rx="11.5" fill="none" stroke="${C.text}" stroke-opacity="${C.border}"/>
   <text x="${padL}" y="27" font-family="${MONO}" font-size="15" font-weight="600" fill="${C.text}">Languages over time · share of code</text>
-  <text x="${W - 14}" y="27" text-anchor="end" font-family="${MONO}" font-size="15" font-weight="600" fill="${C.accent}">${esc(leadName)} ${(leadShare * 100).toFixed(0)}%</text>
+  <text x="${W - 14}" y="27" text-anchor="end" font-family="${MONO}" font-size="15" font-weight="600" fill="${C.accent}">${esc(leadName)} ${(leadShare * 100).toFixed(1)}%</text>
   ${grid}
   <clipPath id="reveal${C.suffix}"><rect x="${padL - 4}" y="${padT - 8}" width="0" height="${plotH + 16}">
     <animate attributeName="width" from="0" to="${plotW + 12}" dur="1.1s" begin="0.2s" fill="freeze" calcMode="spline" keySplines="0.22 1 0.36 1" keyTimes="0;1"/>

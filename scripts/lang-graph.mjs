@@ -131,12 +131,53 @@ if (basis === "tree") {
   for (const day of Object.values(history)) for (const k of Object.keys(day)) measuredLangs.add(k);
 }
 
-/** Bytes moved since `priorDate`; null when nothing measured this language. */
+// ── Share, not size ─────────────────────────────────────────────────────────
+// The marker reports the change in each language's *share* of the code, not the
+// change in its byte count. Bytes almost only ever go up: on any day with work
+// in it every language that was touched grows and every row points up, which
+// says a day happened and nothing about the languages. Shares are a fixed
+// hundred percent split between them, so they sum to zero — something can only
+// rise if something else falls, and the arrow becomes a statement about what
+// the code is made of rather than about whether the week was busy.
+//
+// The unit is percentage points. A row moving 41.9% -> 42.3% is +0.4 pp, which
+// is not the same as being 0.4% larger, and the tooltip prints both ends so
+// there is nothing to misread.
+const sumOf = (obj) => Object.values(obj).reduce((a, b) => a + b, 0);
+const nowTotals = current ? sumOf(current) : [...bytes.values()].reduce((a, b) => a + b, 0);
+const prevTotal = previous ? sumOf(previous) : 0;
+
+const shareIn = (name, src, denom) => {
+  if (!denom) return 0;
+  const v = src instanceof Map ? src.get(name) || 0 : src[name] || 0;
+  return (v / denom) * 100;
+};
+
+// Rounded to the one decimal the rows actually print. A row reading 42.3% next
+// to an up arrow should be a claim the reader can check against the row above
+// it tomorrow; comparing at full precision would put arrows on movement too
+// small to appear in either number shown.
+const PRECISION = 1;
+const round = (v) => Number(v.toFixed(PRECISION));
+
+/**
+ * Percentage points of share moved since `priorDate`, at the precision the
+ * chart prints. Null when the comparison source never measured this language.
+ */
 function delta(name) {
   if (!previous) return null;
   if (basis === "tree" && !measuredLangs.has(name)) return null;
-  const nowBytes = current ? current[name] || 0 : bytes.get(name) || 0;
-  return nowBytes - (previous[name] || 0);
+  const nowShare = round(shareIn(name, current || bytes, nowTotals));
+  const thenShare = round(shareIn(name, previous, prevTotal));
+  return round(nowShare - thenShare);
+}
+
+/** The two ends of that comparison, for the tooltip. */
+function shares(name) {
+  return {
+    then: round(shareIn(name, previous || {}, prevTotal)),
+    now: round(shareIn(name, current || bytes, nowTotals)),
+  };
 }
 
 const ranked = [...bytes.entries()].sort((a, b) => b[1] - a[1]);
@@ -175,19 +216,22 @@ const rows = shown.map(([name, n]) => ({
   n,
   color: colors.get(name) || "#7C6CFF",
   d: delta(name),
+  s: shares(name),
 }));
 if (tail.length) {
+  const seenTail = tail.map(([name]) => name).filter((name) => delta(name) !== null);
+  // The folded row's share is the share of the whole fold, so it is summed from
+  // the parts on each side and differenced once, rather than summing a column
+  // of already-rounded per-language deltas into a bigger rounding error. Only
+  // the parts the source measured count; if it measured none of them the row
+  // gets no marker rather than a flat one summed out of nothing.
+  const tailNow = round(seenTail.reduce((a, name) => a + shareIn(name, current || bytes, nowTotals), 0));
+  const tailThen = round(seenTail.reduce((a, name) => a + shareIn(name, previous || {}, prevTotal), 0));
   rows.push({
     name: `Other · ${tail.length}`,
     n: tail.reduce((sum, [, n]) => sum + n, 0),
-    // The folded row moves if anything inside it moved, so its arrow is the sum
-    // of the parts rather than any one language's direction. Only the parts the
-    // source actually measured count toward it; if it measured none of them the
-    // row gets no marker, rather than a flat one summed out of nothing.
-    d: (() => {
-      const seen = tail.map(([name]) => delta(name)).filter((v) => v !== null);
-      return seen.length ? seen.reduce((a, b) => a + b, 0) : null;
-    })(),
+    d: seenTail.length ? round(tailNow - tailThen) : null,
+    s: { then: tailThen, now: tailNow },
     // Colour is chosen per theme: a near-black "other" band vanishes on a white
     // background, and a pale one vanishes on a dark background.
     other: true,
@@ -282,8 +326,13 @@ const barColor = (row, C) => (row.other ? C.other : row.color);
 function markerFor(row, C) {
   if (row.d === null || row.d === undefined) return "";
   const cy = 7.5; // centre of the 11px-tall bar, relative to the row group
+  const pct = (v) => `${v.toFixed(PRECISION)}%`;
+  // Both ends, always, so the tooltip is checkable rather than a bare number:
+  // "0.4" alone is ambiguous between four tenths of a point and four tenths of
+  // a percent of the row, which are different quantities.
+  const span = `${pct(row.s.then)} → ${pct(row.s.now)} since ${priorDate}`;
   if (row.d === 0) {
-    return `<g><title>no change since ${priorDate}</title>
+    return `<g><title>share unchanged, ${span}</title>
       <rect x="${(markX - 5).toFixed(1)}" y="${(cy - 1.25).toFixed(1)}" width="10" height="2.5" rx="1.25" fill="${C.flat}"/>
     </g>`;
   }
@@ -292,8 +341,8 @@ function markerFor(row, C) {
   const tri = up
     ? `${markX},${cy - 4.5} ${markX - 5},${cy + 3.5} ${markX + 5},${cy + 3.5}`
     : `${markX},${cy + 4.5} ${markX - 5},${cy - 3.5} ${markX + 5},${cy - 3.5}`;
-  const moved = `${up ? "+" : "-"}${size(Math.abs(row.d))}`;
-  return `<g><title>${moved} since ${priorDate}</title>
+  const moved = `${up ? "+" : "−"}${Math.abs(row.d).toFixed(PRECISION)} pp`;
+  return `<g><title>${moved} · ${span}</title>
       <polygon points="${tri}" fill="${c}"/>
     </g>`;
 }
@@ -346,7 +395,7 @@ if (contributedCount) scopeParts.push(`${contributedCount} contributed`);
 // nobody subtracts two printed totals and wonders why the arrow disagrees.
 if (priorDate) {
   scopeParts.push(
-    basis === "tree" ? `▲▼ vs ${priorDate} by tree walk` : `▲▼ vs ${priorDate}`
+    basis === "tree" ? `▲▼ share vs ${priorDate} by tree walk` : `▲▼ share vs ${priorDate}`
   );
 }
 const scope = scopeParts.join(" · ");
