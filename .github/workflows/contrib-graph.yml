@@ -2,10 +2,11 @@ name: Profile graphs
 
 on:
   schedule:
-    # Hourly. A run takes about a minute, and the clone cache below means the
-    # expensive part, cloning every repository to rebuild the language history,
-    # is a fetch rather than a fresh clone. Six hours meant a chart could be
-    # most of a day stale before anyone looked.
+    # Hourly. The charts are a rolling six-month window ending today, so the
+    # left edge drops a day and the right edge gains one every day on its own;
+    # the hourly tick is what keeps the last point current within the day.
+    # The clone cache below means the expensive part, cloning every repository
+    # to rebuild the language history, is a fetch rather than a fresh clone.
     #
     # GitHub runs scheduled workflows late under load, sometimes by half an
     # hour, so treat this as "about hourly" rather than on the minute.
