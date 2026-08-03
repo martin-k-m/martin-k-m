@@ -171,6 +171,14 @@ I'm a co-founder. Credda turns real, both-party-confirmed commitment history int
   <td><a href="https://github.com/martin-k-m/tandem/releases"><img src="https://img.shields.io/github/v/release/martin-k-m/tandem?sort=semver&display_name=tag&label=&style=flat-square&color=7C6CFF"/></a></td>
 </tr>
 </tbody>
+  <tbody>
+  <tr>
+    <td><a href="https://github.com/martin-k-m/blueprint"><b>blueprint</b></a></td>
+    <td>Generates a Rails application from one schema file: models, migrations, REST controllers, routes and specs. A column, the validation guarding it and the parameter permitting it are declared once rather than three times, so they cannot drift apart. No runtime dependencies, not even ActiveSupport.</td>
+    <td><img src="https://img.shields.io/badge/Ruby-CC342D?style=flat-square&logo=ruby&logoColor=fff"/></td>
+    <td><a href="https://github.com/martin-k-m/blueprint/releases"><img src="https://img.shields.io/github/v/release/martin-k-m/blueprint?sort=semver&display_name=tag&label=&style=flat-square&color=7C6CFF"/></a></td>
+  </tr>
+  </tbody>
 <tbody>
 <tr>
   <td><a href="https://github.com/martin-k-m/csvpeek"><b>csvpeek</b></a></td>
