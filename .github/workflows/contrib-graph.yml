@@ -2,15 +2,26 @@ name: Profile graphs
 
 on:
   schedule:
-    # Hourly. The charts are a rolling three-month window ending today, so the
-    # left edge drops a day and the right edge gains one every day on its own;
-    # the hourly tick is what keeps the last point current within the day.
-    # The clone cache below means the expensive part, cloning every repository
-    # to rebuild the language history, is a fetch rather than a fresh clone.
+    # Asks for twice an hour. Do not read that as a promise.
     #
-    # GitHub runs scheduled workflows late under load, sometimes by half an
-    # hour, so treat this as "about hourly" rather than on the minute.
-    - cron: "7 * * * *"
+    # Scheduled workflows on GitHub are best effort, and the gap between what
+    # the cron asks for and what arrives is large. Measured over the five days
+    # to 2026-08-03, a `7 * * * *` cron delivered 24 runs against the 132 it
+    # asked for — 18% — with a median gap of 5.4 hours and a worst gap of 8.8.
+    # Not one of them started on the minute requested; observed start minutes
+    # ranged across :01 to :52.
+    #
+    # Two mitigations, neither a fix. Asking twice an hour rather than once
+    # doubles the number of chances to be picked up. And both slots are away
+    # from the top of the hour, which is the most contended part of the queue
+    # because it is where almost everyone points their cron.
+    #
+    # The charts do not depend on this to stay correct. Their window is derived
+    # from the clock at render time, so it is right whenever it runs; the
+    # schedule only decides how stale the last point is allowed to get. For a
+    # refresh on demand, use the repository_dispatch below or run the workflow
+    # manually.
+    - cron: "23,53 * * * *"
   # So any repository can ask for a refresh right after it pushes, rather than
   # waiting for the next tick:
   #   gh api repos/martin-k-m/martin-k-m/dispatches -f event_type=refresh-graphs
@@ -28,6 +39,14 @@ on:
 
 permissions:
   contents: write
+
+# Runners are UTC, and these charts are about one person's days. Left in UTC the
+# profile read a day behind for the first three hours of every local evening:
+# stamped with yesterday's date, and comparing against the day before that,
+# while being completely up to date. Every script formats and buckets days in
+# this zone instead. Change it here, in one place.
+env:
+  PROFILE_TZ: Europe/Helsinki
 
 jobs:
   build:

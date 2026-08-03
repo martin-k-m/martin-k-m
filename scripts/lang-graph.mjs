@@ -21,6 +21,7 @@
 
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { fetchRepos } from "./repos.mjs";
+import { dayKey, stamp as stampOf, TZ } from "./when.mjs";
 
 const login = process.env.GH_LOGIN;
 const token = process.env.GITHUB_TOKEN;
@@ -63,7 +64,7 @@ for (const repo of repos) {
 // because a reader subtracting the printed byte totals would otherwise get a
 // different number from the one the arrow is based on.
 const HISTORY_DAYS = 14;
-const today = new Date().toISOString().slice(0, 10);
+const today = dayKey();
 const repo = process.env.GITHUB_REPOSITORY || `${login}/${login}`;
 
 const readJson = async (url, init) => {
@@ -238,12 +239,7 @@ if (tail.length) {
   });
 }
 
-const stamp = new Date().toLocaleDateString("en-US", {
-  month: "short",
-  day: "numeric",
-  year: "numeric",
-  timeZone: "UTC",
-});
+const stamp = stampOf();
 
 function size(n) {
   if (n >= 1024 * 1024) return `${(n / (1024 * 1024)).toFixed(1)} MB`;

@@ -29,6 +29,7 @@ import { promisify } from "node:util";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { fetchRepos } from "./repos.mjs";
+import { dayKey as tzDayKey, stamp as stampOf, dayLabel as tzDayLabel, monthYr as tzMonthYr } from "./when.mjs";
 
 const exec = promisify(execFile);
 
@@ -331,17 +332,15 @@ function size(n) {
   return `${n} B`;
 }
 const esc = (s) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-// "Aug 26" reads as the 26th of August, not August 2026, which is exactly how
-// it was misread. The apostrophe is what makes it a year.
-const mon = (d) =>
-  `${d.toLocaleDateString("en-US", { month: "short", timeZone: "UTC" })} '${String(
-    d.getUTCFullYear()
-  ).slice(-2)}`;
+// Both come from when.mjs so every chart names a day the same way and in the
+// same timezone. "Aug 26" reads as the 26th of August rather than August 2026,
+// which is exactly how it was misread, and the apostrophe there is what makes
+// it a year.
+const mon = (d) => tzMonthYr(d);
 
 // The right-hand edge is today, so it says today rather than naming the month
 // it happens to fall in.
-const dayLabel = (d) =>
-  d.toLocaleDateString("en-US", { month: "short", day: "numeric", timeZone: "UTC" });
+const dayLabel = (d) => tzDayLabel(d);
 
 // Roughly six labels along the axis, whatever the span turns out to be.
 const labelEvery = Math.max(1, Math.round(pts.length / 6));
@@ -536,7 +535,7 @@ function render(C) {
   ${endLabels(C)}
   </g>
   <text x="${padL}" y="${H - 10}" font-family="${MONO}" font-size="10" fill="${C.muted}">3 months · sampled every ${stepDays} day${stepDays===1?"":"s"} · ${repos.length} repos · ${size(finalTotal)} today · extensions Linguist counts as code</text>
-  <text x="${W - 14}" y="${H - 10}" text-anchor="end" font-family="${MONO}" font-size="10" fill="${C.muted}">updated ${now.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" })}</text>
+  <text x="${W - 14}" y="${H - 10}" text-anchor="end" font-family="${MONO}" font-size="10" fill="${C.muted}">updated ${stampOf(now)}</text>
   ${hoverLayer(C)}
 </svg>`;
 }
@@ -563,7 +562,7 @@ for (const theme of Object.values(THEMES)) {
 // other would report the gap between two counting methods as if it were a day
 // of work. Both ends of the comparison come from this file or neither does.
 const DAILY_KEEP = 14;
-const dayKey = (d) => d.toISOString().slice(0, 10);
+const dayKey = tzDayKey;
 
 // One entry per day. Sampling is daily, so collisions only happen at the tail
 // where the final point is "now" on a day already recorded; last write wins,

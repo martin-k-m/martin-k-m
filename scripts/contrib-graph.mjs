@@ -10,6 +10,7 @@
 // Env: GH_LOGIN (user), GITHUB_TOKEN (any token, contribution counts are public).
 
 import { mkdir, writeFile } from "node:fs/promises";
+import { stamp as stampOf, dayLabel, monthYr } from "./when.mjs";
 
 const login = process.env.GH_LOGIN;
 const token = process.env.GITHUB_TOKEN;
@@ -32,15 +33,27 @@ async function gql(query, variables) {
 const meta = await gql(`query($login:String!){ user(login:$login){ createdAt } }`, { login });
 const created = new Date(meta.user.createdAt);
 const now = new Date();
-const stamp = now.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" });
+const stamp = stampOf(now);
 
 // Pull the contribution calendar year-by-year (the API caps each window at 1 year).
+//
+// The upper bound runs a day past the present rather than stopping at it. The
+// calendar is bucketed by day in the *account's* timezone, which is ahead of
+// UTC here, so a window ending at the current UTC instant excludes the day that
+// has already begun locally: at 00:41 local the API had a bucket for today
+// holding six contributions, and clamping to `now` returned nothing past
+// yesterday. The chart lost its most recent day, and its right-hand edge sat a
+// day behind the date it was stamped with.
+//
+// Asking past the present is safe — the API returns what exists and no more —
+// and a day is enough for any real timezone offset.
 const byDate = new Map();
-for (let y = created.getUTCFullYear(); y <= now.getUTCFullYear(); y++) {
+const horizon = new Date(now.getTime() + 24 * 60 * 60 * 1000);
+for (let y = created.getUTCFullYear(); y <= horizon.getUTCFullYear(); y++) {
   const from = new Date(Date.UTC(y, 0, 1));
   if (from < created) from.setTime(created.getTime());
   const to = new Date(Date.UTC(y, 11, 31, 23, 59, 59));
-  if (to > now) to.setTime(now.getTime());
+  if (to > horizon) to.setTime(horizon.getTime());
   const data = await gql(
     `query($login:String!,$from:DateTime!,$to:DateTime!){
        user(login:$login){ contributionsCollection(from:$from,to:$to){
@@ -63,18 +76,7 @@ const days = (dates.length ? dates : [allDates[allDates.length - 1]])
   .map((d) => ({ t: new Date(d).getTime(), v: byDate.get(d) || 0 }));
 
 const fmt = (n) => n.toLocaleString("en-US");
-// "Aug 26" reads as a day of the month rather than a year, which is how it was
-// misread. The apostrophe fixes it.
-const monthYr = (t) => {
-  const d = new Date(t);
-  return `${d.toLocaleDateString("en-US", { month: "short", timeZone: "UTC" })} '${String(
-    d.getUTCFullYear()
-  ).slice(-2)}`;
-};
 
-// The window ends today, so the right-hand label says so.
-const dayLabel = (t) =>
-  new Date(t).toLocaleDateString("en-US", { month: "short", day: "numeric", timeZone: "UTC" });
 
 // Two palettes so the README can serve whichever matches the reader's theme.
 // The blue-to-purple accent is the brand and stays put; only the surface, the
