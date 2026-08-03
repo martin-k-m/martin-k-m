@@ -98,6 +98,27 @@ const textW = (s, size) => s.length * advance(size);
 /** `textLength` + the attribute that makes it adjust spacing, not glyph shapes. */
 const fixW = (s, size) => `textLength="${textW(s, size).toFixed(1)}" lengthAdjust="spacing"`;
 
+// ── Entrances that degrade to visible ───────────────────────────────────────
+// The obvious way to stagger a fade-in is opacity="0" plus an animation to 1
+// with a `begin` delay. It reads correctly wherever SMIL runs, and it fails to
+// blank wherever SMIL does not: the base value is what a renderer without
+// animation shows, and that base value is invisible. For a header — the first
+// thing on the page — that is the wrong way round.
+//
+// So the base value is the *finished* state, and the delay moves inside the
+// animation. Every entrance begins at 0s and holds at opacity 0 for its share
+// of its own duration before fading up. Same staggered result, and anything
+// that ignores the animation shows the settled banner instead of an empty card.
+//
+// `begin` stays at 0 rather than carrying the delay because a delayed begin
+// shows the base value until the clock reaches it — here that would flash the
+// text on, off, and back on.
+function fadeIn(delay, dur) {
+  const total = delay + dur;
+  const hold = (delay / total).toFixed(4);
+  return `<animate attributeName="opacity" dur="${total.toFixed(2)}s" values="0;0;1" keyTimes="0;${hold};1" fill="freeze"/>`;
+}
+
 // ── The drifting grid ───────────────────────────────────────────────────────
 // Drawn oversized and translated by exactly one cell over the cycle, so the
 // loop point is invisible: the grid at 40px offset is the same picture as the
@@ -111,39 +132,57 @@ function grid(C) {
 }
 
 // ── The role line ───────────────────────────────────────────────────────────
-// The typing effect the old embed provided, done with a clip rectangle whose
-// width animates from nothing to the text width and back. The caret is a
-// separate rect animating its x on the *same* keyTimes, which is what keeps the
-// two in step; anchoring it to the clip edge directly is not something SVG
-// animation can express without script, and script does not survive GitHub's
-// image sandbox.
+// The typing effect the old embed provided, done with a clip rectangle per role
+// whose width animates from nothing to the text width and back. One line types,
+// holds and clears while the other waits, so the two never overlap.
 //
-// One line types, holds, and clears while the other waits, so the two never
-// overlap. The cycle is the same length for both, offset by half.
+// There is exactly one caret for both lines, not one each. Emitting a caret per
+// role leaves the idle one parked at the start of the line, so the first role
+// types with a stray bar sitting under its opening character. It is driven
+// across the whole cycle on keyTimes that match both clips in turn — anchoring
+// it to the clip edge directly is not something SVG animation can express
+// without script, and script does not survive GitHub's image sandbox.
 const CYCLE = 9;
+
+// Fractions of the cycle. Role 0 types by 0.16, holds to 0.44 and clears by
+// 0.5; role 1 does the same in the second half. The caret's stops are the union
+// of both, which is what keeps it on whichever line is currently moving.
+const KEYS = ["0;0.16;0.44;0.5;1", "0;0.5;0.66;0.94;1"];
+const CARET_KEYS = "0;0.16;0.44;0.5;0.66;0.94;1";
 
 function roleLine(C) {
   const size = 15;
   const x = padL;
-  const parts = ROLES.map((role, i) => {
-    const w = textW(role, size);
-    // Fractions of the cycle: type, hold, clear, then wait out the other line.
-    const keyTimes = i === 0 ? "0;0.16;0.44;0.5;1" : "0;0.5;0.66;0.94;1";
-    const widths = i === 0 ? `0;${w};${w};0;0` : `0;0;${w};${w};0`;
-    const carets = i === 0
-      ? `${x};${x + w};${x + w};${x};${x}`
-      : `${x};${x};${x + w};${x + w};${x}`;
+  const widths = ROLES.map((r) => textW(r, size));
+
+  const lines = ROLES.map((role, i) => {
+    const w = widths[i];
+    const vals = i === 0 ? `0;${w};${w};0;0` : `0;0;${w};${w};0`;
+    // Without animation the clip width is whatever the attribute says, and a
+    // width of 0 hides the line completely — this is the element that failed
+    // hardest when the entrances were built the other way round. So the first
+    // role's clip is open by default and the second's is shut: a renderer that
+    // ignores SMIL shows one settled role rather than two overlapping ones or
+    // an empty line. The animation begins at 0s and overrides both at once.
+    const base = i === 0 ? w : 0;
     return `
-  <clipPath id="type${i}${C.suffix}"><rect x="${x}" y="${roleY - size}" width="0" height="${size + 6}">
-    <animate attributeName="width" dur="${CYCLE}s" repeatCount="indefinite" keyTimes="${keyTimes}" values="${widths}" calcMode="linear"/>
+  <clipPath id="type${i}${C.suffix}"><rect x="${x}" y="${roleY - size}" width="${base}" height="${size + 6}">
+    <animate attributeName="width" dur="${CYCLE}s" repeatCount="indefinite" keyTimes="${KEYS[i]}" values="${vals}" calcMode="linear"/>
   </rect></clipPath>
-  <text x="${x}" y="${roleY}" clip-path="url(#type${i}${C.suffix})" font-family="${MONO}" font-size="${size}" font-weight="500" fill="${C.muted}" ${fixW(role, size)}>${esc(role)}</text>
-  <rect y="${roleY - size + 2}" width="2" height="${size}" fill="${C.a1}" x="${x}">
-    <animate attributeName="x" dur="${CYCLE}s" repeatCount="indefinite" keyTimes="${keyTimes}" values="${carets}" calcMode="linear"/>
+  <text x="${x}" y="${roleY}" clip-path="url(#type${i}${C.suffix})" font-family="${MONO}" font-size="${size}" font-weight="500" fill="${C.muted}" ${fixW(role, size)}>${esc(role)}</text>`;
+  }).join("");
+
+  const [w0, w1] = widths;
+  const stops = [x, x + w0, x + w0, x, x + w1, x + w1, x].join(";");
+  // Parked at the end of role 0, which is the line a renderer without animation
+  // is showing, so the caret sits where that text actually ends.
+  const caret = `
+  <rect x="${x + w0}" y="${roleY - size + 2}" width="2" height="${size}" fill="${C.a1}">
+    <animate attributeName="x" dur="${CYCLE}s" repeatCount="indefinite" keyTimes="${CARET_KEYS}" values="${stops}" calcMode="linear"/>
     <animate attributeName="opacity" dur="1.06s" repeatCount="indefinite" values="1;1;0;0" keyTimes="0;0.5;0.5;1" calcMode="discrete"/>
   </rect>`;
-  });
-  return parts.join("");
+
+  return lines + caret;
 }
 
 // ── Chips ───────────────────────────────────────────────────────────────────
@@ -163,8 +202,8 @@ function chips(C) {
   return CHIPS.map((label, i) => {
     const tw = textW(label, size) * CHIP_TRACK;
     const w = tw + padX * 2;
-    const g = `<g opacity="0">
-    <animate attributeName="opacity" from="0" to="1" dur="0.5s" begin="${(0.85 + i * 0.09).toFixed(2)}s" fill="freeze"/>
+    const g = `<g opacity="1">
+    ${fadeIn(0.85 + i * 0.09, 0.5)}
     <rect x="${x.toFixed(1)}" y="${chipY}" width="${w.toFixed(1)}" height="${chipH}" rx="${chipH / 2}" fill="${C.text}" fill-opacity="${C.chipFill}" stroke="${C.text}" stroke-opacity="${C.chipStroke}"/>
     <text x="${(x + padX).toFixed(1)}" y="${chipY + 16}" font-family="${MONO}" font-size="${size}" fill="${C.muted}" textLength="${tw.toFixed(1)}" lengthAdjust="spacing">${esc(label)}</text>
   </g>`;
@@ -267,8 +306,8 @@ function render(C) {
   <ellipse class="breathe" cx="120" cy="30" rx="360" ry="180" fill="url(#glowA${C.suffix})"/>
   <ellipse class="breathe" cx="${SIG_X}" cy="${SIG_Y}" rx="200" ry="150" fill="url(#glowB${C.suffix})" style="animation-delay:2s"/>
 
-  <text x="${padL}" y="${nameY}" font-family="${MONO}" font-size="${nameSize}" font-weight="700" fill="url(#ramp${C.suffix})" opacity="0">${esc(NAME)}
-    <animate attributeName="opacity" from="0" to="1" dur="0.7s" begin="0.15s" fill="freeze"/>
+  <text x="${padL}" y="${nameY}" font-family="${MONO}" font-size="${nameSize}" font-weight="700" fill="url(#ramp${C.suffix})" opacity="1">${esc(NAME)}
+    ${fadeIn(0.15, 0.7)}
   </text>
   ${roleLine(C)}
   ${chips(C)}
