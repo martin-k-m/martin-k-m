@@ -2,7 +2,19 @@ name: Profile graphs
 
 on:
   schedule:
-    - cron: "7 */6 * * *"   # every 6 hours
+    # Hourly. A run takes about a minute, and the clone cache below means the
+    # expensive part, cloning every repository to rebuild the language history,
+    # is a fetch rather than a fresh clone. Six hours meant a chart could be
+    # most of a day stale before anyone looked.
+    #
+    # GitHub runs scheduled workflows late under load, sometimes by half an
+    # hour, so treat this as "about hourly" rather than on the minute.
+    - cron: "7 * * * *"
+  # So any repository can ask for a refresh right after it pushes, rather than
+  # waiting for the next tick:
+  #   gh api repos/martin-k-m/martin-k-m/dispatches -f event_type=refresh-graphs
+  repository_dispatch:
+    types: [refresh-graphs]
   workflow_dispatch:
   push:
     branches: [main]
@@ -23,6 +35,18 @@ jobs:
       - uses: actions/setup-node@v7
         with:
           node-version: "24"
+      # The language history clones every repository to read its tree at each
+      # sample point. Restoring them between runs turns that into a fetch, which
+      # is what makes an hourly schedule reasonable rather than wasteful. The key
+      # rotates per run so the cache is always written; restore-keys means any
+      # recent one will do.
+      - name: Restore the repository clones
+        uses: actions/cache@v4
+        with:
+          path: ${{ runner.temp }}/lang-history-cache
+          key: lang-clones-${{ github.run_id }}
+          restore-keys: lang-clones-
+
       - name: Generate contribution SVGs
         env:
           GH_LOGIN: ${{ github.repository_owner }}
