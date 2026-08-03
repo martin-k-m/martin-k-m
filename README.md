@@ -1,10 +1,8 @@
-<img src="https://capsule-render.vercel.app/api?type=waving&color=0:4f8cff,100:7c6cff&height=90&section=header&reversed=true" width="100%" alt="" />
-
-# Martin Muskov
-
-<a href="https://github.com/martin-k-m">
-  <img src="https://readme-typing-svg.demolab.com?font=JetBrains+Mono&weight=600&size=24&pause=1000&color=7C6CFF&width=440&lines=Studying+EE+%40+UCSC;Co-Founder+%40+Credda" alt="Studying EE at UCSC; Co-Founder at Credda" />
-</a>
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/banner.svg" />
+  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/banner-light.svg" />
+  <img src="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/banner-light.svg" width="100%" alt="Martin Muskov — studying EE at UCSC, co-founder at Credda" />
+</picture>
 
 [![Credda](https://img.shields.io/badge/Credda-7C6CFF?style=flat-square&logo=verifiedbadge&logoColor=white)](https://credda.io)
 [![Website](https://img.shields.io/badge/martin--k--m.github.io-0A0A0C?style=flat-square&logo=github&logoColor=white)](https://martin-k-m.github.io)
@@ -229,4 +227,8 @@ pip install git+https://github.com/martin-k-m/csvpeek   # csvpeek CSV profiler
 
 </div>
 
-<img src="https://capsule-render.vercel.app/api?type=waving&color=0:4f8cff,100:7c6cff&height=90&section=footer" width="100%" alt="" />
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/footer.svg" />
+  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/footer-light.svg" />
+  <img src="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/footer-light.svg" width="100%" alt="" />
+</picture>

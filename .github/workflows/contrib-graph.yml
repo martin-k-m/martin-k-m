@@ -20,6 +20,7 @@ on:
   push:
     branches: [main]
     paths:
+      - "scripts/banner.mjs"
       - "scripts/contrib-graph.mjs"
       - "scripts/lang-graph.mjs"
       - "scripts/lang-history.mjs"
@@ -47,6 +48,13 @@ jobs:
           path: ${{ runner.temp }}/lang-history-cache
           key: lang-clones-${{ github.run_id }}
           restore-keys: lang-clones-
+
+      # No API and no token: the content is static, and it is generated rather
+      # than committed so the dark and light copies cannot drift apart. It runs
+      # first because it is the one step that cannot fail for a credentials
+      # reason, so the header is published even on a run where the rest does not.
+      - name: Generate the README banner
+        run: node scripts/banner.mjs
 
       - name: Generate contribution SVGs
         env:
