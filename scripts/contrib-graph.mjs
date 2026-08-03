@@ -117,7 +117,7 @@ const THEMES = {
 // than being inflated to fill the frame. A second scale would have made the
 // busiest day and the final total look the same height while meaning entirely
 // different things.
-function renderChart({ title, valueLabel, points, secondary, markPeak }, C) {
+function renderChart({ title, valueLabel, points, secondary, markPeak, hover }, C) {
   const W = 820, H = 260, padL = 16, padR = 16, padT = 66, padB = 30;
   const plotW = W - padL - padR, plotH = H - padT - padB;
   const t0 = points[0].t, t1 = points[points.length - 1].t;
@@ -175,7 +175,36 @@ function renderChart({ title, valueLabel, points, secondary, markPeak }, C) {
   </g>`
     : "";
 
+  // Hover: an invisible strip per day; the strip under the pointer lights a
+  // guide line, a dot on each series and that day's numbers. CSS only, so it
+  // survives raw.githubusercontent's sandbox CSP, which allows inline styles
+  // and nothing else. The README's <img> never sees the pointer at all, which
+  // is why the caption links to the raw file.
+  let hoverLayer = "";
+  if (hover && hover.length > 1) {
+    const clamp = (v, lo, hi) => Math.min(Math.max(v, lo), hi);
+    hoverLayer = hover
+      .map((p, i) => {
+        const hx = X(p.t);
+        const x0 = i === 0 ? padL : (X(hover[i - 1].t) + hx) / 2;
+        const x1 = i === hover.length - 1 ? W - padR : (hx + X(hover[i + 1].t)) / 2;
+        const label = `${dayLabel(p.t)} · ${fmt(p.v)} total · ${fmt(p.v2)} on the day`;
+        const tw = label.length * 6.4 + 14;
+        const bx = clamp(hx - tw / 2, padL + 2, W - padR - tw - 2);
+        const by = padT + 6;
+        return `<g class="hd"><rect class="hit" x="${x0.toFixed(1)}" y="${padT}" width="${(x1 - x0).toFixed(1)}" height="${plotH}"/><g class="tip">
+    <line x1="${hx.toFixed(1)}" y1="${padT}" x2="${hx.toFixed(1)}" y2="${padT + plotH}" stroke="${C.muted}" stroke-opacity="0.7"/>
+    <circle cx="${hx.toFixed(1)}" cy="${Y(p.v).toFixed(1)}" r="3.2" fill="${C.a2}" stroke="${C.bg}" stroke-width="1.5"/>
+    <circle cx="${hx.toFixed(1)}" cy="${Y(p.v2).toFixed(1)}" r="3.2" fill="${C.rate}" stroke="${C.bg}" stroke-width="1.5"/>
+    <rect x="${bx.toFixed(1)}" y="${by}" width="${tw.toFixed(1)}" height="22" rx="5" fill="${C.bg}" stroke="${C.text}" stroke-opacity="0.25"/>
+    <text x="${(bx + tw / 2).toFixed(1)}" y="${by + 15}" text-anchor="middle" font-family="${MONO}" font-size="11" fill="${C.text}">${label}</text>
+  </g></g>`;
+      })
+      .join("");
+  }
+
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="${title}: ${valueLabel}">
+  <style>.hd .hit{fill:#000;fill-opacity:0}.hd .tip{opacity:0;pointer-events:none}.hd:hover .tip{opacity:1}text{pointer-events:none}</style>
   <defs>
     <linearGradient id="area" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0" stop-color="${C.a2}" stop-opacity="0.42"/>
@@ -208,6 +237,7 @@ function renderChart({ title, valueLabel, points, secondary, markPeak }, C) {
   <text x="${padL}" y="${H - 10}" font-family="'JetBrains Mono',ui-monospace,monospace" font-size="11" fill="${C.muted}">${monthYr(t0)}</text>
   <text x="${W / 2}" y="${H - 10}" text-anchor="middle" font-family="'JetBrains Mono',ui-monospace,monospace" font-size="11" fill="${C.muted}">updated ${stamp}</text>
   <text x="${W - padR}" y="${H - 10}" text-anchor="end" font-family="'JetBrains Mono',ui-monospace,monospace" font-size="11" fill="${C.muted}">${dayLabel(t1)}</text>
+  ${hoverLayer}
 </svg>`;
 }
 
@@ -237,6 +267,7 @@ const opts = {
     peakLabel: (v) => `${fmt(v)} in a day`,
   },
   markPeak: true,
+  hover: days.map((d, i) => ({ t: d.t, v: cumulative[i].v, v2: d.v })),
 };
 
 await mkdir("dist", { recursive: true });

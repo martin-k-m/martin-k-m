@@ -444,6 +444,46 @@ function endLabels(C) {
     .join("\n  ");
 }
 
+// Hover: an invisible strip per sampled day; the strip under the pointer
+// lights a guide line, a dot on every language's line and a panel with that
+// day's shares, one decimal since whole percents barely move day to day. CSS
+// only, which is all raw.githubusercontent's sandbox CSP allows; the README's
+// <img> never sees the pointer, so the caption links to the raw file.
+function hoverLayer(C) {
+  const nameW = Math.max(...bands.map((b) => b.length));
+  const boxW = nameW * 6.1 + 80;
+  const lineH = 13;
+  const boxH = 36 + (bands.length - 1) * lineH;
+  return pts
+    .map((d, i) => {
+      const hx = x(i);
+      const x0 = i === 0 ? padL : (x(i - 1) + hx) / 2;
+      const x1 = i === pts.length - 1 ? padL + plotW : (hx + x(i + 1)) / 2;
+      const bx = hx + 12 + boxW > padL + plotW ? hx - 12 - boxW : hx + 12;
+      const by = padT + 6;
+      const dots = bands
+        .map((name) => `<circle cx="${hx.toFixed(1)}" cy="${y(shares[i].get(name) || 0).toFixed(1)}" r="3" fill="${strokeOf(name, C)}" stroke="${C.bg}" stroke-width="1.2"/>`)
+        .join("");
+      const rows = bands
+        .map((name, r) => {
+          const ry = by + 30 + r * lineH;
+          const share = shares[i].get(name) || 0;
+          return `<rect x="${(bx + 8).toFixed(1)}" y="${(ry - 7).toFixed(1)}" width="7" height="7" rx="2" fill="${strokeOf(name, C)}"/>
+    <text x="${(bx + 20).toFixed(1)}" y="${ry.toFixed(1)}" font-family="${MONO}" font-size="10" fill="${C.text}">${esc(name)}</text>
+    <text x="${(bx + boxW - 8).toFixed(1)}" y="${ry.toFixed(1)}" text-anchor="end" font-family="${MONO}" font-size="10" fill="${C.muted}">${(share * 100).toFixed(1)}%</text>`;
+        })
+        .join("\n    ");
+      return `<g class="hd"><rect class="hit" x="${x0.toFixed(1)}" y="${padT}" width="${(x1 - x0).toFixed(1)}" height="${plotH}"/><g class="tip">
+    <line x1="${hx.toFixed(1)}" y1="${padT}" x2="${hx.toFixed(1)}" y2="${padT + plotH}" stroke="${C.muted}" stroke-opacity="0.7"/>
+    ${dots}
+    <rect x="${bx.toFixed(1)}" y="${by}" width="${boxW.toFixed(1)}" height="${boxH}" rx="6" fill="${C.bg}" stroke="${C.text}" stroke-opacity="0.25"/>
+    <text x="${(bx + 8).toFixed(1)}" y="${by + 16}" font-family="${MONO}" font-size="10" font-weight="600" fill="${C.text}">${dayLabel(d)}</text>
+    ${rows}
+  </g></g>`;
+    })
+    .join("");
+}
+
 function render(C) {
   const grid = gridVals
     .map(
@@ -463,6 +503,7 @@ function render(C) {
     .join("\n  ");
 
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="Share of code by language over time across ${repos.length} repositories">
+  <style>.hd .hit{fill:#000;fill-opacity:0}.hd .tip{opacity:0;pointer-events:none}.hd:hover .tip{opacity:1}text{pointer-events:none}</style>
   <rect width="${W}" height="${H}" rx="12" fill="${C.bg}"/>
   <rect x="0.5" y="0.5" width="${W - 1}" height="${H - 1}" rx="11.5" fill="none" stroke="${C.text}" stroke-opacity="${C.border}"/>
   <text x="${padL}" y="27" font-family="${MONO}" font-size="15" font-weight="600" fill="${C.text}">Languages over time · share of code</text>
@@ -481,6 +522,7 @@ function render(C) {
   </g>
   <text x="${padL}" y="${H - 10}" font-family="${MONO}" font-size="10" fill="${C.muted}">3 months · sampled every ${stepDays} day${stepDays===1?"":"s"} · ${repos.length} repos · ${size(finalTotal)} today · extensions Linguist counts as code</text>
   <text x="${W - 14}" y="${H - 10}" text-anchor="end" font-family="${MONO}" font-size="10" fill="${C.muted}">updated ${now.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" })}</text>
+  ${hoverLayer(C)}
 </svg>`;
 }
 
