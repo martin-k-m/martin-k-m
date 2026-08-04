@@ -144,3 +144,25 @@ jobs:
           build_dir: dist
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # The website reads these files at build time and bakes them into its
+      # HTML, so it only shows what was true when it last built. It rebuilds on
+      # a schedule as a floor, but that leaves it hours behind data that has
+      # just changed — so tell it the moment there is something new.
+      #
+      # Needs the PAT: the Actions GITHUB_TOKEN is scoped to this repository and
+      # cannot dispatch to another one. Not fatal if it is missing or the call
+      # fails, because the site's own schedule still catches up; a failed ping
+      # should not fail a run whose charts already published.
+      - name: Ask the website to rebuild
+        if: github.event_name != 'pull_request'
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ secrets.PROFILE_TOKEN }}
+          SITE: ${{ github.repository_owner }}/${{ github.repository_owner }}.github.io
+        run: |
+          if [ -z "$GH_TOKEN" ]; then
+            echo "::warning::no PROFILE_TOKEN, the site will refresh on its own schedule"
+            exit 0
+          fi
+          gh api "repos/$SITE/dispatches" -f event_type=refresh-data             && echo "asked $SITE to rebuild"
