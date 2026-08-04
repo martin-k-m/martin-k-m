@@ -49,6 +49,12 @@ const CACHE = process.env.CLONE_DIR || join(process.env.RUNNER_TEMP || tmpdir(),
 // Absent on purpose: .json, .yml, .yaml, .toml, .xml, .svg, .md. Linguist calls
 // those data or prose and keeps them out of a repository's language bar, so
 // counting them here would put this chart at odds with the other one.
+//
+// One difference with the API that cannot be closed here: Linguist reports some
+// .sql files as PLpgSQL by reading their contents, and an extension table has
+// no way to tell the two apart. Everything ending .sql is SQL in this chart.
+// Since every surface now draws from this walk, that is a single consistent
+// answer rather than two charts disagreeing.
 const EXT = {
   ts: "TypeScript", tsx: "TypeScript", mts: "TypeScript", cts: "TypeScript",
   js: "JavaScript", jsx: "JavaScript", mjs: "JavaScript", cjs: "JavaScript",
@@ -68,6 +74,25 @@ const EXT = {
   ps1: "PowerShell", psm1: "PowerShell",
   sql: "SQL", vue: "Vue", svelte: "Svelte", astro: "Astro",
   r: "R", m: "Objective-C", mm: "Objective-C", pl: "Perl", zig: "Zig",
+  // Below here: extensions added so this walk stops missing languages the API
+  // reports. The profile bar is drawn from these numbers now, so anything
+  // Linguist counts and this does not would simply vanish from the chart.
+  tf: "HCL", tfvars: "HCL", hcl: "HCL",
+  mk: "Makefile",
+  mako: "Mako",
+  flux: "FLUX",
+};
+
+// Languages recognised by file name rather than extension. Linguist knows these
+// by name, and the extension rule below cannot see them at all: `Dockerfile` has
+// no dot, and a name-with-no-extension was being dropped as a dotfile.
+const BY_NAME = {
+  dockerfile: "Dockerfile",
+  containerfile: "Dockerfile",
+  makefile: "Makefile",
+  gnumakefile: "Makefile",
+  justfile: "Just",
+  ".justfile": "Just",
 };
 
 // Directories nobody wrote by hand. Linguist skips these too, and without them
@@ -84,6 +109,14 @@ function langOf(path) {
   if (SKIP_FILE.test(path)) return null;
   for (const seg of path.split("/").slice(0, -1)) if (SKIP_DIR.has(seg)) return null;
   const base = path.slice(path.lastIndexOf("/") + 1);
+  const lower = base.toLowerCase();
+
+  // By name first. `Dockerfile.prod` and `Dockerfile` are both Dockerfiles, and
+  // neither reaches the extension rule with a useful answer.
+  if (BY_NAME[lower]) return BY_NAME[lower];
+  const beforeDot = lower.slice(0, lower.indexOf(".") === -1 ? lower.length : lower.indexOf("."));
+  if (BY_NAME[beforeDot] && beforeDot !== "") return BY_NAME[beforeDot];
+
   const dot = base.lastIndexOf(".");
   if (dot <= 0) return null; // no extension, or a dotfile
   return EXT[base.slice(dot + 1).toLowerCase()] ?? null;

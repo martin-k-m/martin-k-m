@@ -1,6 +1,12 @@
 // Generate dist/languages.svg: the languages I actually write, ranked by how
-// much of them exists, measured in bytes of code that GitHub's own Linguist
-// attributes to each language across my repositories.
+// much of them exists, measured in bytes of code across my repositories.
+//
+// The bytes come from lang-history.mjs walking every repository's tree, which
+// is the same measurement the history chart and the website draw. That is the
+// point: three surfaces showing the same quantity have to agree, and they did
+// not while this one asked GitHub's Linguist API instead. Linguist is the
+// fallback for a run where the walk published nothing, and the footer says
+// which one was used.
 //
 // Bytes, not repository counts: ten one-file experiments in a language should
 // not outrank the one where the real work lives.
@@ -33,6 +39,9 @@ if (!login || !token) {
 const { repos, colors, privateCount, contributedCount } = await fetchRepos(login, token);
 const repoCount = repos.length;
 
+// Linguist's totals, which are the fallback rather than the default. The bar
+// is redrawn from the tree walk below when its data is available; see the note
+// at "one measurement everywhere".
 const bytes = new Map(); // language -> bytes
 for (const repo of repos) {
   for (const { size, node } of repo.languages.edges) {
@@ -56,7 +65,7 @@ for (const repo of repos) {
 // last two samples is a measured day rather than a wait. It now writes that out
 // as dist/lang-daily.json and runs first, so the arrows are right on run one.
 //
-// The two measurements are NOT mixed. Tree-walk bytes and Linguist bytes are
+// The two measurements are still NOT mixed. Tree-walk bytes and Linguist bytes are
 // close but not equal — 26.0 MB against 26.2 MB on the run this was written —
 // so subtracting one from the other would publish the gap between two counting
 // methods as if it were a day of work. Both ends of the comparison come from
@@ -76,6 +85,11 @@ const readJson = async (url, init) => {
 
 let history = {};
 let basis = null; // which measurement the arrows are computed from
+// How many repositories the tree walk actually measured. Not the same as how
+// many the API returns: a repository with no commits has no default branch and
+// no tree to walk, so the walk skips it. Reporting the API's count next to the
+// walk's bytes put "56 repos" under a chart built from 55.
+let measuredRepoCount = null;
 
 // First choice: this run's reconstruction, written moments ago by lang-history.
 try {
@@ -83,6 +97,7 @@ try {
   if (local && typeof local.days === "object" && Object.keys(local.days).length > 1) {
     history = local.days;
     basis = "tree";
+    if (Number.isFinite(local.repos)) measuredRepoCount = local.repos;
   }
 } catch {
   // Absent whenever lang-history did not run or could not finish — it is
@@ -130,6 +145,25 @@ const current =
 const measuredLangs = new Set();
 if (basis === "tree") {
   for (const day of Object.values(history)) for (const k of Object.keys(day)) measuredLangs.add(k);
+}
+
+// ── One measurement everywhere ──────────────────────────────────────────────
+// The bar is drawn from the tree walk, not from Linguist, whenever the walk has
+// published a number for today.
+//
+// It used to draw from Linguist while the history chart and the website drew
+// from the walk, and the two do not agree: 42.40% against 42.30% for
+// TypeScript, 0.63% against 1.51% for HTML, HCL in one and SQL in the other.
+// Both are defensible measurements and neither is wrong, but a reader looking
+// at the profile and the site sees one set of numbers contradict the other, and
+// no amount of accuracy in either fixes that.
+//
+// So there is one source now. The walk's extension table was widened to cover
+// what Linguist was catching and it was not (HCL, Dockerfile, Makefile, Just,
+// Mako, FLUX), so switching costs no languages.
+if (current) {
+  bytes.clear();
+  for (const [name, size] of Object.entries(current)) bytes.set(name, size);
 }
 
 // ── Share, not size ─────────────────────────────────────────────────────────
@@ -381,23 +415,22 @@ function barsFor(C) {
 
 // State exactly what was counted. If the token could not see private repos this
 // silently says so by reporting none, rather than implying full coverage.
-const scopeParts = [`${ranked.length} languages`, `${repoCount} repos`];
+// The count that goes with the bytes being drawn. See measuredRepoCount.
+const shownRepoCount = current && measuredRepoCount !== null ? measuredRepoCount : repoCount;
+const scopeParts = [`${ranked.length} languages`, `${shownRepoCount} repos`];
 if (privateCount) scopeParts.push(`${privateCount} private`);
 if (contributedCount) scopeParts.push(`${contributedCount} contributed`);
 // Name the day the arrows are measured against. "since yesterday" would be a
 // guess on any run that follows a gap in the schedule.
-//
-// And name the measurement when it is not the one the bars are drawn from, so
-// nobody subtracts two printed totals and wonders why the arrow disagrees.
-if (priorDate) {
-  scopeParts.push(
-    basis === "tree" ? `▲▼ share vs ${priorDate} by tree walk` : `▲▼ share vs ${priorDate}`
-  );
-}
+if (priorDate) scopeParts.push(`▲▼ share vs ${priorDate}`);
+// Name the measurement itself. It is the same one for the bars and the arrows
+// now, and the same one the history chart and the website use, so this reads as
+// a statement of method rather than as a warning that two numbers differ.
+scopeParts.push(current ? "tree walk" : "Linguist");
 const scope = scopeParts.join(" · ");
 
 function render(C) {
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="Languages by bytes of code across ${repoCount} repositories">
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="Languages by bytes of code across ${shownRepoCount} repositories">
   <rect width="${W}" height="${H}" rx="12" fill="${C.bg}"/>
   <rect x="0.5" y="0.5" width="${W - 1}" height="${H - 1}" rx="11.5" fill="none" stroke="${C.text}" stroke-opacity="${C.borderOpacity}"/>
   <text x="${padL}" y="27" font-family="${MONO}" font-size="15" font-weight="600" fill="${C.text}">Languages · by bytes of code</text>
