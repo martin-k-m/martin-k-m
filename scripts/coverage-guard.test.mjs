@@ -108,3 +108,13 @@ test("the escape hatch has to be deliberate", async () => {
   // Anything other than exactly 1 is not an opt-in.
   assert.ok(await guard(36, { repos: 57 }, { allow: "true" }));
 });
+
+test("both charts must compare the same quantity", async () => {
+  // The bar chart counts every repository the token returns; the history chart
+  // walks only those with a default branch. Feeding the guard the filtered
+  // number made it refuse on a run the other chart was happy with, and the two
+  // charts then described different sets. Both pass visibility now, so a drop
+  // of the same five repositories is judged identically.
+  const visible = 32;
+  assert.equal(await guard(visible, { repos: 37 }), null);
+});

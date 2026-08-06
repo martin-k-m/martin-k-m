@@ -151,7 +151,12 @@ if (repos.length < 2) {
 // The loud failure is above. This one catches the quiet version: a token that
 // still works and can suddenly see two thirds of what it could yesterday.
 try {
-  await assertCoverage(repos.length, {
+  // all.repos, not the filtered `repos`. The guard is about what the token can
+  // see; the filter above is about what can be walked, and an empty repository
+  // is visible without being walkable. Comparing the filtered number against a
+  // baseline written from the unfiltered one is two different quantities, which
+  // is why this refused on a run where the bar chart was content.
+  await assertCoverage(all.repos.length, {
     repo: process.env.GITHUB_REPOSITORY || `${login}/${login}`,
     label: "lang-history.svg",
   });
