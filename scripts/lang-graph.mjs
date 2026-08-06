@@ -28,6 +28,7 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { fetchRepos } from "./repos.mjs";
 import { dayKey, stamp as stampOf, TZ } from "./when.mjs";
+import { assertCoverage } from "./coverage-guard.mjs";
 
 const login = process.env.GH_LOGIN;
 const token = process.env.GITHUB_TOKEN;
@@ -232,6 +233,16 @@ if (repoCount < 2) {
       "as the PROFILE_TOKEN secret). The Actions GITHUB_TOKEN cannot enumerate a user's\n" +
       "repositories, only the one it is running in."
   );
+  process.exit(1);
+}
+
+// Seeing fewer than two repositories is the obvious version of the failure. The
+// quiet version is seeing most of them, which needs the last published run to
+// notice.
+try {
+  await assertCoverage(repoCount, { repo, label: "languages.svg" });
+} catch (err) {
+  console.error(err.message);
   process.exit(1);
 }
 
@@ -457,7 +468,13 @@ const kept = Object.keys(history)
 await writeFile(
   "dist/languages.json",
   JSON.stringify(
-    { updated: new Date().toISOString(), days: Object.fromEntries(kept.map((d) => [d, history[d]])) },
+    {
+      updated: new Date().toISOString(),
+      // Published so the next run can tell a shrinking token from a shrinking
+      // account. See coverage-guard.mjs.
+      repos: repoCount,
+      days: Object.fromEntries(kept.map((d) => [d, history[d]])),
+    },
     null,
     2
   )

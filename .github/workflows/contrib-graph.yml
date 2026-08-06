@@ -72,6 +72,12 @@ jobs:
       # than committed so the dark and light copies cannot drift apart. It runs
       # first because it is the one step that cannot fail for a credentials
       # reason, so the header is published even on a run where the rest does not.
+      # The coverage guard decides whether a chart is allowed to publish, so it
+      # runs before anything that could be stopped by it. A guard nobody tests
+      # is a guard that quietly stops guarding.
+      - name: Test the coverage guard
+        run: node --test scripts/coverage-guard.test.mjs
+
       - name: Generate the README banner
         run: node scripts/banner.mjs
 

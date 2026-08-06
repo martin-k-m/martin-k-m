@@ -30,6 +30,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { fetchRepos } from "./repos.mjs";
 import { dayKey as tzDayKey, stamp as stampOf, dayLabel as tzDayLabel, monthYr as tzMonthYr } from "./when.mjs";
+import { assertCoverage } from "./coverage-guard.mjs";
 
 const exec = promisify(execFile);
 
@@ -137,6 +138,18 @@ if (repos.length < 2) {
     `only ${repos.length} repository visible to this token, refusing to publish a misleading chart.\n` +
       "Set GITHUB_TOKEN to a PAT with `repo` scope (as the PROFILE_TOKEN secret in Actions)."
   );
+  process.exit(1);
+}
+
+// The loud failure is above. This one catches the quiet version: a token that
+// still works and can suddenly see two thirds of what it could yesterday.
+try {
+  await assertCoverage(repos.length, {
+    repo: process.env.GITHUB_REPOSITORY || `${login}/${login}`,
+    label: "lang-history.svg",
+  });
+} catch (err) {
+  console.error(err.message);
   process.exit(1);
 }
 
