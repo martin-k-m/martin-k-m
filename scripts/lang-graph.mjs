@@ -472,6 +472,12 @@ await writeFile(
       updated: new Date().toISOString(),
       // Published so the next run can tell a shrinking token from a shrinking
       // account. See coverage-guard.mjs.
+      //
+      // The API's count, not the walk's, so it differs by a repository or two
+      // from the number under the chart: an empty repository has no tree to
+      // walk but is still visible to the token. Visibility is what the guard
+      // measures, so this is the number it needs, and it is compared only
+      // against itself.
       repos: repoCount,
       days: Object.fromEntries(kept.map((d) => [d, history[d]])),
     },
