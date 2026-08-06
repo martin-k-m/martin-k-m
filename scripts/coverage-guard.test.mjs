@@ -47,12 +47,16 @@ async function guard(repoCount, published, { status = 200, allow } = {}) {
 
 test("the run that caused this is refused", async () => {
   // 57 repositories yesterday, 36 today, no error anywhere. That run published.
+  // It turned out to be a real deletion, which is the point: the script cannot
+  // tell, so it stops and says so.
   const err = await guard(36, { repos: 57 });
   assert.ok(err, "a 21-repo drop was allowed");
   assert.match(err.message, /36/);
   assert.match(err.message, /57/);
-  // The message has to name the likely cause, since the symptom is silence.
+  // Both explanations, because guessing one is what went wrong the first time.
+  assert.match(err.message, /deleted or archived/);
   assert.match(err.message, /PROFILE_TOKEN/);
+  assert.match(err.message, /ALLOW_COVERAGE_DROP=1/);
 });
 
 test("a steady count passes", async () => {

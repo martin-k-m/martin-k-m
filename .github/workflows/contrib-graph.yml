@@ -75,8 +75,8 @@ jobs:
       # The coverage guard decides whether a chart is allowed to publish, so it
       # runs before anything that could be stopped by it. A guard nobody tests
       # is a guard that quietly stops guarding.
-      - name: Test the coverage guard
-        run: node --test scripts/coverage-guard.test.mjs
+      - name: Test the guard and the language map
+        run: node --test scripts/coverage-guard.test.mjs scripts/lang-map.test.mjs
 
       - name: Generate the README banner
         run: node scripts/banner.mjs

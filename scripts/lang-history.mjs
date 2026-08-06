@@ -66,8 +66,15 @@ const EXT = {
   kt: "Kotlin", kts: "Kotlin",
   html: "HTML", htm: "HTML",
   css: "CSS", scss: "SCSS", sass: "SCSS", less: "Less",
-  c: "C", h: "C",
-  cpp: "C++", cc: "C++", cxx: "C++", hpp: "C++", hh: "C++", hxx: "C++",
+  c: "C",
+  // `.h` is deliberately absent: it belongs to whichever of C and C++ the tree
+  // it sits in is written in, and that is decided per tree in countsFor.
+  cpp: "C++", cc: "C++", cxx: "C++", "c++": "C++",
+  hpp: "C++", hh: "C++", hxx: "C++", "h++": "C++",
+  // Templates and inline definitions carry real implementation, and module
+  // interfaces are where a modern C++ codebase keeps its declarations.
+  ipp: "C++", tpp: "C++", inl: "C++", cppm: "C++", ixx: "C++",
+  cu: "Cuda", cuh: "Cuda",
   cs: "C#",
   rb: "Ruby", php: "PHP", swift: "Swift", dart: "Dart", lua: "Lua",
   scala: "Scala", ex: "Elixir", exs: "Elixir", erl: "Erlang", hs: "Haskell",
@@ -157,7 +164,7 @@ try {
 const FALLBACK = {
   TypeScript: "#3178c6", JavaScript: "#f1e05a", Rust: "#dea584", Python: "#3572A5",
   Go: "#00ADD8", Java: "#b07219", Kotlin: "#A97BFF", HTML: "#e34c26", CSS: "#663399",
-  SCSS: "#c6538c", "C++": "#f34b7d", C: "#555555", "C#": "#178600", Ruby: "#701516",
+  SCSS: "#c6538c", "C++": "#f34b7d", C: "#555555", Cuda: "#3A4E3A", "C#": "#178600", Ruby: "#701516",
   PHP: "#4F5D95", Swift: "#F05138", Dart: "#00B4AB", Shell: "#89e051",
   PowerShell: "#012456", SQL: "#e38c00", Vue: "#41b883", Svelte: "#ff3e00",
   Lua: "#000080", Scala: "#c22d40", Elixir: "#6e4a7e", Haskell: "#5e5086",
@@ -255,6 +262,9 @@ async function countsFor(dir, sha) {
   if (hit) return hit;
 
   const counts = new Map();
+  // `.h` bytes, and whether this tree contains anything definitely C++.
+  let headerBytes = 0;
+  let sawCpp = false;
   const tree = await git(dir, ["ls-tree", "-r", "-l", sha]);
   for (const line of tree.split("\n")) {
     if (!line) continue;
@@ -265,10 +275,30 @@ async function countsFor(dir, sha) {
     if (meta[1] !== "blob") continue;
     const size = Number(meta[3]);
     if (!Number.isFinite(size)) continue;
-    const lang = langOf(line.slice(tab + 1));
+    const path = line.slice(tab + 1);
+
+    // `.h` is C in a C project and C++ in a C++ one, and guessing globally gets
+    // it wrong for whichever kind of project is in the minority. A C++ codebase
+    // with `.h` headers would show a large C band that is not C, splitting one
+    // language into two. Held back and attributed once the whole tree is known.
+    if (path.toLowerCase().endsWith(".h") && !SKIP_FILE.test(path)) {
+      headerBytes += size;
+      continue;
+    }
+
+    const lang = langOf(path);
     if (!lang) continue;
+    if (lang === "C++") sawCpp = true;
     counts.set(lang, (counts.get(lang) || 0) + size);
   }
+
+  // Linguist reads the file to decide; this reads the company it keeps, which
+  // is the same answer in every case that matters and needs no file contents.
+  if (headerBytes > 0) {
+    const owner = sawCpp ? "C++" : "C";
+    counts.set(owner, (counts.get(owner) || 0) + headerBytes);
+  }
+
   treeCache.set(sha, counts);
   walked++;
   return counts;

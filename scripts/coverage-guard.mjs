@@ -1,17 +1,17 @@
 // Refuse to publish a chart that measures a lot less than the last one did.
 //
-// This exists because of a run that succeeded and was wrong. Overnight the
-// token stopped seeing the organization repositories: 57 repos became 36, the
-// contributed count went 29 to 8, and Python fell from 11.7 MB to 1.0 MB. No
-// step failed, so nothing was preserved and both charts published, showing
-// TypeScript at 67% where the day before it was 41%. The shape of the account
-// appeared to change overnight, and nothing about the account had changed.
+// This exists because of a run where 57 repositories became 36 between one
+// evening and the next morning. The contributed count went 29 to 8, Python fell
+// from 11.7 MB to 1.0 MB, and TypeScript read 67% where the day before it read
+// 41%. No step failed, so the step that preserves the last published charts
+// never fired and both charts published the smaller picture.
 //
-// A scan that sees less than it did is nearly always an access problem, not a
-// deletion: a PAT expiring, an organization's SSO authorization lapsing, a
-// fine-grained token's approval running out. Those are exactly the failures
-// that do not raise an error, because the API answers cheerfully with the
-// subset it is willing to show.
+// That drop was real: three organizations' repositories had been deleted. The
+// first diagnosis was a token that had lost its organization access, and it was
+// wrong, which is the whole argument for this file. From inside a script the two
+// causes are indistinguishable. A PAT whose SSO authorization has lapsed and an
+// account that genuinely shrank both arrive as a shorter list with a 200, and
+// only the person running it knows which happened.
 //
 // So the guard is on coverage rather than on the numbers themselves. Bytes move
 // for real reasons all the time; the count of repositories a token can see does
@@ -66,10 +66,14 @@ export async function assertCoverage(repoCount, { repo, label }) {
 
   throw new Error(
     `${label}: this run sees ${repoCount} repositories, the last published run saw ${previous}.\n` +
-      `A drop of ${drop} is almost always the token losing access rather than repositories\n` +
-      "going away: check that PROFILE_TOKEN has not expired and is still authorized for the\n" +
-      "organizations (SSO authorization lapses separately from the token itself).\n" +
-      "If the repositories really are gone, rerun with ALLOW_COVERAGE_DROP=1."
+      `A drop of ${drop} has two explanations and this script cannot tell them apart.\n` +
+      "  Repositories were deleted or archived: rerun with ALLOW_COVERAGE_DROP=1, and the\n" +
+      "    new number becomes the baseline.\n" +
+      "  The token lost access: check that PROFILE_TOKEN has not expired and is still\n" +
+      "    authorized for the organizations, since SSO authorization lapses separately\n" +
+      "    from the token itself.\n" +
+      "Publishing without deciding which is how a chart quietly starts describing a\n" +
+      "different account."
   );
 }
 
