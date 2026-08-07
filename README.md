@@ -94,6 +94,26 @@ I'm a co-founder. Credda turns real, both-party-confirmed commitment history int
 
 <br/>
 
+<!-- The repository is still named raster on github.com; the redirect keeps
+     these URLs working once it is renamed. -->
+## twill &nbsp;·&nbsp; [GitHub](https://github.com/martin-k-m/raster) &nbsp;·&nbsp; [![Release](https://img.shields.io/github/v/release/martin-k-m/raster?sort=semver&display_name=tag&label=&style=flat-square&color=4FB79B)](https://github.com/martin-k-m/raster/releases)
+
+<div align="center">
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/martin-k-m/raster/main/assets/twill-mark-glow.png" />
+  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/martin-k-m/raster/main/assets/twill-mark.png" />
+  <img src="https://raw.githubusercontent.com/martin-k-m/raster/main/assets/twill-mark.png" width="96" alt="twill" />
+</picture>
+
+</div>
+
+> **A language built around differentiable tensor programs.** Tensors are the primitive, `grad` is in the language rather than a library, and a static checker catches shape mistakes before a program runs.
+
+One dependency-free Go binary, source files end in `.tw`.
+
+<br/>
+
 ## Tech
 
 <div align="center">
