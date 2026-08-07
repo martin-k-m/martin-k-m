@@ -96,14 +96,14 @@ I'm a co-founder. Credda turns real, both-party-confirmed commitment history int
 
 <!-- The repository is still named raster on github.com; the redirect keeps
      these URLs working once it is renamed. -->
-## twill &nbsp;·&nbsp; [GitHub](https://github.com/martin-k-m/raster) &nbsp;·&nbsp; [![Release](https://img.shields.io/github/v/release/martin-k-m/raster?sort=semver&display_name=tag&label=&style=flat-square&color=4FB79B)](https://github.com/martin-k-m/raster/releases)
+## twill &nbsp;·&nbsp; [GitHub](https://github.com/martin-k-m/twill) &nbsp;·&nbsp; [![Release](https://img.shields.io/github/v/release/martin-k-m/twill?sort=semver&display_name=tag&label=&style=flat-square&color=4FB79B)](https://github.com/martin-k-m/twill/releases)
 
 <div align="center">
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/martin-k-m/raster/main/assets/twill-mark-glow.png" />
-  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/martin-k-m/raster/main/assets/twill-mark.png" />
-  <img src="https://raw.githubusercontent.com/martin-k-m/raster/main/assets/twill-mark.png" width="96" alt="twill" />
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/martin-k-m/twill/main/assets/twill-mark-glow.png" />
+  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/martin-k-m/twill/main/assets/twill-mark.png" />
+  <img src="https://raw.githubusercontent.com/martin-k-m/twill/main/assets/twill-mark.png" width="96" alt="twill" />
 </picture>
 
 </div>
