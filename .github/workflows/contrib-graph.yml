@@ -32,6 +32,7 @@ on:
     branches: [main]
     paths:
       - "scripts/banner.mjs"
+      - "scripts/stack.mjs"
       - "scripts/contrib-graph.mjs"
       - "scripts/lang-graph.mjs"
       - "scripts/lang-history.mjs"
@@ -143,6 +144,14 @@ jobs:
               || echo "::warning::no published $j.json to preserve"
             [ -s "dist/$j.json" ] || rm -f "dist/$j.json"
           done
+      # After the preserve step on purpose. The panel's language chips are read
+      # from dist/languages.json, and on a run where lang-graph failed that file
+      # only exists once the previous copy has been pulled back down. Running
+      # earlier would publish a panel with its measured row silently missing on
+      # exactly the runs where everything else was preserved intact.
+      - name: Generate the stack panel
+        run: node scripts/stack.mjs
+
       - name: Publish to the assets branch
         uses: crazy-max/ghaction-github-pages@v5
         with:
