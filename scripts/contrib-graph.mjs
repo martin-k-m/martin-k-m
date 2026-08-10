@@ -71,7 +71,22 @@ if (allDates.length === 0) { console.error("no contribution data"); process.exit
 // with the clock, so each run drops the oldest day and adds the newest.
 const WINDOW_DAYS = 92;
 const windowStart = now.getTime() - WINDOW_DAYS * 24 * 60 * 60 * 1000;
-const dates = allDates.filter((d) => new Date(d).getTime() >= windowStart);
+// The upper bound needs trimming as well as the lower one. `horizon` above asks
+// a day past the present on purpose, and the API answers with tomorrow as a
+// real calendar day holding zero, so every chart built from this ended on a day
+// nobody had worked yet: the daily line dropped to the floor at the right edge
+// and every day-over-day figure computed off the tail read as a collapse.
+//
+// Only a ZERO day past today is dropped, not everything past today. The horizon
+// exists because this account's calendar can be a day ahead of UTC, and cutting
+// on the UTC date alone would delete that real day and undo the fix above. A
+// future-looking day with work on it is that timezone edge and is kept.
+const todayUtc = new Date().toISOString().slice(0, 10);
+const dates = allDates.filter(
+  (d) =>
+    new Date(d).getTime() >= windowStart &&
+    (d <= todayUtc || (byDate.get(d) || 0) > 0)
+);
 const days = (dates.length ? dates : [allDates[allDates.length - 1]])
   .map((d) => ({ t: new Date(d).getTime(), v: byDate.get(d) || 0 }));
 
