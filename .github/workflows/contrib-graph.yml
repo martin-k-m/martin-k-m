@@ -34,6 +34,8 @@ on:
       - "scripts/banner.mjs"
       - "scripts/stack.mjs"
       - "scripts/project-cards.mjs"
+      - "scripts/constellation.mjs"
+      - "scripts/repos.mjs"
       - "scripts/contrib-graph.mjs"
       - "scripts/lang-graph.mjs"
       - "scripts/lang-history.mjs"
@@ -124,15 +126,27 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.PROFILE_TOKEN || secrets.GITHUB_TOKEN }}
         run: node scripts/lang-graph.mjs
 
+      # Same PAT and same reason as the language charts: it enumerates every
+      # repository the account touches, including the organization ones the
+      # Actions token cannot see. continue-on-error because a constellation is
+      # worth less than a run, and the preserve step below keeps the last one.
+      - name: Generate the constellation
+        id: constellation
+        continue-on-error: true
+        env:
+          GH_LOGIN: ${{ github.repository_owner }}
+          GITHUB_TOKEN: ${{ secrets.PROFILE_TOKEN || secrets.GITHUB_TOKEN }}
+        run: node scripts/constellation.mjs
+
       # The publish step replaces the whole assets branch, so a chart that failed
       # to regenerate would be deleted rather than left alone, breaking the README
       # image. Pull the last published copy back down instead; whatever did run
       # still updates.
       - name: Preserve the last published charts
-        if: steps.lang.outcome != 'success' || steps.history.outcome != 'success'
+        if: steps.lang.outcome != 'success' || steps.history.outcome != 'success' || steps.constellation.outcome != 'success'
         run: |
           echo "::warning::a chart did not regenerate — check the PROFILE_TOKEN secret (PAT with repo scope)"
-          for f in languages languages-light lang-history lang-history-light; do
+          for f in languages languages-light lang-history lang-history-light constellation constellation-light; do
             [ -s "dist/$f.svg" ] && continue
             curl -fsSL -o "dist/$f.svg" \
               "https://raw.githubusercontent.com/${{ github.repository }}/assets/$f.svg" \

@@ -42,6 +42,16 @@
 
 <sub>Running total and contributions per day · rolling 3 months · click, then hover for any day</sub>
 
+<br/><br/>
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/constellation.svg" />
+  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/constellation-light.svg" />
+  <img src="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/constellation-light.svg" width="100%" alt="Every repository this account touches, sized by bytes of code, coloured by dominant language and clustered by owner" />
+</picture>
+
+<sub>Every repository, clustered by owner · area is bytes of code, colour is the dominant language · private repositories are drawn but never named</sub>
+
 </div>
 
 ## Credda &nbsp;·&nbsp; [credda.io](https://credda.io) &nbsp;·&nbsp; [@martin](https://credda.io/profile/martin) &nbsp;·&nbsp; [GitHub](https://github.com/Credda-io)
