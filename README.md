@@ -52,43 +52,18 @@
 
 </div>
 
-> **Portable trust infrastructure.** Reputation shouldn't reset every time you join a new platform.
-
 I'm a co-founder. Credda turns real, both-party-confirmed commitment history into a verified
 **0–100 reliability score** that a person owns and carries across marketplaces, lenders, and clients.
 
-<table>
-<tbody>
-<tr>
-  <td><b>Deterministic</b></td>
-  <td>The score is a pure function of an append-only event ledger. No human or AI can move it. The AI layer is advisory only, and inert entirely unless a key is configured.</td>
-</tr>
-</tbody>
-<tbody>
-<tr>
-  <td><b>Yours to carry</b></td>
-  <td>Trust is portable as signed W3C Verifiable Credentials (<code>did:web</code>).</td>
-</tr>
-</tbody>
-<tbody>
-<tr>
-  <td><b>Commitments, not reviews</b></td>
-  <td>The primitive is a commitment both parties confirmed, alongside platform verification, disputes, notifications, and billing.</td>
-</tr>
-</tbody>
-<tbody>
-<tr>
-  <td><b>Built for teams</b></td>
-  <td>Organizations with members, roles, and invitations, so a reputation works for a company as well as a person.</td>
-</tr>
-</tbody>
-<tbody>
-<tr>
-  <td><b>Real stack</b></td>
-  <td>React 19 · Vite 7 · Tailwind v4 on the front. Express 5 · TypeScript · Prisma/PostgreSQL · Redis on AWS behind it.</td>
-</tr>
-</tbody>
-</table>
+<div align="center">
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/credda.svg" />
+  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/credda-light.svg" />
+  <img src="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/credda-light.svg" width="100%" alt="Credda: deterministic scoring from an append-only ledger, portable as a signed W3C Verifiable Credential, built on commitments rather than reviews, with organizations" />
+</picture>
+
+</div>
 
 <sub>Early-stage and under active development. Anything the site marks <i>coming soon</i> is direction, not a shipped guarantee.</sub>
 
@@ -106,11 +81,15 @@ I'm a co-founder. Credda turns real, both-party-confirmed commitment history int
   <img src="https://raw.githubusercontent.com/martin-k-m/twill/main/assets/twill-mark.png" width="96" alt="twill" />
 </picture>
 
+<br/><br/>
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/twill.svg" />
+  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/twill-light.svg" />
+  <img src="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/twill-light.svg" width="100%" alt="twill: shape errors caught at check time, differentiation as syntax, one deterministic dependency-free binary" />
+</picture>
+
 </div>
-
-> **A language built around differentiable tensor programs.** Tensors are the primitive, `grad` is in the language rather than a library, and a static checker catches shape mistakes before a program runs.
-
-One dependency-free Go binary, source files end in `.tw`.
 
 <br/>
 

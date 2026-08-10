@@ -33,6 +33,7 @@ on:
     paths:
       - "scripts/banner.mjs"
       - "scripts/stack.mjs"
+      - "scripts/project-cards.mjs"
       - "scripts/contrib-graph.mjs"
       - "scripts/lang-graph.mjs"
       - "scripts/lang-history.mjs"
@@ -81,6 +82,12 @@ jobs:
 
       - name: Generate the README banner
         run: node scripts/banner.mjs
+
+      # Static content, no API and no token, so it sits with the banner rather
+      # than with the charts: it publishes even on a run where every credentialed
+      # step fails.
+      - name: Generate the project cards
+        run: node scripts/project-cards.mjs
 
       - name: Generate contribution SVGs
         env:
