@@ -135,23 +135,15 @@ function langOf(path) {
 }
 
 // ── Which repositories ──────────────────────────────────────────────────────
-// The languages I write in my own projects: repositories I own, not forks, with
-// the website left out. Repositories I only contribute to through an org are
-// excluded on purpose, so the bars are what I build rather than the byte totals
-// of every codebase I can reach. Colours come from the same place as
-// languages.svg, so a language is the same colour in both charts.
+// Same population as languages.svg: not forks, and anything owned, collaborated
+// on, or reached through an org, so the org codebases I contribute to (Credda)
+// count too. Colours come from the same place, so a language is the same colour
+// in both charts.
 
 const all = await fetchRepos(login, token);
 const colors = all.colors;
-const OWNER = login.toLowerCase();
-// The website renders this page; it is not one of the projects being counted.
-const EXCLUDED_REPOS = new Set([`${OWNER}/${OWNER}.github.io`]);
-// An empty repository has no default branch and so nothing to walk. Then keep
-// only what I own, and drop the website.
-const repos = all.repos
-  .filter((r) => r.defaultBranchRef)
-  .filter((r) => r.owner.login.toLowerCase() === OWNER)
-  .filter((r) => !EXCLUDED_REPOS.has(r.nameWithOwner.toLowerCase()));
+// An empty repository has no default branch and so nothing to walk.
+const repos = all.repos.filter((r) => r.defaultBranchRef);
 
 if (repos.length < 2) {
   console.error(
