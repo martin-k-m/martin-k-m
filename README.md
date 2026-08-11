@@ -103,6 +103,42 @@ I'm a co-founder. Credda turns real, both-party-confirmed commitment history int
 
 <br/>
 
+## Selected projects
+
+<sub>Beyond Credda and twill: small, dependency-light tools, one job each, with tests and CI, in the language that fits it.</sub>
+
+<table>
+<tr>
+<td width="50%" valign="top">
+
+**Data**
+
+<a href="https://github.com/martin-k-m/drift"><b>drift</b></a> · <code>Rust</code><br/>
+Diff two tables by key rather than by line position, so re-ordering or re-exporting a file is not a diff.
+
+<a href="https://github.com/martin-k-m/sift"><b>sift</b></a> · <code>Python</code><br/>
+Query CSV and JSONL from the terminal with a small clause language. Streaming, zero dependencies.
+
+<a href="https://github.com/martin-k-m/csvpeek"><b>csvpeek</b></a> · <code>Python</code><br/>
+Profile a CSV: inferred types, null rates, per-column stats and distributions.
+
+</td>
+<td width="50%" valign="top">
+
+**Developer infrastructure**
+
+<a href="https://github.com/martin-k-m/capsule"><b>capsule</b></a> · <code>Go</code><br/>
+Throwaway, isolated development environments described by one config file, gone when you exit.
+
+<a href="https://github.com/martin-k-m/tandem"><b>tandem</b></a> · <code>Java</code><br/>
+Durable workflow orchestration for the JVM: retries, compensation and resume, with no runtime dependencies.
+
+</td>
+</tr>
+</table>
+
+<br/>
+
 ## Tech
 
 <div align="center">
