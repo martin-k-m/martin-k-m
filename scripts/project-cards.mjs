@@ -124,11 +124,22 @@ function scoreMotif(C, cx, cy) {
   const score = 73.92;
   const dash = circ * sweep * (score / 100);
 
+  // Where the swept arc ends: the dash starts at 3 o'clock and runs clockwise,
+  // so the tip sits at (dash / circ) of a turn from there, in the same rotated
+  // frame as the arc. A small marker rides it, so the gauge names its current
+  // value with a point on the ring rather than only a length of colour.
+  const tipA = (dash / circ) * 2 * Math.PI;
+  const tipX = (r * Math.cos(tipA)).toFixed(2);
+  const tipY = (r * Math.sin(tipA)).toFixed(2);
+
   return `<g transform="translate(${cx} ${cy})">
     <g transform="rotate(129)">
       <circle r="${r}" fill="none" stroke="${C.text}" stroke-opacity="${C.track}" stroke-width="9" stroke-linecap="round" stroke-dasharray="${(circ * sweep).toFixed(1)} ${circ.toFixed(1)}"/>
       <circle r="${r}" fill="none" stroke="url(#ramp${C.suffix})" stroke-width="9" stroke-linecap="round" stroke-dasharray="0 ${circ.toFixed(1)}">
         <animate attributeName="stroke-dasharray" dur="1.6s" values="0 ${circ.toFixed(1)};${dash.toFixed(1)} ${circ.toFixed(1)}" keyTimes="0;1" fill="freeze" calcMode="spline" keySplines="0.16 1 0.3 1"/>
+      </circle>
+      <circle cx="${tipX}" cy="${tipY}" r="4.5" fill="${C.bg}" stroke="url(#ramp${C.suffix})" stroke-width="2.5">
+        <animate attributeName="opacity" dur="1.7s" values="0;0;1" keyTimes="0;0.82;1" fill="freeze"/>
       </circle>
     </g>
     <text y="-6" text-anchor="middle" font-family="${MONO}" font-size="9" fill="${C.muted}" letter-spacing="1.6">SCORE</text>

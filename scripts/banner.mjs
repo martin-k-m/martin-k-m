@@ -261,7 +261,16 @@ function signal(C) {
   </circle>`
     )
     .join("");
-  return `<g>${still}${pulses}
+  // A dashed tick ring turning slowly between the two still rings, so the mark
+  // reads as a scope rather than a bare target. SMIL rotate about the fixed
+  // centre — the same reliable path the packets take — rather than a CSS
+  // transform, whose origin does not survive GitHub's image sandbox.
+  const scope = `<circle cx="${SIG_X}" cy="${SIG_Y}" r="38" fill="none" stroke="${C.text}" stroke-opacity="${(
+    C.border * 1.6
+  ).toFixed(3)}" stroke-width="1" stroke-dasharray="2 8">
+    <animateTransform attributeName="transform" type="rotate" from="0 ${SIG_X} ${SIG_Y}" to="360 ${SIG_X} ${SIG_Y}" dur="30s" repeatCount="indefinite"/>
+  </circle>`;
+  return `<g>${still}${scope}${pulses}
   <circle cx="${SIG_X}" cy="${SIG_Y}" r="10" fill="${C.bg}" stroke="url(#ramp${C.suffix})" stroke-width="3"/>
   <circle cx="${SIG_X}" cy="${SIG_Y}" r="3.4" fill="url(#ramp${C.suffix})"/></g>`;
 }

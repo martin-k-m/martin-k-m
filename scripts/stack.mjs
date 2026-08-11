@@ -169,9 +169,16 @@ function chip(C, c, y, delay, sizeText) {
 
   // The bar is the evidence. Full width of the chip's text column at 100%, so
   // a glance across the row compares shares without reading a single number.
+  const fillW = ((tw * Math.min(c.share, 100)) / 100).toFixed(1);
+  // The fill sweeps out to its share as the chip settles, so the bar reads as a
+  // measurement being taken rather than a value asserted. The base width is the
+  // finished value, so a renderer that strips SMIL shows the full bar rather
+  // than an empty track — the same rule the reveals follow everywhere here.
   const bar = c.measured
     ? `<rect x="${(c.x + c.padX).toFixed(1)}" y="${(y + 19).toFixed(1)}" width="${tw.toFixed(1)}" height="2" rx="1" fill="${C.text}" fill-opacity="${C.barTrack}"/>
-     <rect x="${(c.x + c.padX).toFixed(1)}" y="${(y + 19).toFixed(1)}" width="${((tw * Math.min(c.share, 100)) / 100).toFixed(1)}" height="2" rx="1" fill="url(#ramp${C.suffix})"/>`
+     <rect x="${(c.x + c.padX).toFixed(1)}" y="${(y + 19).toFixed(1)}" width="${fillW}" height="2" rx="1" fill="url(#ramp${C.suffix})">
+       <animate attributeName="width" dur="1.1s" begin="${delay.toFixed(2)}s" values="0;${fillW}" keyTimes="0;1" fill="freeze" calcMode="spline" keySplines="0.16 1 0.3 1"/>
+     </rect>`
     : "";
 
   return `<g opacity="1">${fadeIn(delay, 0.5)}

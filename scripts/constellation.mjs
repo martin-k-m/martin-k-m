@@ -221,12 +221,18 @@ const [core, ...orbit] = clusters;
 core.cx = 0;
 core.cy = 0;
 
+// The ring the orbiting owners are seeded on, kept so the drawing can trace it
+// faintly behind them. Reading it out changes no placement; it only lets the
+// picture show the structure it was already built with.
+let orbitRingR = 0;
+
 if (orbit.length > 0) {
   const totalSpan = orbit.reduce((s, c) => s + c.radius, 0);
   let ringR = core.radius + Math.max(...orbit.map((c) => c.radius)) + 26;
   // Enough circumference for every orbiting cluster to sit clear of its
   // neighbours, which is a bound on the ring radius rather than a guess at it.
   ringR = Math.max(ringR, (totalSpan * 2.5) / Math.PI);
+  orbitRingR = ringR;
 
   let angle = -Math.PI / 2;
   for (const c of orbit) {
@@ -405,6 +411,13 @@ function render(C) {
   <rect width="${W}" height="${H}" fill="${C.bg}"/>
   <g class="grid" stroke="${C.a2}" stroke-opacity="${C.grid}" stroke-width="1">${grid.join("")}</g>
   <ellipse class="breathe" cx="${CX}" cy="${CY}" rx="330" ry="220" fill="url(#cglow${C.suffix})"/>
+  ${
+    orbitRingR > 0
+      ? `<ellipse cx="${px(0)}" cy="${py(0)}" rx="${pr(orbitRingR)}" ry="${pr(
+          orbitRingR * 0.62
+        )}" fill="none" stroke="${C.text}" stroke-opacity="${C.haloStroke}" stroke-width="1" stroke-dasharray="1 7"/>`
+      : ""
+  }
 
   <text x="28" y="42" font-family="${MONO}" font-size="15" font-weight="700" fill="url(#ramp${C.suffix})">CONSTELLATION</text>
   <text x="${W - 28}" y="42" text-anchor="end" font-family="${MONO}" font-size="10" fill="${C.muted}">${esc(note)}</text>
