@@ -62,7 +62,7 @@ Electrical engineering at UC Santa Cruz, co-founder of Credda. I build small, de
 
 <div align="center">
 
-<img src="https://raw.githubusercontent.com/Credda-io/.github/main/profile/banner.svg" width="100%" alt="Credda: a portable, verified work record, scored by a public formula" />
+<img src="https://raw.githubusercontent.com/Credda-io/.github/main/profile/assets/creddaseallockupdarktransparent.png" width="80%" alt="Credda: a portable, verified work record, scored by a public formula" />
 
 </div>
 
