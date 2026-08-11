@@ -186,9 +186,7 @@ function renderChart({ title, valueLabel, points, secondary, markPeak, hover }, 
   const MONO = "'JetBrains Mono',ui-monospace,monospace";
 
   const secondaryLine = secondary
-    ? `<path d="${path(secondary.points, Y2)}" fill="none" stroke="${C.rate}" stroke-width="1.8" stroke-dasharray="5 4" stroke-linecap="round" opacity="0">
-    <animate attributeName="opacity" from="0" to="1" dur="0.8s" begin="0.9s" fill="freeze"/>
-  </path>`
+    ? `<path d="${path(secondary.points, Y2)}" fill="none" stroke="${C.rate}" stroke-width="1.8" stroke-dasharray="5 4" stroke-linecap="round" opacity="1"/>`
     : "";
 
   // Label the busiest day, which is the one point on the daily line worth
@@ -202,7 +200,7 @@ function renderChart({ title, valueLabel, points, secondary, markPeak, hover }, 
     if (sp[pi].v > 0) {
       const px = X(sp[pi].t), py = Y2(sp[pi].v);
       const anchor = px > W - 90 ? "end" : px < 90 ? "start" : "middle";
-      peakMark = `<g opacity="0"><animate attributeName="opacity" from="0" to="1" dur="0.5s" begin="1.5s" fill="freeze"/>
+      peakMark = `<g opacity="1">
     <circle cx="${px.toFixed(1)}" cy="${py.toFixed(1)}" r="3" fill="${C.rate}"/>
     <text x="${px.toFixed(1)}" y="${(py - 9).toFixed(1)}" text-anchor="${anchor}" font-family="${MONO}" font-size="10" fill="${C.rate}">${secondary.peakLabel(sp[pi].v)}</text>
   </g>`;
@@ -274,19 +272,15 @@ function renderChart({ title, valueLabel, points, secondary, markPeak, hover }, 
   <text x="${padL}" y="27" font-family="${SANS}" font-size="15" font-weight="600" fill="${C.text}">${title}</text>
   <text x="${W - padR}" y="27" text-anchor="end" font-family="'JetBrains Mono',ui-monospace,monospace" font-size="15" font-weight="600" fill="${C.a2}">${valueLabel}</text>
   ${legend}
-  <path d="${area}" fill="url(#area)" opacity="0"><animate attributeName="opacity" from="0" to="1" dur="1.4s" begin="0.3s" fill="freeze"/></path>
+  <path d="${area}" fill="url(#area)" opacity="1"/>
   ${secondaryLine}
-  <path d="${line}" fill="none" stroke="url(#stroke)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" pathLength="1000" stroke-dasharray="1000" stroke-dashoffset="1000">
-    <animate attributeName="stroke-dashoffset" from="1000" to="0" dur="1.9s" fill="freeze"/>
-  </path>
+  <path d="${line}" fill="none" stroke="url(#stroke)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
   ${peakMark}
-  <circle cx="${endX.toFixed(1)}" cy="${endY.toFixed(1)}" r="0" fill="none" stroke="${C.a2}" stroke-width="2" opacity="0.7">
-    <animate attributeName="r" from="4" to="15" dur="1.8s" begin="1.9s" repeatCount="indefinite"/>
-    <animate attributeName="opacity" from="0.6" to="0" dur="1.8s" begin="1.9s" repeatCount="indefinite"/>
+  <circle cx="${endX.toFixed(1)}" cy="${endY.toFixed(1)}" r="4.5" fill="none" stroke="${C.a2}" stroke-width="2" opacity="0.7">
+    <animate attributeName="r" from="4" to="15" dur="1.8s" begin="0s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" from="0.6" to="0" dur="1.8s" begin="0s" repeatCount="indefinite"/>
   </circle>
-  <circle cx="${endX.toFixed(1)}" cy="${endY.toFixed(1)}" r="0" fill="${C.bg}" stroke="${C.a2}" stroke-width="2">
-    <animate attributeName="r" from="0" to="4.5" dur="0.4s" begin="1.9s" fill="freeze"/>
-  </circle>
+  <circle cx="${endX.toFixed(1)}" cy="${endY.toFixed(1)}" r="4.5" fill="${C.bg}" stroke="${C.a2}" stroke-width="2"/>
   <text x="${padL}" y="${H - 10}" font-family="'JetBrains Mono',ui-monospace,monospace" font-size="11" fill="${C.muted}">${monthYr(t0)}</text>
   <text x="${W / 2}" y="${H - 10}" text-anchor="middle" font-family="'JetBrains Mono',ui-monospace,monospace" font-size="11" fill="${C.muted}">updated ${stamp}</text>
   <text x="${W - padR}" y="${H - 10}" text-anchor="end" font-family="'JetBrains Mono',ui-monospace,monospace" font-size="11" fill="${C.muted}">${dayLabel(t1)}</text>

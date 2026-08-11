@@ -110,10 +110,11 @@ const textW = (s, size) => s.length * advance(size);
 // the animation. opacity="0" plus a delayed begin blanks the element anywhere
 // SMIL does not run, and a panel that renders empty in a sandbox that strips
 // animation is worse than one that never animated at all.
-function fadeIn(delay, dur) {
-  const total = delay + dur;
-  const hold = (delay / total).toFixed(4);
-  return `<animate attributeName="opacity" dur="${total.toFixed(2)}s" values="0;0;1" keyTimes="0;${hold};1" fill="freeze"/>`;
+// No-op: entrances must never be what makes an element appear. Every element
+// here carries its finished value as a plain static attribute, so it is fully
+// visible with SMIL stripped or its first frame frozen. See banner.mjs.
+function fadeIn(_delay, _dur) {
+  return "";
 }
 
 const CELL = 40;
@@ -193,16 +194,12 @@ function chip(C, c, y, delay, sizeText) {
 
   // The bar is the evidence. Full width of the chip's text column at 100%, so
   // a glance across the row compares shares without reading a single number.
+  // Drawn statically at its finished width — no sweep — so the measured share is
+  // fully visible whether or not any animation runs.
   const fillW = ((tw * Math.min(c.share, 100)) / 100).toFixed(1);
-  // The fill sweeps out to its share as the chip settles, so the bar reads as a
-  // measurement being taken rather than a value asserted. The base width is the
-  // finished value, so a renderer that strips SMIL shows the full bar rather
-  // than an empty track — the same rule the reveals follow everywhere here.
   const bar = c.measured
     ? `<rect x="${(c.x + c.padX).toFixed(1)}" y="${(y + 19).toFixed(1)}" width="${tw.toFixed(1)}" height="2" rx="1" fill="${C.text}" fill-opacity="${C.barTrack}"/>
-     <rect x="${(c.x + c.padX).toFixed(1)}" y="${(y + 19).toFixed(1)}" width="${fillW}" height="2" rx="1" fill="url(#ramp${C.suffix})">
-       <animate attributeName="width" dur="1.1s" begin="${delay.toFixed(2)}s" values="0;${fillW}" keyTimes="0;1" fill="freeze" calcMode="spline" keySplines="0.16 1 0.3 1"/>
-     </rect>`
+     <rect x="${(c.x + c.padX).toFixed(1)}" y="${(y + 19).toFixed(1)}" width="${fillW}" height="2" rx="1" fill="url(#ramp${C.suffix})"/>`
     : "";
 
   return `<g opacity="1">${fadeIn(delay, 0.5)}

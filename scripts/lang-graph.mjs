@@ -413,9 +413,9 @@ function spectrumFor(C) {
   return rows
     .map((r, i) => {
       const w = (r.n / total) * (W - padL - padR);
-      const seg = `<rect x="${x.toFixed(1)}" y="${specY}" width="${Math.max(0, w - (i < rows.length - 1 ? 1.5 : 0)).toFixed(1)}" height="${specH}" rx="3" fill="${barColor(r, C)}" opacity="0">
-      <animate attributeName="opacity" from="0" to="0.95" dur="0.5s" begin="${(0.25 + i * 0.05).toFixed(2)}s" fill="freeze"/>
-    </rect>`;
+      // Static at its finished opacity: the proportion bar is information, so it
+      // must be fully drawn whether or not any animation runs.
+      const seg = `<rect x="${x.toFixed(1)}" y="${specY}" width="${Math.max(0, w - (i < rows.length - 1 ? 1.5 : 0)).toFixed(1)}" height="${specH}" rx="3" fill="${barColor(r, C)}" opacity="0.95"/>`;
       x += w;
       return seg;
     })
@@ -427,15 +427,14 @@ function barsFor(C) {
     .map((r, i) => {
       const y = rowsY + i * rowH;
       const w = Math.max(2, (r.n / scale) * barW);
-      const begin = (0.3 + i * 0.07).toFixed(2);
+      // The bar and its marker are drawn statically at their finished values.
+      // These are the measurement, so they must be fully visible with no
+      // animation running or its first frame frozen.
       return `<g>
     <text x="${padL}" y="${y + 11}" font-family="${MONO}" font-size="12" fill="${C.text}">${esc(r.name)}</text>
     <rect x="${barX}" y="${y + 2}" width="${barW}" height="11" rx="5.5" fill="${C.text}" fill-opacity="${C.trackOpacity}"/>
-    <rect x="${barX}" y="${y + 2}" width="0" height="11" rx="5.5" fill="${barColor(r, C)}">
-      <animate attributeName="width" from="0" to="${w.toFixed(1)}" dur="0.9s" begin="${begin}s" fill="freeze" calcMode="spline" keySplines="0.22 1 0.36 1" keyTimes="0;1"/>
-    </rect>
-    <g transform="translate(0 ${y + 2})" opacity="0">
-      <animate attributeName="opacity" from="0" to="1" dur="0.4s" begin="${(Number(begin) + 0.9).toFixed(2)}s" fill="freeze"/>
+    <rect x="${barX}" y="${y + 2}" width="${w.toFixed(1)}" height="11" rx="5.5" fill="${barColor(r, C)}"/>
+    <g transform="translate(0 ${y + 2})" opacity="1">
       ${markerFor(r, C)}
     </g>
     <text x="${W - padR}" y="${y + 11}" text-anchor="end" font-family="${MONO}" font-size="11" fill="${C.muted}">${size(r.n)} · ${pct(r.n).toFixed(1)}%</text>

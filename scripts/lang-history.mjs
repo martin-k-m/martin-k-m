@@ -636,15 +636,12 @@ function render(C) {
   <text x="${padL}" y="27" font-family="${SANS}" font-size="15" font-weight="600" fill="${C.text}">Languages over time · share of code</text>
   <text x="${W - 14}" y="27" text-anchor="end" font-family="${MONO}" font-size="15" font-weight="600" fill="${C.accent}">${esc(leadName)} ${(leadShare * 100).toFixed(1)}%</text>
   ${grid}
-  <clipPath id="reveal${C.suffix}"><rect x="${padL - 4}" y="${padT - 8}" width="0" height="${plotH + 16}">
-    <animate attributeName="width" from="0" to="${plotW + 12}" dur="1.1s" begin="0.2s" fill="freeze" calcMode="spline" keySplines="0.22 1 0.36 1" keyTimes="0;1"/>
-  </rect></clipPath>
-  <g clip-path="url(#reveal${C.suffix})">
+  <g>
   ${lines(C)}
   </g>
   <line x1="${padL}" y1="${padT + plotH}" x2="${W - padR}" y2="${padT + plotH}" stroke="${C.line2}" stroke-opacity="0.9"/>
   ${xLabels}
-  <g opacity="0"><animate attributeName="opacity" from="0" to="1" dur="0.4s" begin="1.1s" fill="freeze"/>
+  <g opacity="1">
   ${endLabels(C)}
   </g>
   <text x="${padL}" y="${H - 10}" font-family="${MONO}" font-size="10" fill="${C.muted}">3 months · sampled every ${stepDays} day${stepDays===1?"":"s"} · ${repos.length} repos · ${size(finalTotal)} today · extensions Linguist counts as code</text>

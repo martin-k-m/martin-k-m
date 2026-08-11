@@ -369,10 +369,10 @@ function render(C) {
           const text = named
             ? `<text x="${cx}" y="${(Number(cy) + 3.2).toFixed(1)}" text-anchor="middle" font-family="${MONO}" font-size="8" fill="${C.nodeStroke}" font-weight="700">${esc(m.name.slice(0, 9))}</text>`
             : "";
-          // Staggered so the field assembles rather than appearing, and with
-          // the finished state as the base value so it is never an empty box.
-          const delay = 0.25 + ci * 0.08 + i * 0.012;
-          return `<g opacity="1"><animate attributeName="opacity" dur="${(delay + 0.5).toFixed(2)}s" values="0;0;1" keyTimes="0;${(delay / (delay + 0.5)).toFixed(4)};1" fill="freeze"/>
+          // Drawn statically at full opacity. Each node is a repository — real
+          // information — so it must be fully visible with SMIL stripped or its
+          // first frame frozen, not revealed by an entrance.
+          return `<g opacity="1">
       <circle cx="${cx}" cy="${cy}" r="${r}" fill="${fill}" fill-opacity="${C.dim}" stroke="${C.nodeStroke}" stroke-width="1.2"/>${text}</g>`;
         })
         .join("");

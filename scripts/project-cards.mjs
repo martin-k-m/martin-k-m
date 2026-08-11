@@ -105,13 +105,11 @@ function wrap(text, size, maxW) {
   return lines;
 }
 
-// Base value is the finished state; the delay lives inside the animation. Same
-// reasoning as banner.mjs: a card whose base value is opacity 0 renders as an
-// empty box anywhere SMIL is stripped, and this one is most of a section.
-function fadeIn(delay, dur) {
-  const total = delay + dur;
-  const hold = (delay / total).toFixed(4);
-  return `<animate attributeName="opacity" dur="${total.toFixed(2)}s" values="0;0;1" keyTimes="0;${hold};1" fill="freeze"/>`;
+// No-op: entrances must never be what makes an element appear. All card text
+// carries its finished value as a plain static attribute, so it is fully
+// visible with SMIL stripped or its first frame frozen. See banner.mjs.
+function fadeIn(_delay, _dur) {
+  return "";
 }
 
 const CELL = 40;
@@ -158,12 +156,8 @@ function scoreMotif(C, cx, cy) {
   return `<g transform="translate(${cx} ${cy})">
     <g transform="rotate(129)">
       <circle r="${r}" fill="none" stroke="${C.line2}" stroke-opacity="${C.track}" stroke-width="9" stroke-linecap="round" stroke-dasharray="${(circ * sweep).toFixed(1)} ${circ.toFixed(1)}"/>
-      <circle r="${r}" fill="none" stroke="url(#ramp${C.suffix})" stroke-width="9" stroke-linecap="round" stroke-dasharray="0 ${circ.toFixed(1)}">
-        <animate attributeName="stroke-dasharray" dur="1.6s" values="0 ${circ.toFixed(1)};${dash.toFixed(1)} ${circ.toFixed(1)}" keyTimes="0;1" fill="freeze" calcMode="spline" keySplines="0.16 1 0.3 1"/>
-      </circle>
-      <circle cx="${tipX}" cy="${tipY}" r="4.5" fill="${C.bg}" stroke="url(#ramp${C.suffix})" stroke-width="2.5">
-        <animate attributeName="opacity" dur="1.7s" values="0;0;1" keyTimes="0;0.82;1" fill="freeze"/>
-      </circle>
+      <circle r="${r}" fill="none" stroke="url(#ramp${C.suffix})" stroke-width="9" stroke-linecap="round" stroke-dasharray="${dash.toFixed(1)} ${circ.toFixed(1)}"/>
+      <circle cx="${tipX}" cy="${tipY}" r="4.5" fill="${C.bg}" stroke="url(#ramp${C.suffix})" stroke-width="2.5" opacity="1"/>
     </g>
     <text y="-6" text-anchor="middle" font-family="${MONO}" font-size="9" fill="${C.muted}" letter-spacing="1.6">SCORE</text>
     <text y="16" text-anchor="middle" font-family="${MONO}" font-size="20" font-weight="700" fill="${C.text}">0-100</text>

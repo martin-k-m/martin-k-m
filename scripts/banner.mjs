@@ -124,10 +124,16 @@ const fixW = (s, size) => `textLength="${textW(s, size).toFixed(1)}" lengthAdjus
 // `begin` stays at 0 rather than carrying the delay because a delayed begin
 // shows the base value until the clock reaches it — here that would flash the
 // text on, off, and back on.
-function fadeIn(delay, dur) {
-  const total = delay + dur;
-  const hold = (delay / total).toFixed(4);
-  return `<animate attributeName="opacity" dur="${total.toFixed(2)}s" values="0;0;1" keyTimes="0;${hold};1" fill="freeze"/>`;
+// Entrances are motion ON TOP of an already-complete picture, never the thing
+// that makes the picture appear. GitHub renders README SVGs as <img>, where
+// SMIL does not run, and some rasterizers freeze the first animation frame
+// where an opacity reveal reads 0 — either way an entrance that starts hidden
+// ships hidden. So every information-bearing element carries its finished value
+// as a plain static attribute and gets no reveal at all. This helper is kept as
+// a no-op so the call sites still read as "this settles in", and so a future
+// reveal can only be added deliberately rather than by default.
+function fadeIn(_delay, _dur) {
+  return "";
 }
 
 // ── The drifting grid ───────────────────────────────────────────────────────
@@ -165,39 +171,26 @@ const CYCLE = 9;
 const KEYS = ["0;0.16;0.44;0.5;1", "0;0.5;0.66;0.94;1"];
 const CARET_KEYS = "0;0.16;0.44;0.5;0.66;0.94;1";
 
+// The old role line typed one line, cleared it, typed the other, using a clip
+// whose width animated from 0. That clip is a reveal: its base width for the
+// idle line is 0, so a renderer without SMIL shows only one role, and a
+// rasterizer that freezes the first frame shows none. Both roles are real
+// information, so the line is now a single static string that names both, with
+// no clip and no reveal. The one piece of motion left is the caret blink, which
+// is decorative — its absence hides nothing.
+const ROLE_LINE = ROLES.join("   ·   ");
+
 function roleLine(C) {
   const size = 15;
   const x = padL;
-  const widths = ROLES.map((r) => textW(r, size));
-
-  const lines = ROLES.map((role, i) => {
-    const w = widths[i];
-    const vals = i === 0 ? `0;${w};${w};0;0` : `0;0;${w};${w};0`;
-    // Without animation the clip width is whatever the attribute says, and a
-    // width of 0 hides the line completely — this is the element that failed
-    // hardest when the entrances were built the other way round. So the first
-    // role's clip is open by default and the second's is shut: a renderer that
-    // ignores SMIL shows one settled role rather than two overlapping ones or
-    // an empty line. The animation begins at 0s and overrides both at once.
-    const base = i === 0 ? w : 0;
-    return `
-  <clipPath id="type${i}${C.suffix}"><rect x="${x}" y="${roleY - size}" width="${base}" height="${size + 6}">
-    <animate attributeName="width" dur="${CYCLE}s" repeatCount="indefinite" keyTimes="${KEYS[i]}" values="${vals}" calcMode="linear"/>
-  </rect></clipPath>
-  <text x="${x}" y="${roleY}" clip-path="url(#type${i}${C.suffix})" font-family="${MONO}" font-size="${size}" font-weight="500" fill="${C.muted}" ${fixW(role, size)}>${esc(role)}</text>`;
-  }).join("");
-
-  const [w0, w1] = widths;
-  const stops = [x, x + w0, x + w0, x, x + w1, x + w1, x].join(";");
-  // Parked at the end of role 0, which is the line a renderer without animation
-  // is showing, so the caret sits where that text actually ends.
-  const caret = `
-  <rect x="${x + w0}" y="${roleY - size + 2}" width="2" height="${size}" fill="${C.a1}">
-    <animate attributeName="x" dur="${CYCLE}s" repeatCount="indefinite" keyTimes="${CARET_KEYS}" values="${stops}" calcMode="linear"/>
+  const w = textW(ROLE_LINE, size);
+  const text = `<text x="${x}" y="${roleY}" font-family="${MONO}" font-size="${size}" font-weight="500" fill="${C.muted}" ${fixW(ROLE_LINE, size)}>${esc(ROLE_LINE)}</text>`;
+  // Caret parked at the end of the settled line, blinking. Base opacity is 1, so
+  // it is a visible bar wherever the blink does not run.
+  const caret = `<rect x="${(x + w + 4).toFixed(1)}" y="${roleY - size + 2}" width="2" height="${size}" fill="${C.a2}" opacity="1">
     <animate attributeName="opacity" dur="1.06s" repeatCount="indefinite" values="1;1;0;0" keyTimes="0;0.5;0.5;1" calcMode="discrete"/>
   </rect>`;
-
-  return lines + caret;
+  return text + caret;
 }
 
 // ── Chips ───────────────────────────────────────────────────────────────────
@@ -250,22 +243,24 @@ function packets(C) {
 // SMIL rotate the packets use rather than a CSS transform whose origin does not
 // survive GitHub's image sandbox.
 //
-// The base value is the finished mark: stroke-dashoffset settles at 0, so a
-// renderer that strips SMIL shows the whole M rather than nothing.
+// The M is always fully drawn: a plain static stroke, no dash reveal, so it is
+// the whole mark in every renderer. Its living detail is a gentle opacity
+// breathe that never drops below 0.7, so the frozen-first-frame case and the
+// no-SMIL case both show a fully visible monogram.
 const SIG_X = W - padR - 92;
 const SIG_Y = H / 2;
 const MONO_PATH = "M20 79 V21 L50 55 L80 21 V79";
 
 /** The shared mark, drawn into a box of side S centred on (cx, cy). */
-function monogram(C, cx, cy, S, { stroke, width = 6, draw = true, delay = 0 } = {}) {
+function monogram(C, cx, cy, S, { stroke, width = 6, breathe = true } = {}) {
   const s = (S / 100).toFixed(4);
   const x = (cx - S / 2).toFixed(2);
   const y = (cy - S / 2).toFixed(2);
-  const anim = draw
-    ? `<animate attributeName="stroke-dashoffset" dur="1.6s" begin="${delay}s" values="100;0" keyTimes="0;1" fill="freeze" calcMode="spline" keySplines="0.16 1 0.3 1"/>`
+  const pulse = breathe
+    ? `<animate attributeName="opacity" dur="7s" repeatCount="indefinite" values="0.7;1;0.7" keyTimes="0;0.5;1"/>`
     : "";
-  return `<g transform="translate(${x} ${y}) scale(${s})" fill="none" stroke="${stroke}" stroke-width="${width}" stroke-linejoin="round" stroke-linecap="round">
-    <path d="${MONO_PATH}" pathLength="100" stroke-dasharray="100" stroke-dashoffset="0">${anim}</path>
+  return `<g transform="translate(${x} ${y}) scale(${s})" fill="none" stroke="${stroke}" stroke-width="${width}" stroke-linejoin="round" stroke-linecap="round" opacity="1">${pulse}
+    <path d="${MONO_PATH}"/>
   </g>`;
 }
 
@@ -286,8 +281,7 @@ function signal(C) {
   return `<g>${still}${scope}${monogram(C, SIG_X, SIG_Y, 44, {
     stroke: `url(#ramp${C.suffix})`,
     width: 7,
-    draw: true,
-    delay: 0.4,
+    breathe: true,
   })}</g>`;
 }
 
@@ -409,7 +403,7 @@ function renderFooter(C) {
 <rect x="${inset}" y="${cy - 0.6}" width="${cx - gap - inset}" height="1.2" fill="url(#frule${C.suffix})"/>
 <rect x="${cx + gap}" y="${cy - 0.6}" width="${cx - gap - inset}" height="1.2" fill="url(#frule${C.suffix})"/>
 ${packet}
-${monogram(C, cx, cy, 30, { stroke: `url(#fr${C.suffix})`, width: 8, draw: true, delay: 0.2 })}
+${monogram(C, cx, cy, 30, { stroke: `url(#fr${C.suffix})`, width: 8, breathe: true })}
 </svg>`;
 }
 
