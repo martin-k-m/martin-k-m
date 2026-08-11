@@ -28,39 +28,50 @@ const ROLES = ["Studying EE @ UCSC", "Co-Founder @ Credda"];
 
 const CHIPS = ["TYPESCRIPT", "PYTHON", "RUST", "GO"];
 
-// Same two palettes as every other asset in dist/, so the header sits on the
-// charts below it rather than next to them. The blue-to-purple accent is the
-// through-line and is identical in both; only the surface and the text move.
+// The website's palette, shared by every asset in dist/ so the whole README
+// reads as one drawing rather than a stack of unrelated graphics. A warm,
+// "creamy engineery" editorial ground with a dark temper; the olive accent is
+// the through-line, and the grid paper, hairlines and type are the same
+// everywhere. Only the surface and the text move between light and dark.
 const THEMES = {
   dark: {
     suffix: "",
-    bg: "#0A0A0C",
-    text: "#ECEDF1",
-    muted: "#6D6E79",
-    a1: "#4F8CFF",
-    a2: "#7C6CFF",
-    grid: 0.05,
-    border: 0.06,
-    chipFill: 0.04,
-    chipStroke: 0.1,
+    bg: "#15140e",
+    surface: "#1d1b13",
+    text: "#ece7d6",
+    muted: "#b6af98",
+    faint: "#8a836c",
+    line: "#2b291f",   // hairline
+    line2: "#3a3729",  // hairline-2
+    a1: "#8f854a",     // accent-soft (khaki)
+    a2: "#c9bb70",     // accent (olive)
+    grid: 0.9,
+    border: 0.5,
+    chipFill: 0.05,
+    chipStroke: 0.5,
   },
   light: {
     suffix: "-light",
-    bg: "#FFFFFF",
-    text: "#1F2328",
-    muted: "#59636E",
-    a1: "#4F8CFF",
-    a2: "#7C6CFF",
-    // A grid drawn at 5% black is invisible where 5% white on near-black is
-    // not, so the light theme carries more of everything structural.
-    grid: 0.09,
-    border: 0.14,
-    chipFill: 0.03,
-    chipStroke: 0.16,
+    bg: "#ece7d6",
+    surface: "#f4f0e3",
+    text: "#2b2820",
+    muted: "#55503f",
+    faint: "#746e59",
+    line: "#dbd4bf",
+    line2: "#cec6ac",
+    a1: "#a99e5e",
+    a2: "#6d6329",
+    grid: 0.9,
+    border: 0.7,
+    chipFill: 0.04,
+    chipStroke: 0.6,
   },
 };
 
 const MONO = "'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace";
+// Inter for headings, matching the website. A system fallback stack follows it
+// so nothing has to be fetched; GitHub strips web-font requests anyway.
+const SANS = "Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif";
 
 // ── Layout ──────────────────────────────────────────────────────────────────
 // 820 wide because every chart in dist/ is 820 wide. The README renders them at
@@ -113,22 +124,32 @@ const fixW = (s, size) => `textLength="${textW(s, size).toFixed(1)}" lengthAdjus
 // `begin` stays at 0 rather than carrying the delay because a delayed begin
 // shows the base value until the clock reaches it — here that would flash the
 // text on, off, and back on.
-function fadeIn(delay, dur) {
-  const total = delay + dur;
-  const hold = (delay / total).toFixed(4);
-  return `<animate attributeName="opacity" dur="${total.toFixed(2)}s" values="0;0;1" keyTimes="0;${hold};1" fill="freeze"/>`;
+// Entrances are motion ON TOP of an already-complete picture, never the thing
+// that makes the picture appear. GitHub renders README SVGs as <img>, where
+// SMIL does not run, and some rasterizers freeze the first animation frame
+// where an opacity reveal reads 0 — either way an entrance that starts hidden
+// ships hidden. So every information-bearing element carries its finished value
+// as a plain static attribute and gets no reveal at all. This helper is kept as
+// a no-op so the call sites still read as "this settles in", and so a future
+// reveal can only be added deliberately rather than by default.
+function fadeIn(_delay, _dur) {
+  return "";
 }
 
 // ── The drifting grid ───────────────────────────────────────────────────────
 // Drawn oversized and translated by exactly one cell over the cycle, so the
 // loop point is invisible: the grid at 40px offset is the same picture as the
 // grid at 0.
+// Grid paper: crossing hairlines on the hairline colour, drifting by one cell so
+// the loop is seamless, and masked so it fades out at the edges of the card. The
+// same substrate sits behind every section, which is most of what ties them
+// together.
 const CELL = 40;
 function grid(C) {
   const lines = [];
   for (let x = -CELL; x <= W + CELL; x += CELL) lines.push(`<path d="M${x} ${-CELL} V${H + CELL}"/>`);
   for (let y = -CELL; y <= H + CELL; y += CELL) lines.push(`<path d="M${-CELL} ${y} H${W + CELL}"/>`);
-  return `<g class="grid" stroke="${C.a2}" stroke-opacity="${C.grid}" stroke-width="1">${lines.join("")}</g>`;
+  return `<g mask="url(#fade${C.suffix})"><g class="grid" stroke="${C.line}" stroke-opacity="${C.grid}" stroke-width="1">${lines.join("")}</g></g>`;
 }
 
 // ── The role line ───────────────────────────────────────────────────────────
@@ -150,39 +171,26 @@ const CYCLE = 9;
 const KEYS = ["0;0.16;0.44;0.5;1", "0;0.5;0.66;0.94;1"];
 const CARET_KEYS = "0;0.16;0.44;0.5;0.66;0.94;1";
 
+// The old role line typed one line, cleared it, typed the other, using a clip
+// whose width animated from 0. That clip is a reveal: its base width for the
+// idle line is 0, so a renderer without SMIL shows only one role, and a
+// rasterizer that freezes the first frame shows none. Both roles are real
+// information, so the line is now a single static string that names both, with
+// no clip and no reveal. The one piece of motion left is the caret blink, which
+// is decorative — its absence hides nothing.
+const ROLE_LINE = ROLES.join("   ·   ");
+
 function roleLine(C) {
   const size = 15;
   const x = padL;
-  const widths = ROLES.map((r) => textW(r, size));
-
-  const lines = ROLES.map((role, i) => {
-    const w = widths[i];
-    const vals = i === 0 ? `0;${w};${w};0;0` : `0;0;${w};${w};0`;
-    // Without animation the clip width is whatever the attribute says, and a
-    // width of 0 hides the line completely — this is the element that failed
-    // hardest when the entrances were built the other way round. So the first
-    // role's clip is open by default and the second's is shut: a renderer that
-    // ignores SMIL shows one settled role rather than two overlapping ones or
-    // an empty line. The animation begins at 0s and overrides both at once.
-    const base = i === 0 ? w : 0;
-    return `
-  <clipPath id="type${i}${C.suffix}"><rect x="${x}" y="${roleY - size}" width="${base}" height="${size + 6}">
-    <animate attributeName="width" dur="${CYCLE}s" repeatCount="indefinite" keyTimes="${KEYS[i]}" values="${vals}" calcMode="linear"/>
-  </rect></clipPath>
-  <text x="${x}" y="${roleY}" clip-path="url(#type${i}${C.suffix})" font-family="${MONO}" font-size="${size}" font-weight="500" fill="${C.muted}" ${fixW(role, size)}>${esc(role)}</text>`;
-  }).join("");
-
-  const [w0, w1] = widths;
-  const stops = [x, x + w0, x + w0, x, x + w1, x + w1, x].join(";");
-  // Parked at the end of role 0, which is the line a renderer without animation
-  // is showing, so the caret sits where that text actually ends.
-  const caret = `
-  <rect x="${x + w0}" y="${roleY - size + 2}" width="2" height="${size}" fill="${C.a1}">
-    <animate attributeName="x" dur="${CYCLE}s" repeatCount="indefinite" keyTimes="${CARET_KEYS}" values="${stops}" calcMode="linear"/>
+  const w = textW(ROLE_LINE, size);
+  const text = `<text x="${x}" y="${roleY}" font-family="${MONO}" font-size="${size}" font-weight="500" fill="${C.muted}" ${fixW(ROLE_LINE, size)}>${esc(ROLE_LINE)}</text>`;
+  // Caret parked at the end of the settled line, blinking. Base opacity is 1, so
+  // it is a visible bar wherever the blink does not run.
+  const caret = `<rect x="${(x + w + 4).toFixed(1)}" y="${roleY - size + 2}" width="2" height="${size}" fill="${C.a2}" opacity="1">
     <animate attributeName="opacity" dur="1.06s" repeatCount="indefinite" values="1;1;0;0" keyTimes="0;0.5;0.5;1" calcMode="discrete"/>
   </rect>`;
-
-  return lines + caret;
+  return text + caret;
 }
 
 // ── Chips ───────────────────────────────────────────────────────────────────
@@ -204,7 +212,7 @@ function chips(C) {
     const w = tw + padX * 2;
     const g = `<g opacity="1">
     ${fadeIn(0.85 + i * 0.09, 0.5)}
-    <rect x="${x.toFixed(1)}" y="${chipY}" width="${w.toFixed(1)}" height="${chipH}" rx="${chipH / 2}" fill="${C.text}" fill-opacity="${C.chipFill}" stroke="${C.text}" stroke-opacity="${C.chipStroke}"/>
+    <rect x="${x.toFixed(1)}" y="${chipY}" width="${w.toFixed(1)}" height="${chipH}" rx="${chipH / 2}" fill="${C.text}" fill-opacity="${C.chipFill}" stroke="${C.line2}" stroke-opacity="${C.chipStroke}"/>
     <text x="${(x + padX).toFixed(1)}" y="${chipY + 16}" font-family="${MONO}" font-size="${size}" fill="${C.muted}" textLength="${tw.toFixed(1)}" lengthAdjust="spacing">${esc(label)}</text>
   </g>`;
     x += w + 9;
@@ -227,52 +235,54 @@ function packets(C) {
   }).join("");
 }
 
-// ── The pulsing signal ──────────────────────────────────────────────────────
-// The same mark contrib-graph.mjs puts on the last point of its line: a filled
-// dot with rings expanding out of it and fading. Reused rather than reinvented
-// so the header and the charts below it read as one set of drawings, and used
-// instead of Credda's score ring, which is a number that means something there
-// and would mean nothing on a personal header.
+// ── The monogram ─────────────────────────────────────────────────────────────
+// The M mark that every asset shares: one open stroke on a 100 box, no fill,
+// drawn in the theme's olive. It anchors the right third of the card, which the
+// text does not reach, and it draws itself on with a dash sweep — the slow
+// living detail is a dashed hairline ring turning behind it, the same reliable
+// SMIL rotate the packets use rather than a CSS transform whose origin does not
+// survive GitHub's image sandbox.
 //
-// It anchors the right third of the card, which the text does not reach. That
-// only works at a size that reads as deliberate: drawn small it looked like a
-// stray dot in a large empty area.
-//
-// The two still rings are Credda's track-behind-the-arc trick. They carry no
-// animation, so the right side is never empty — before the pulses start, and in
-// any renderer that shows the first frame and stops.
+// The M is always fully drawn: a plain static stroke, no dash reveal, so it is
+// the whole mark in every renderer. Its living detail is a gentle opacity
+// breathe that never drops below 0.7, so the frozen-first-frame case and the
+// no-SMIL case both show a fully visible monogram.
 const SIG_X = W - padR - 92;
 const SIG_Y = H / 2;
+const MONO_PATH = "M20 79 V21 L50 55 L80 21 V79";
+
+/** The shared mark, drawn into a box of side S centred on (cx, cy). */
+function monogram(C, cx, cy, S, { stroke, width = 6, breathe = true } = {}) {
+  const s = (S / 100).toFixed(4);
+  const x = (cx - S / 2).toFixed(2);
+  const y = (cy - S / 2).toFixed(2);
+  const pulse = breathe
+    ? `<animate attributeName="opacity" dur="7s" repeatCount="indefinite" values="0.7;1;0.7" keyTimes="0;0.5;1"/>`
+    : "";
+  return `<g transform="translate(${x} ${y}) scale(${s})" fill="none" stroke="${stroke}" stroke-width="${width}" stroke-linejoin="round" stroke-linecap="round" opacity="1">${pulse}
+    <path d="${MONO_PATH}"/>
+  </g>`;
+}
 
 function signal(C) {
   const still = [30, 46]
     .map(
       (r, i) =>
-        `<circle cx="${SIG_X}" cy="${SIG_Y}" r="${r}" fill="none" stroke="${C.text}" stroke-opacity="${(
-          C.border * (i === 0 ? 1.5 : 1)
+        `<circle cx="${SIG_X}" cy="${SIG_Y}" r="${r}" fill="none" stroke="${C.line2}" stroke-opacity="${(
+          i === 0 ? 0.9 : 0.55
         ).toFixed(3)}" stroke-width="1"/>`
     )
     .join("");
-  const pulses = [0, 1.5, 3]
-    .map(
-      (d) => `<circle cx="${SIG_X}" cy="${SIG_Y}" r="0" fill="none" stroke="${C.a2}" stroke-width="1.8">
-    <animate attributeName="r" from="12" to="72" dur="4.5s" begin="${d}s" repeatCount="indefinite"/>
-    <animate attributeName="opacity" from="0.5" to="0" dur="4.5s" begin="${d}s" repeatCount="indefinite"/>
-  </circle>`
-    )
-    .join("");
   // A dashed tick ring turning slowly between the two still rings, so the mark
-  // reads as a scope rather than a bare target. SMIL rotate about the fixed
-  // centre — the same reliable path the packets take — rather than a CSS
-  // transform, whose origin does not survive GitHub's image sandbox.
-  const scope = `<circle cx="${SIG_X}" cy="${SIG_Y}" r="38" fill="none" stroke="${C.text}" stroke-opacity="${(
-    C.border * 1.6
-  ).toFixed(3)}" stroke-width="1" stroke-dasharray="2 8">
+  // reads as a scope rather than a bare target.
+  const scope = `<circle cx="${SIG_X}" cy="${SIG_Y}" r="38" fill="none" stroke="${C.line2}" stroke-opacity="0.8" stroke-width="1" stroke-dasharray="2 8">
     <animateTransform attributeName="transform" type="rotate" from="0 ${SIG_X} ${SIG_Y}" to="360 ${SIG_X} ${SIG_Y}" dur="30s" repeatCount="indefinite"/>
   </circle>`;
-  return `<g>${still}${scope}${pulses}
-  <circle cx="${SIG_X}" cy="${SIG_Y}" r="10" fill="${C.bg}" stroke="url(#ramp${C.suffix})" stroke-width="3"/>
-  <circle cx="${SIG_X}" cy="${SIG_Y}" r="3.4" fill="url(#ramp${C.suffix})"/></g>`;
+  return `<g>${still}${scope}${monogram(C, SIG_X, SIG_Y, 44, {
+    stroke: `url(#ramp${C.suffix})`,
+    width: 7,
+    breathe: true,
+  })}</g>`;
 }
 
 function render(C) {
@@ -282,6 +292,14 @@ function render(C) {
 <title>${esc(label)}</title>
 <defs>
   <clipPath id="card${C.suffix}"><rect x="0" y="0" width="${W}" height="${H}" rx="12"/></clipPath>
+  <radialGradient id="fadeg${C.suffix}" cx="50%" cy="50%" r="72%">
+    <stop offset="0" stop-color="#fff" stop-opacity="1"/>
+    <stop offset="0.62" stop-color="#fff" stop-opacity="1"/>
+    <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+  </radialGradient>
+  <mask id="fade${C.suffix}" maskUnits="userSpaceOnUse" x="0" y="0" width="${W}" height="${H}">
+    <rect width="${W}" height="${H}" fill="url(#fadeg${C.suffix})"/>
+  </mask>
   <linearGradient id="ramp${C.suffix}" x1="0" y1="0" x2="1" y2="0">
     <stop offset="0" stop-color="${C.a1}"/>
     <stop offset="1" stop-color="${C.a2}"/>
@@ -315,7 +333,7 @@ function render(C) {
   <ellipse class="breathe" cx="120" cy="30" rx="360" ry="180" fill="url(#glowA${C.suffix})"/>
   <ellipse class="breathe" cx="${SIG_X}" cy="${SIG_Y}" rx="200" ry="150" fill="url(#glowB${C.suffix})" style="animation-delay:2s"/>
 
-  <text x="${padL}" y="${nameY}" font-family="${MONO}" font-size="${nameSize}" font-weight="700" fill="url(#ramp${C.suffix})" opacity="1">${esc(NAME)}
+  <text x="${padL}" y="${nameY}" font-family="${SANS}" font-size="${nameSize}" font-weight="700" fill="url(#ramp${C.suffix})" opacity="1">${esc(NAME)}
     ${fadeIn(0.15, 0.7)}
   </text>
   ${roleLine(C)}
@@ -325,7 +343,7 @@ function render(C) {
   ${packets(C)}
   ${signal(C)}
 </g>
-<rect x="0.5" y="0.5" width="${W - 1}" height="${H - 1}" rx="11.5" fill="none" stroke="${C.text}" stroke-opacity="${C.border}"/>
+<rect x="0.5" y="0.5" width="${W - 1}" height="${H - 1}" rx="11.5" fill="none" stroke="${C.line2}" stroke-opacity="${C.border}"/>
 </svg>`;
 }
 
@@ -335,45 +353,57 @@ function render(C) {
 // still depending on a service that can disappear, so the footer is generated
 // here too rather than left as the one remaining embed.
 //
-// It is a wave rather than a rule because that is what was there, drawn as two
-// offset sine paths so the crests do not sit exactly on top of each other, with
-// the same ramp the header uses.
+// A wave was the wrong register for this system: the rest of the page is calm,
+// hairline-framed and editorial, so the footer closes it the same way. A single
+// hairline rule with a gap in the middle for the shared monogram, one packet
+// drifting along the rule as the living detail, and the same faded grid paper
+// behind everything else. Nothing here depends on a service that can disappear.
 const FW = 820;
 const FH = 70;
 
-// Three crests across the width, so one full period is two thirds of it. That
-// number matters: the scroll below translates by exactly one period, which is
-// the only distance at which the loop is seamless. Half a period would slide
-// the wave onto its own inverse and visibly jump every cycle.
-const CRESTS = 3;
-const PERIOD = (FW / CRESTS) * 2;
-
-// Drawn a period wider on each side than the frame, because a path that starts
-// at x=0 leaves a gap at the trailing edge the moment it is translated.
-function wave(amp, phase, yBase) {
-  const step = PERIOD / 16;
-  let d = `M${-PERIOD} ${FH}`;
-  for (let x = -PERIOD; x <= FW + PERIOD; x += step) {
-    const y = yBase + Math.sin((x / PERIOD) * Math.PI * 2 + phase) * amp;
-    d += ` L${x.toFixed(1)} ${y.toFixed(2)}`;
-  }
-  return `${d} L${(FW + PERIOD).toFixed(1)} ${FH} Z`;
-}
-
 function renderFooter(C) {
+  const cx = FW / 2;
+  const cy = FH / 2;
+  const gap = 34;   // half-gap around the monogram
+  const inset = 40; // rule inset from each edge
+  const CELL = 40;
+  const gl = [];
+  for (let x = -CELL; x <= FW + CELL; x += CELL) gl.push(`<path d="M${x} ${-CELL} V${FH + CELL}"/>`);
+  for (let y = -CELL; y <= FH + CELL; y += CELL) gl.push(`<path d="M${-CELL} ${y} H${FW + CELL}"/>`);
+
+  // One packet running the left segment of the rule and fading, so the footer is
+  // never dead but never busy. Base state is invisible-at-rest, which is fine
+  // here: the rule and monogram carry the footer without it.
+  const packet = `<circle cy="${cy}" r="2.4" fill="url(#fr${C.suffix})" opacity="0">
+    <animate attributeName="cx" from="${inset}" to="${cx - gap}" dur="6s" begin="0s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" dur="6s" begin="0s" repeatCount="indefinite" values="0;1;1;0" keyTimes="0;0.1;0.85;1"/>
+  </circle>`;
+
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${FW} ${FH}" width="${FW}" height="${FH}" role="presentation" aria-hidden="true">
 <defs>
   <linearGradient id="fr${C.suffix}" x1="0" y1="0" x2="1" y2="0">
     <stop offset="0" stop-color="${C.a1}"/>
     <stop offset="1" stop-color="${C.a2}"/>
   </linearGradient>
+  <radialGradient id="ffadeg${C.suffix}" cx="50%" cy="50%" r="70%">
+    <stop offset="0" stop-color="#fff" stop-opacity="1"/>
+    <stop offset="0.55" stop-color="#fff" stop-opacity="1"/>
+    <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+  </radialGradient>
+  <mask id="ffade${C.suffix}" maskUnits="userSpaceOnUse" x="0" y="0" width="${FW}" height="${FH}">
+    <rect width="${FW}" height="${FH}" fill="url(#ffadeg${C.suffix})"/>
+  </mask>
+  <linearGradient id="frule${C.suffix}" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0" stop-color="${C.line2}" stop-opacity="0"/>
+    <stop offset="0.5" stop-color="${C.line2}" stop-opacity="1"/>
+    <stop offset="1" stop-color="${C.line2}" stop-opacity="0"/>
+  </linearGradient>
 </defs>
-<path d="${wave(9, 0, 30)}" fill="url(#fr${C.suffix})" opacity="0.28">
-  <animateTransform attributeName="transform" type="translate" values="0 0;-${PERIOD.toFixed(1)} 0" dur="14s" repeatCount="indefinite"/>
-</path>
-<path d="${wave(7, 2.1, 40)}" fill="url(#fr${C.suffix})" opacity="0.85">
-  <animateTransform attributeName="transform" type="translate" values="-${PERIOD.toFixed(1)} 0;0 0" dur="18s" repeatCount="indefinite"/>
-</path>
+<g mask="url(#ffade${C.suffix})"><g stroke="${C.line}" stroke-opacity="${C.grid}" stroke-width="1">${gl.join("")}</g></g>
+<rect x="${inset}" y="${cy - 0.6}" width="${cx - gap - inset}" height="1.2" fill="url(#frule${C.suffix})"/>
+<rect x="${cx + gap}" y="${cy - 0.6}" width="${cx - gap - inset}" height="1.2" fill="url(#frule${C.suffix})"/>
+${packet}
+${monogram(C, cx, cy, 30, { stroke: `url(#fr${C.suffix})`, width: 8, breathe: true })}
 </svg>`;
 }
 

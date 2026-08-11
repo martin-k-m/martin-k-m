@@ -183,7 +183,7 @@ const FALLBACK = {
   "Objective-C": "#438eff", Perl: "#0298c3", Zig: "#ec915c", R: "#198CE7",
   Astro: "#ff5a03", Less: "#1d365d", Erlang: "#B83998",
 };
-const colorOf = (name) => colors.get(name) || FALLBACK[name] || "#7C6CFF";
+const colorOf = (name) => colors.get(name) || FALLBACK[name] || "#8f854a";
 
 // ── Clone, then measure each month ──────────────────────────────────────────
 await mkdir(CACHE, { recursive: true });
@@ -387,12 +387,16 @@ const [leadName, leadBytes] = ranked[0];
 const leadShare = finalTotal ? leadBytes / finalTotal : 0;
 
 // ── Rendering ───────────────────────────────────────────────────────────────
+// The website's warm editorial palette, shared with every other asset. The
+// per-language line colours are kept (colour identifies the language); the
+// ground, axis gridlines, frame, accent and "other" band are unified.
 const THEMES = {
-  dark: { suffix: "", bg: "#0A0A0C", text: "#ECEDF1", muted: "#6D6E79", accent: "#7C6CFF", other: "#3A3B44", grid: 0.07, border: 0.06 },
-  light: { suffix: "-light", bg: "#FFFFFF", text: "#1F2328", muted: "#59636E", accent: "#7C6CFF", other: "#AFB8C1", grid: 0.1, border: 0.14 },
+  dark: { suffix: "", bg: "#15140e", surface: "#1d1b13", text: "#ece7d6", muted: "#b6af98", faint: "#8a836c", line: "#2b291f", line2: "#3a3729", accent: "#c9bb70", other: "#6b6450", grid: 0.5, gridpaper: 0.9, border: 0.7 },
+  light: { suffix: "-light", bg: "#ece7d6", surface: "#f4f0e3", text: "#2b2820", muted: "#55503f", faint: "#746e59", line: "#dbd4bf", line2: "#cec6ac", accent: "#6d6329", other: "#b0a887", grid: 0.6, gridpaper: 0.9, border: 0.9 },
 };
 
 const MONO = "'JetBrains Mono',ui-monospace,monospace";
+const SANS = "Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif";
 const W = 820;
 // padL fits a "100%" tick, padR is the label column at the end of each line.
 const padL = 44, padR = 140, padT = 52, padB = 46;
@@ -570,7 +574,7 @@ function hoverLayer(C) {
       return `<g class="hd"><rect class="hit" x="${x0.toFixed(1)}" y="${padT}" width="${(x1 - x0).toFixed(1)}" height="${plotH}"/><g class="tip">
     <line x1="${hx.toFixed(1)}" y1="${padT}" x2="${hx.toFixed(1)}" y2="${padT + plotH}" stroke="${C.muted}" stroke-opacity="0.7"/>
     ${dots}
-    <rect x="${bx.toFixed(1)}" y="${by}" width="${boxW.toFixed(1)}" height="${boxH}" rx="6" fill="${C.bg}" stroke="${C.text}" stroke-opacity="0.25"/>
+    <rect x="${bx.toFixed(1)}" y="${by}" width="${boxW.toFixed(1)}" height="${boxH}" rx="6" fill="${C.surface}" stroke="${C.line2}" stroke-opacity="0.9"/>
     <text x="${(bx + 8).toFixed(1)}" y="${by + 16}" font-family="${MONO}" font-size="10" font-weight="600" fill="${C.text}">${dayLabel(d)}</text>
     ${rows}
   </g></g>`;
@@ -578,11 +582,21 @@ function hoverLayer(C) {
     .join("");
 }
 
+// The shared grid paper, faded at the edges, behind the whole chart. Distinct
+// from the axis gridlines above, which mark share values.
+const CELL = 40;
+function gridSubstrate(C) {
+  const lines = [];
+  for (let gx = -CELL; gx <= W + CELL; gx += CELL) lines.push(`<path d="M${gx} ${-CELL} V${H + CELL}"/>`);
+  for (let gy = -CELL; gy <= H + CELL; gy += CELL) lines.push(`<path d="M${-CELL} ${gy} H${W + CELL}"/>`);
+  return `<g mask="url(#fade${C.suffix})"><g stroke="${C.line}" stroke-opacity="${C.gridpaper}" stroke-width="1">${lines.join("")}</g></g>`;
+}
+
 function render(C) {
   const grid = gridVals
     .map(
       (v) =>
-        `<line x1="${padL}" y1="${y(v).toFixed(1)}" x2="${W - padR}" y2="${y(v).toFixed(1)}" stroke="${C.text}" stroke-opacity="${C.grid}"/>
+        `<line x1="${padL}" y1="${y(v).toFixed(1)}" x2="${W - padR}" y2="${y(v).toFixed(1)}" stroke="${C.line2}" stroke-opacity="${C.grid}"/>
   <text x="${padL - 8}" y="${(y(v) + 3.5).toFixed(1)}" text-anchor="end" font-family="${MONO}" font-size="10" fill="${C.muted}">${Math.round(v * 100)}%</text>`
     )
     .join("\n  ");
@@ -606,20 +620,28 @@ function render(C) {
 
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="Share of code by language over time across ${repos.length} repositories">
   <style>.hd .hit{fill:#000;fill-opacity:0}.hd .tip{opacity:0;pointer-events:none}.hd:hover .tip{opacity:1}text{pointer-events:none}</style>
+  <defs>
+    <radialGradient id="fadeg${C.suffix}" cx="50%" cy="50%" r="72%">
+      <stop offset="0" stop-color="#fff" stop-opacity="1"/>
+      <stop offset="0.62" stop-color="#fff" stop-opacity="1"/>
+      <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+    </radialGradient>
+    <mask id="fade${C.suffix}" maskUnits="userSpaceOnUse" x="0" y="0" width="${W}" height="${H}">
+      <rect width="${W}" height="${H}" fill="url(#fadeg${C.suffix})"/>
+    </mask>
+  </defs>
   <rect width="${W}" height="${H}" rx="12" fill="${C.bg}"/>
-  <rect x="0.5" y="0.5" width="${W - 1}" height="${H - 1}" rx="11.5" fill="none" stroke="${C.text}" stroke-opacity="${C.border}"/>
-  <text x="${padL}" y="27" font-family="${MONO}" font-size="15" font-weight="600" fill="${C.text}">Languages over time · share of code</text>
+  ${gridSubstrate(C)}
+  <rect x="0.5" y="0.5" width="${W - 1}" height="${H - 1}" rx="11.5" fill="none" stroke="${C.line2}" stroke-opacity="${C.border}"/>
+  <text x="${padL}" y="27" font-family="${SANS}" font-size="15" font-weight="600" fill="${C.text}">Languages over time · share of code</text>
   <text x="${W - 14}" y="27" text-anchor="end" font-family="${MONO}" font-size="15" font-weight="600" fill="${C.accent}">${esc(leadName)} ${(leadShare * 100).toFixed(1)}%</text>
   ${grid}
-  <clipPath id="reveal${C.suffix}"><rect x="${padL - 4}" y="${padT - 8}" width="0" height="${plotH + 16}">
-    <animate attributeName="width" from="0" to="${plotW + 12}" dur="1.1s" begin="0.2s" fill="freeze" calcMode="spline" keySplines="0.22 1 0.36 1" keyTimes="0;1"/>
-  </rect></clipPath>
-  <g clip-path="url(#reveal${C.suffix})">
+  <g>
   ${lines(C)}
   </g>
-  <line x1="${padL}" y1="${padT + plotH}" x2="${W - padR}" y2="${padT + plotH}" stroke="${C.text}" stroke-opacity="${C.border + 0.1}"/>
+  <line x1="${padL}" y1="${padT + plotH}" x2="${W - padR}" y2="${padT + plotH}" stroke="${C.line2}" stroke-opacity="0.9"/>
   ${xLabels}
-  <g opacity="0"><animate attributeName="opacity" from="0" to="1" dur="0.4s" begin="1.1s" fill="freeze"/>
+  <g opacity="1">
   ${endLabels(C)}
   </g>
   <text x="${padL}" y="${H - 10}" font-family="${MONO}" font-size="10" fill="${C.muted}">3 months · sampled every ${stepDays} day${stepDays===1?"":"s"} · ${repos.length} repos · ${size(finalTotal)} today · extensions Linguist counts as code</text>

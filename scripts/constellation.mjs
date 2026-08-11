@@ -40,38 +40,51 @@ if (!token) {
   process.exit(0);
 }
 
+// The website's warm editorial palette, shared with every other asset. The
+// per-language node and legend colours are kept as they are, since colour is
+// what identifies the language; everything else (ground, grid, halo, frame,
+// accent) is unified. See banner.mjs for the full note.
 const THEMES = {
   dark: {
     suffix: "",
-    bg: "#0A0A0C",
-    text: "#ECEDF1",
-    muted: "#6D6E79",
-    a1: "#4F8CFF",
-    a2: "#7C6CFF",
-    grid: 0.05,
-    border: 0.06,
+    bg: "#15140e",
+    surface: "#1d1b13",
+    text: "#ece7d6",
+    muted: "#b6af98",
+    faint: "#8a836c",
+    line: "#2b291f",
+    line2: "#3a3729",
+    a1: "#8f854a",
+    a2: "#c9bb70",
+    grid: 0.9,
+    border: 0.5,
     halo: 0.05,
-    haloStroke: 0.1,
-    nodeStroke: "#0A0A0C",
-    dim: 0.85,
+    haloStroke: 0.6,
+    nodeStroke: "#15140e",
+    dim: 0.9,
   },
   light: {
     suffix: "-light",
-    bg: "#FFFFFF",
-    text: "#1F2328",
-    muted: "#59636E",
-    a1: "#4F8CFF",
-    a2: "#7C6CFF",
-    grid: 0.09,
-    border: 0.14,
-    halo: 0.035,
-    haloStroke: 0.14,
-    nodeStroke: "#FFFFFF",
+    bg: "#ece7d6",
+    surface: "#f4f0e3",
+    text: "#2b2820",
+    muted: "#55503f",
+    faint: "#746e59",
+    line: "#dbd4bf",
+    line2: "#cec6ac",
+    a1: "#a99e5e",
+    a2: "#6d6329",
+    grid: 0.9,
+    border: 0.7,
+    halo: 0.05,
+    haloStroke: 0.7,
+    nodeStroke: "#ece7d6",
     dim: 1,
   },
 };
 
 const MONO = "'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace";
+const SANS = "Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif";
 
 const W = 820;
 const H = 560;
@@ -340,7 +353,7 @@ function render(C) {
 
   const drawn = clusters
     .map((c, ci) => {
-      const halo = `<circle cx="${px(c.cx)}" cy="${py(c.cy)}" r="${pr(c.radius + 14)}" fill="${C.text}" fill-opacity="${C.halo}" stroke="${C.text}" stroke-opacity="${C.haloStroke}" stroke-width="1"/>`;
+      const halo = `<circle cx="${px(c.cx)}" cy="${py(c.cy)}" r="${pr(c.radius + 14)}" fill="${C.text}" fill-opacity="${C.halo}" stroke="${C.line2}" stroke-opacity="${C.haloStroke}" stroke-width="1"/>`;
 
       const label = `<text x="${px(c.cx)}" y="${(Number(py(c.cy)) - Number(pr(c.radius + 14)) - 8).toFixed(1)}" text-anchor="middle" font-family="${MONO}" font-size="10" font-weight="600" fill="${C.muted}" letter-spacing="1.2">${esc(c.owner)} · ${c.members.length}</text>`;
 
@@ -356,10 +369,10 @@ function render(C) {
           const text = named
             ? `<text x="${cx}" y="${(Number(cy) + 3.2).toFixed(1)}" text-anchor="middle" font-family="${MONO}" font-size="8" fill="${C.nodeStroke}" font-weight="700">${esc(m.name.slice(0, 9))}</text>`
             : "";
-          // Staggered so the field assembles rather than appearing, and with
-          // the finished state as the base value so it is never an empty box.
-          const delay = 0.25 + ci * 0.08 + i * 0.012;
-          return `<g opacity="1"><animate attributeName="opacity" dur="${(delay + 0.5).toFixed(2)}s" values="0;0;1" keyTimes="0;${(delay / (delay + 0.5)).toFixed(4)};1" fill="freeze"/>
+          // Drawn statically at full opacity. Each node is a repository — real
+          // information — so it must be fully visible with SMIL stripped or its
+          // first frame frozen, not revealed by an entrance.
+          return `<g opacity="1">
       <circle cx="${cx}" cy="${cy}" r="${r}" fill="${fill}" fill-opacity="${C.dim}" stroke="${C.nodeStroke}" stroke-width="1.2"/>${text}</g>`;
         })
         .join("");
@@ -385,6 +398,14 @@ function render(C) {
 <title>${esc(title)}</title>
 <defs>
   <clipPath id="ccard${C.suffix}"><rect x="0" y="0" width="${W}" height="${H}" rx="12"/></clipPath>
+  <radialGradient id="fadeg${C.suffix}" cx="50%" cy="50%" r="72%">
+    <stop offset="0" stop-color="#fff" stop-opacity="1"/>
+    <stop offset="0.62" stop-color="#fff" stop-opacity="1"/>
+    <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+  </radialGradient>
+  <mask id="fade${C.suffix}" maskUnits="userSpaceOnUse" x="0" y="0" width="${W}" height="${H}">
+    <rect width="${W}" height="${H}" fill="url(#fadeg${C.suffix})"/>
+  </mask>
   <linearGradient id="ramp${C.suffix}" x1="0" y1="0" x2="1" y2="0">
     <stop offset="0" stop-color="${C.a1}"/>
     <stop offset="1" stop-color="${C.a2}"/>
@@ -409,13 +430,13 @@ function render(C) {
 </style>
 <g clip-path="url(#ccard${C.suffix})">
   <rect width="${W}" height="${H}" fill="${C.bg}"/>
-  <g class="grid" stroke="${C.a2}" stroke-opacity="${C.grid}" stroke-width="1">${grid.join("")}</g>
+  <g mask="url(#fade${C.suffix})"><g class="grid" stroke="${C.line}" stroke-opacity="${C.grid}" stroke-width="1">${grid.join("")}</g></g>
   <ellipse class="breathe" cx="${CX}" cy="${CY}" rx="330" ry="220" fill="url(#cglow${C.suffix})"/>
   ${
     orbitRingR > 0
       ? `<ellipse cx="${px(0)}" cy="${py(0)}" rx="${pr(orbitRingR)}" ry="${pr(
           orbitRingR * 0.62
-        )}" fill="none" stroke="${C.text}" stroke-opacity="${C.haloStroke}" stroke-width="1" stroke-dasharray="1 7"/>`
+        )}" fill="none" stroke="${C.line2}" stroke-opacity="${C.haloStroke}" stroke-width="1" stroke-dasharray="1 7"/>`
       : ""
   }
 
@@ -428,7 +449,7 @@ function render(C) {
   <rect x="28" y="${H - 52}" width="${W - 56}" height="1.2" fill="url(#crule${C.suffix})"/>
   ${chips}
 </g>
-<rect x="0.5" y="0.5" width="${W - 1}" height="${H - 1}" rx="11.5" fill="none" stroke="${C.text}" stroke-opacity="${C.border}"/>
+<rect x="0.5" y="0.5" width="${W - 1}" height="${H - 1}" rx="11.5" fill="none" stroke="${C.line2}" stroke-opacity="${C.border}"/>
 </svg>`;
 }
 

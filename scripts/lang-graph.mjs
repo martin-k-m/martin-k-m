@@ -264,7 +264,7 @@ const tail = ranked.slice(shown.length); // ranked is sorted, so what is shown i
 const rows = shown.map(([name, n]) => ({
   name,
   n,
-  color: colors.get(name) || "#7C6CFF",
+  color: colors.get(name) || "#8f854a",
   d: delta(name),
   s: shares(name),
 }));
@@ -302,38 +302,54 @@ const esc = (s) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, 
 // The per-language bar colours are GitHub's own and stay identical in both:
 // they are the thing being identified, so recolouring them would break the
 // association. Only the surface, text and "other" band change.
+// The website's warm editorial palette, shared with every other asset. The
+// per-language bar colours are GitHub's own and stay identical in both tempers:
+// they are the thing being identified. The up/down markers keep their green and
+// red since those are semantic, but everything structural — ground, grid, axes,
+// frame, accent, the "other" band and the "no change" mark — is unified.
 const THEMES = {
   dark: {
     suffix: "",
-    bg: "#0A0A0C",
-    text: "#ECEDF1",
-    muted: "#6D6E79",
-    accent: "#7C6CFF",
-    other: "#3A3B44",
-    trackOpacity: 0.05,
-    borderOpacity: 0.06,
+    bg: "#15140e",
+    surface: "#1d1b13",
+    text: "#ece7d6",
+    muted: "#b6af98",
+    faint: "#8a836c",
+    line: "#2b291f",
+    line2: "#3a3729",
+    accent: "#c9bb70",
+    other: "#6b6450",
+    grid: 0.9,
+    trackOpacity: 0.14,
+    borderOpacity: 0.7,
     up: "#3FB950",
     down: "#F85149",
-    flat: "#4F8CFF",
+    flat: "#8a836c",
   },
   light: {
     suffix: "-light",
-    bg: "#FFFFFF",
-    text: "#1F2328",
-    muted: "#59636E",
-    accent: "#7C6CFF",
-    other: "#AFB8C1",
-    trackOpacity: 0.09,
-    borderOpacity: 0.14,
-    // Darker on white. The dark theme's greens and reds wash out badly enough
-    // on a light background to stop reading as up and down.
+    bg: "#ece7d6",
+    surface: "#f4f0e3",
+    text: "#2b2820",
+    muted: "#55503f",
+    faint: "#746e59",
+    line: "#dbd4bf",
+    line2: "#cec6ac",
+    accent: "#6d6329",
+    other: "#b0a887",
+    grid: 0.9,
+    trackOpacity: 0.16,
+    borderOpacity: 0.9,
+    // Darker on the cream ground. The dark theme's greens and reds wash out
+    // badly enough on a light background to stop reading as up and down.
     up: "#1A7F37",
     down: "#CF222E",
-    flat: "#0969DA",
+    flat: "#746e59",
   },
 };
 
 const MONO = "'JetBrains Mono',ui-monospace,monospace";
+const SANS = "Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif";
 
 // ── Layout ──────────────────────────────────────────────────────────────────
 const W = 820;
@@ -397,9 +413,9 @@ function spectrumFor(C) {
   return rows
     .map((r, i) => {
       const w = (r.n / total) * (W - padL - padR);
-      const seg = `<rect x="${x.toFixed(1)}" y="${specY}" width="${Math.max(0, w - (i < rows.length - 1 ? 1.5 : 0)).toFixed(1)}" height="${specH}" rx="3" fill="${barColor(r, C)}" opacity="0">
-      <animate attributeName="opacity" from="0" to="0.95" dur="0.5s" begin="${(0.25 + i * 0.05).toFixed(2)}s" fill="freeze"/>
-    </rect>`;
+      // Static at its finished opacity: the proportion bar is information, so it
+      // must be fully drawn whether or not any animation runs.
+      const seg = `<rect x="${x.toFixed(1)}" y="${specY}" width="${Math.max(0, w - (i < rows.length - 1 ? 1.5 : 0)).toFixed(1)}" height="${specH}" rx="3" fill="${barColor(r, C)}" opacity="0.95"/>`;
       x += w;
       return seg;
     })
@@ -411,15 +427,14 @@ function barsFor(C) {
     .map((r, i) => {
       const y = rowsY + i * rowH;
       const w = Math.max(2, (r.n / scale) * barW);
-      const begin = (0.3 + i * 0.07).toFixed(2);
+      // The bar and its marker are drawn statically at their finished values.
+      // These are the measurement, so they must be fully visible with no
+      // animation running or its first frame frozen.
       return `<g>
     <text x="${padL}" y="${y + 11}" font-family="${MONO}" font-size="12" fill="${C.text}">${esc(r.name)}</text>
     <rect x="${barX}" y="${y + 2}" width="${barW}" height="11" rx="5.5" fill="${C.text}" fill-opacity="${C.trackOpacity}"/>
-    <rect x="${barX}" y="${y + 2}" width="0" height="11" rx="5.5" fill="${barColor(r, C)}">
-      <animate attributeName="width" from="0" to="${w.toFixed(1)}" dur="0.9s" begin="${begin}s" fill="freeze" calcMode="spline" keySplines="0.22 1 0.36 1" keyTimes="0;1"/>
-    </rect>
-    <g transform="translate(0 ${y + 2})" opacity="0">
-      <animate attributeName="opacity" from="0" to="1" dur="0.4s" begin="${(Number(begin) + 0.9).toFixed(2)}s" fill="freeze"/>
+    <rect x="${barX}" y="${y + 2}" width="${w.toFixed(1)}" height="11" rx="5.5" fill="${barColor(r, C)}"/>
+    <g transform="translate(0 ${y + 2})" opacity="1">
       ${markerFor(r, C)}
     </g>
     <text x="${W - padR}" y="${y + 11}" text-anchor="end" font-family="${MONO}" font-size="11" fill="${C.muted}">${size(r.n)} · ${pct(r.n).toFixed(1)}%</text>
@@ -444,11 +459,32 @@ if (priorDate) scopeParts.push(`▲▼ share vs ${priorDate}`);
 scopeParts.push(current ? "tree walk" : "Linguist");
 const scope = scopeParts.join(" · ");
 
+// The shared grid paper, faded at the edges, so this chart sits on the same
+// substrate as every other section rather than on a bare card.
+const CELL = 40;
+function gridSubstrate(C) {
+  const lines = [];
+  for (let gx = -CELL; gx <= W + CELL; gx += CELL) lines.push(`<path d="M${gx} ${-CELL} V${H + CELL}"/>`);
+  for (let gy = -CELL; gy <= H + CELL; gy += CELL) lines.push(`<path d="M${-CELL} ${gy} H${W + CELL}"/>`);
+  return `<g mask="url(#fade${C.suffix})"><g stroke="${C.line}" stroke-opacity="${C.grid}" stroke-width="1">${lines.join("")}</g></g>`;
+}
+
 function render(C) {
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="Languages by bytes of code across ${shownRepoCount} repositories">
+  <defs>
+    <radialGradient id="fadeg${C.suffix}" cx="50%" cy="50%" r="72%">
+      <stop offset="0" stop-color="#fff" stop-opacity="1"/>
+      <stop offset="0.62" stop-color="#fff" stop-opacity="1"/>
+      <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+    </radialGradient>
+    <mask id="fade${C.suffix}" maskUnits="userSpaceOnUse" x="0" y="0" width="${W}" height="${H}">
+      <rect width="${W}" height="${H}" fill="url(#fadeg${C.suffix})"/>
+    </mask>
+  </defs>
   <rect width="${W}" height="${H}" rx="12" fill="${C.bg}"/>
-  <rect x="0.5" y="0.5" width="${W - 1}" height="${H - 1}" rx="11.5" fill="none" stroke="${C.text}" stroke-opacity="${C.borderOpacity}"/>
-  <text x="${padL}" y="27" font-family="${MONO}" font-size="15" font-weight="600" fill="${C.text}">Languages · by bytes of code</text>
+  ${gridSubstrate(C)}
+  <rect x="0.5" y="0.5" width="${W - 1}" height="${H - 1}" rx="11.5" fill="none" stroke="${C.line2}" stroke-opacity="${C.borderOpacity}"/>
+  <text x="${padL}" y="27" font-family="${SANS}" font-size="15" font-weight="600" fill="${C.text}">Languages · by bytes of code</text>
   <text x="${W - padR}" y="27" text-anchor="end" font-family="${MONO}" font-size="15" font-weight="600" fill="${C.accent}">${size(total)}</text>
   ${spectrumFor(C)}
   ${barsFor(C)}

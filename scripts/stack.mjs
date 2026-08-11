@@ -39,36 +39,48 @@ const GROUPS = [
 const MIN_SHARE = 1;
 const MAX_LANGS = 6;
 
+// The website's warm editorial palette, shared with every other asset in dist/.
+// See banner.mjs for the full note; only the surface and text move between
+// tempers, the olive accent and hairline grid stay constant.
 const THEMES = {
   dark: {
     suffix: "",
-    bg: "#0A0A0C",
-    text: "#ECEDF1",
-    muted: "#6D6E79",
-    a1: "#4F8CFF",
-    a2: "#7C6CFF",
-    grid: 0.05,
-    border: 0.06,
-    chipFill: 0.04,
-    chipStroke: 0.1,
-    barTrack: 0.08,
+    bg: "#15140e",
+    surface: "#1d1b13",
+    text: "#ece7d6",
+    muted: "#b6af98",
+    faint: "#8a836c",
+    line: "#2b291f",
+    line2: "#3a3729",
+    a1: "#8f854a",
+    a2: "#c9bb70",
+    grid: 0.9,
+    border: 0.5,
+    chipFill: 0.05,
+    chipStroke: 0.5,
+    barTrack: 0.16,
   },
   light: {
     suffix: "-light",
-    bg: "#FFFFFF",
-    text: "#1F2328",
-    muted: "#59636E",
-    a1: "#4F8CFF",
-    a2: "#7C6CFF",
-    grid: 0.09,
-    border: 0.14,
-    chipFill: 0.03,
-    chipStroke: 0.16,
-    barTrack: 0.12,
+    bg: "#ece7d6",
+    surface: "#f4f0e3",
+    text: "#2b2820",
+    muted: "#55503f",
+    faint: "#746e59",
+    line: "#dbd4bf",
+    line2: "#cec6ac",
+    a1: "#a99e5e",
+    a2: "#6d6329",
+    grid: 0.9,
+    border: 0.7,
+    chipFill: 0.04,
+    chipStroke: 0.6,
+    barTrack: 0.2,
   },
 };
 
 const MONO = "'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace";
+const SANS = "Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif";
 
 // 820 to match every other asset in dist/. The README renders them all at
 // width="100%", so a panel on a different grid lines up at exactly one viewport
@@ -98,10 +110,11 @@ const textW = (s, size) => s.length * advance(size);
 // the animation. opacity="0" plus a delayed begin blanks the element anywhere
 // SMIL does not run, and a panel that renders empty in a sandbox that strips
 // animation is worse than one that never animated at all.
-function fadeIn(delay, dur) {
-  const total = delay + dur;
-  const hold = (delay / total).toFixed(4);
-  return `<animate attributeName="opacity" dur="${total.toFixed(2)}s" values="0;0;1" keyTimes="0;${hold};1" fill="freeze"/>`;
+// No-op: entrances must never be what makes an element appear. Every element
+// here carries its finished value as a plain static attribute, so it is fully
+// visible with SMIL stripped or its first frame frozen. See banner.mjs.
+function fadeIn(_delay, _dur) {
+  return "";
 }
 
 const CELL = 40;
@@ -109,7 +122,19 @@ function grid(C, H) {
   const lines = [];
   for (let x = -CELL; x <= W + CELL; x += CELL) lines.push(`<path d="M${x} ${-CELL} V${H + CELL}"/>`);
   for (let y = -CELL; y <= H + CELL; y += CELL) lines.push(`<path d="M${-CELL} ${y} H${W + CELL}"/>`);
-  return `<g class="grid" stroke="${C.a2}" stroke-opacity="${C.grid}" stroke-width="1">${lines.join("")}</g>`;
+  return `<g mask="url(#fade${C.suffix})"><g class="grid" stroke="${C.line}" stroke-opacity="${C.grid}" stroke-width="1">${lines.join("")}</g></g>`;
+}
+
+// The edge-fade mask the grid rides on, so the paper thins out at the frame.
+function fadeDefs(C, H) {
+  return `<radialGradient id="fadeg${C.suffix}" cx="50%" cy="50%" r="72%">
+    <stop offset="0" stop-color="#fff" stop-opacity="1"/>
+    <stop offset="0.62" stop-color="#fff" stop-opacity="1"/>
+    <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+  </radialGradient>
+  <mask id="fade${C.suffix}" maskUnits="userSpaceOnUse" x="0" y="0" width="${W}" height="${H}">
+    <rect width="${W}" height="${H}" fill="url(#fadeg${C.suffix})"/>
+  </mask>`;
 }
 
 // ── Reading the measured languages ──────────────────────────────────────────
@@ -169,20 +194,16 @@ function chip(C, c, y, delay, sizeText) {
 
   // The bar is the evidence. Full width of the chip's text column at 100%, so
   // a glance across the row compares shares without reading a single number.
+  // Drawn statically at its finished width — no sweep — so the measured share is
+  // fully visible whether or not any animation runs.
   const fillW = ((tw * Math.min(c.share, 100)) / 100).toFixed(1);
-  // The fill sweeps out to its share as the chip settles, so the bar reads as a
-  // measurement being taken rather than a value asserted. The base width is the
-  // finished value, so a renderer that strips SMIL shows the full bar rather
-  // than an empty track — the same rule the reveals follow everywhere here.
   const bar = c.measured
     ? `<rect x="${(c.x + c.padX).toFixed(1)}" y="${(y + 19).toFixed(1)}" width="${tw.toFixed(1)}" height="2" rx="1" fill="${C.text}" fill-opacity="${C.barTrack}"/>
-     <rect x="${(c.x + c.padX).toFixed(1)}" y="${(y + 19).toFixed(1)}" width="${fillW}" height="2" rx="1" fill="url(#ramp${C.suffix})">
-       <animate attributeName="width" dur="1.1s" begin="${delay.toFixed(2)}s" values="0;${fillW}" keyTimes="0;1" fill="freeze" calcMode="spline" keySplines="0.16 1 0.3 1"/>
-     </rect>`
+     <rect x="${(c.x + c.padX).toFixed(1)}" y="${(y + 19).toFixed(1)}" width="${fillW}" height="2" rx="1" fill="url(#ramp${C.suffix})"/>`
     : "";
 
   return `<g opacity="1">${fadeIn(delay, 0.5)}
-    <rect x="${c.x.toFixed(1)}" y="${y}" width="${c.w.toFixed(1)}" height="${CHIP_H}" rx="${(CHIP_H / 2).toFixed(1)}" fill="${C.text}" fill-opacity="${C.chipFill}" stroke="${c.measured ? `url(#ramp${C.suffix})` : C.text}" stroke-opacity="${c.measured ? 0.55 : C.chipStroke}"/>
+    <rect x="${c.x.toFixed(1)}" y="${y}" width="${c.w.toFixed(1)}" height="${CHIP_H}" rx="${(CHIP_H / 2).toFixed(1)}" fill="${C.text}" fill-opacity="${C.chipFill}" stroke="${c.measured ? `url(#ramp${C.suffix})` : C.line2}" stroke-opacity="${c.measured ? 0.8 : C.chipStroke}"/>
     ${label}${bar}
   </g>`;
 }
@@ -236,6 +257,7 @@ function render(C, langs) {
 <title>${esc(title)}</title>
 <defs>
   <clipPath id="scard${C.suffix}"><rect x="0" y="0" width="${W}" height="${H}" rx="12"/></clipPath>
+  ${fadeDefs(C, H)}
   <linearGradient id="ramp${C.suffix}" x1="0" y1="0" x2="1" y2="0">
     <stop offset="0" stop-color="${C.a1}"/>
     <stop offset="1" stop-color="${C.a2}"/>
@@ -269,7 +291,7 @@ function render(C, langs) {
 
   ${drawn.join("\n  ")}
 </g>
-<rect x="0.5" y="0.5" width="${W - 1}" height="${H - 1}" rx="11.5" fill="none" stroke="${C.text}" stroke-opacity="${C.border}"/>
+<rect x="0.5" y="0.5" width="${W - 1}" height="${H - 1}" rx="11.5" fill="none" stroke="${C.line2}" stroke-opacity="${C.border}"/>
 </svg>`;
 }
 
