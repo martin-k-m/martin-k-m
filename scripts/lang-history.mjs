@@ -57,6 +57,10 @@ const CACHE = process.env.CLONE_DIR || join(process.env.RUNNER_TEMP || tmpdir(),
 // Since every surface now draws from this walk, that is a single consistent
 // answer rather than two charts disagreeing.
 const EXT = {
+  // Twill (.tw) is my own language. Linguist has never heard of it, so without
+  // this line every byte of its self-hosting compiler, standard library and
+  // toolchain falls out of the walk and inflates every other language's share.
+  tw: "Twill",
   ts: "TypeScript", tsx: "TypeScript", mts: "TypeScript", cts: "TypeScript",
   js: "JavaScript", jsx: "JavaScript", mjs: "JavaScript", cjs: "JavaScript",
   rs: "Rust",
@@ -167,6 +171,8 @@ try {
 
 // Colours for anything the API never named, so a band is never left colourless.
 const FALLBACK = {
+  // Twill's own teal, matching the language's release badge and wordmark.
+  Twill: "#4FB79B",
   TypeScript: "#3178c6", JavaScript: "#f1e05a", Rust: "#dea584", Python: "#3572A5",
   Go: "#00ADD8", Java: "#b07219", Kotlin: "#A97BFF", HTML: "#e34c26", CSS: "#663399",
   SCSS: "#c6538c", "C++": "#f34b7d", C: "#555555", Cuda: "#3A4E3A", "C#": "#178600", Ruby: "#701516",

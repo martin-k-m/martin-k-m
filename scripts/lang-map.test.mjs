@@ -78,3 +78,14 @@ test("C++ has a colour, so a band is never drawn colourless", () => {
   assert.match(source, /"C\+\+": "#f34b7d"/);
   assert.match(source, /Cuda: "#3A4E3A"/);
 });
+
+test("Twill (.tw) is counted, so my own language is not invisible", () => {
+  // Linguist does not know Twill, so if the walk does not count it either then
+  // the compiler, its standard library and its toolchain — all written in .tw —
+  // vanish from every chart and inflate whatever is left.
+  assert.ok(maps("tw", "Twill"));
+});
+
+test("Twill has a colour of its own rather than the fallback violet", () => {
+  assert.match(source, /Twill: "#4FB79B"/);
+});
