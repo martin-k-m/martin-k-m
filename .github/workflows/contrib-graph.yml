@@ -28,6 +28,11 @@ on:
   repository_dispatch:
     types: [refresh-graphs]
   workflow_dispatch:
+    inputs:
+      allow_coverage_drop:
+        description: "Publish even after a large intentional drop in repo count"
+        type: boolean
+        default: false
   push:
     branches: [main]
     paths:
@@ -112,6 +117,7 @@ jobs:
         env:
           GH_LOGIN: ${{ github.repository_owner }}
           GITHUB_TOKEN: ${{ secrets.PROFILE_TOKEN || secrets.GITHUB_TOKEN }}
+          ALLOW_COVERAGE_DROP: ${{ github.event.inputs.allow_coverage_drop == 'true' && '1' || '' }}
         run: node scripts/lang-history.mjs
 
       # Same PAT, same reason: the Actions GITHUB_TOKEN is scoped to this
@@ -124,6 +130,7 @@ jobs:
         env:
           GH_LOGIN: ${{ github.repository_owner }}
           GITHUB_TOKEN: ${{ secrets.PROFILE_TOKEN || secrets.GITHUB_TOKEN }}
+          ALLOW_COVERAGE_DROP: ${{ github.event.inputs.allow_coverage_drop == 'true' && '1' || '' }}
         run: node scripts/lang-graph.mjs
 
       # Same PAT and same reason as the language charts: it enumerates every
