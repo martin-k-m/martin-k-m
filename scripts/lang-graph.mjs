@@ -37,11 +37,20 @@ if (!login || !token) {
   process.exit(1);
 }
 
-const { repos, colors, privateCount, contributedCount } = await fetchRepos(login, token);
+const { repos: allRepos, colors } = await fetchRepos(login, token);
 // Twill is not a Linguist language, so GitHub supplies no colour for it. Give it
 // the same teal the language's own badges use, so the bar does not fall back to
 // the default violet for what is often the largest slice.
 colors.set("Twill", "#4FB79B");
+// Match lang-history's population: my own repositories, the website excluded, so
+// the bar, its repo count and the history chart all describe the same set.
+const OWNER = login.toLowerCase();
+const EXCLUDED_REPOS = new Set([`${OWNER}/${OWNER}.github.io`]);
+const repos = allRepos.filter(
+  (r) => r.owner.login.toLowerCase() === OWNER && !EXCLUDED_REPOS.has(r.nameWithOwner.toLowerCase())
+);
+const privateCount = repos.filter((r) => r.isPrivate).length;
+const contributedCount = 0; // owner-only now, so nothing is contributed through an org
 const repoCount = repos.length;
 
 // Linguist's totals, which are the fallback rather than the default. The bar
