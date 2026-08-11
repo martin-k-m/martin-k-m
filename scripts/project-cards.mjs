@@ -24,34 +24,45 @@
 
 import { mkdir, writeFile } from "node:fs/promises";
 
+// The website's warm editorial palette, shared with every other asset. See
+// banner.mjs for the full note.
 const THEMES = {
   dark: {
     suffix: "",
-    bg: "#0A0A0C",
-    text: "#ECEDF1",
-    muted: "#6D6E79",
-    body: "#A9AAB4",
-    a1: "#4F8CFF",
-    a2: "#7C6CFF",
-    grid: 0.05,
-    border: 0.06,
-    track: 0.1,
+    bg: "#15140e",
+    surface: "#1d1b13",
+    text: "#ece7d6",
+    muted: "#b6af98",
+    faint: "#8a836c",
+    body: "#b6af98",
+    line: "#2b291f",
+    line2: "#3a3729",
+    a1: "#8f854a",
+    a2: "#c9bb70",
+    grid: 0.9,
+    border: 0.5,
+    track: 0.6,
   },
   light: {
     suffix: "-light",
-    bg: "#FFFFFF",
-    text: "#1F2328",
-    muted: "#59636E",
-    body: "#3D444D",
-    a1: "#4F8CFF",
-    a2: "#7C6CFF",
-    grid: 0.09,
-    border: 0.14,
-    track: 0.16,
+    bg: "#ece7d6",
+    surface: "#f4f0e3",
+    text: "#2b2820",
+    muted: "#55503f",
+    faint: "#746e59",
+    body: "#55503f",
+    line: "#dbd4bf",
+    line2: "#cec6ac",
+    a1: "#a99e5e",
+    a2: "#6d6329",
+    grid: 0.9,
+    border: 0.7,
+    track: 0.7,
   },
 };
 
 const MONO = "'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace";
+const SANS = "Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif";
 
 const W = 820;
 const padL = 28;
@@ -108,7 +119,19 @@ function grid(C, H) {
   const lines = [];
   for (let x = -CELL; x <= W + CELL; x += CELL) lines.push(`<path d="M${x} ${-CELL} V${H + CELL}"/>`);
   for (let y = -CELL; y <= H + CELL; y += CELL) lines.push(`<path d="M${-CELL} ${y} H${W + CELL}"/>`);
-  return `<g class="grid" stroke="${C.a2}" stroke-opacity="${C.grid}" stroke-width="1">${lines.join("")}</g>`;
+  return `<g mask="url(#fade${C.suffix})"><g class="grid" stroke="${C.line}" stroke-opacity="${C.grid}" stroke-width="1">${lines.join("")}</g></g>`;
+}
+
+// The edge-fade mask for the grid paper, thinning it out at the frame.
+function fadeDefs(C, H) {
+  return `<radialGradient id="fadeg${C.suffix}" cx="50%" cy="50%" r="72%">
+    <stop offset="0" stop-color="#fff" stop-opacity="1"/>
+    <stop offset="0.62" stop-color="#fff" stop-opacity="1"/>
+    <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+  </radialGradient>
+  <mask id="fade${C.suffix}" maskUnits="userSpaceOnUse" x="0" y="0" width="${W}" height="${H}">
+    <rect width="${W}" height="${H}" fill="url(#fadeg${C.suffix})"/>
+  </mask>`;
 }
 
 // ── Motifs ──────────────────────────────────────────────────────────────────
@@ -134,7 +157,7 @@ function scoreMotif(C, cx, cy) {
 
   return `<g transform="translate(${cx} ${cy})">
     <g transform="rotate(129)">
-      <circle r="${r}" fill="none" stroke="${C.text}" stroke-opacity="${C.track}" stroke-width="9" stroke-linecap="round" stroke-dasharray="${(circ * sweep).toFixed(1)} ${circ.toFixed(1)}"/>
+      <circle r="${r}" fill="none" stroke="${C.line2}" stroke-opacity="${C.track}" stroke-width="9" stroke-linecap="round" stroke-dasharray="${(circ * sweep).toFixed(1)} ${circ.toFixed(1)}"/>
       <circle r="${r}" fill="none" stroke="url(#ramp${C.suffix})" stroke-width="9" stroke-linecap="round" stroke-dasharray="0 ${circ.toFixed(1)}">
         <animate attributeName="stroke-dasharray" dur="1.6s" values="0 ${circ.toFixed(1)};${dash.toFixed(1)} ${circ.toFixed(1)}" keyTimes="0;1" fill="freeze" calcMode="spline" keySplines="0.16 1 0.3 1"/>
       </circle>
@@ -156,7 +179,7 @@ function scoreMotif(C, cx, cy) {
  */
 function shapeMotif(C, cx, cy) {
   const box = (x, y, w, h, label) => `
-    <rect x="${x}" y="${y}" width="${w}" height="${h}" rx="3" fill="${C.text}" fill-opacity="0.04" stroke="${C.text}" stroke-opacity="${C.track}"/>
+    <rect x="${x}" y="${y}" width="${w}" height="${h}" rx="3" fill="${C.text}" fill-opacity="0.04" stroke="${C.line2}" stroke-opacity="${C.track}"/>
     <text x="${x + w / 2}" y="${y + h / 2 + 4}" text-anchor="middle" font-family="${MONO}" font-size="10" fill="${C.muted}">${esc(label)}</text>`;
 
   return `<g transform="translate(${cx} ${cy})">
@@ -241,7 +264,7 @@ function render(C, p) {
 
   y += 34;
   out.push(
-    `<text x="${padL}" y="${y}" font-family="${MONO}" font-size="${titleSize}" font-weight="700" fill="url(#ramp${C.suffix})" opacity="1">${esc(p.title)}${fadeIn(0.18, 0.6)}</text>`
+    `<text x="${padL}" y="${y}" font-family="${SANS}" font-size="${titleSize}" font-weight="700" fill="url(#ramp${C.suffix})" opacity="1">${esc(p.title)}${fadeIn(0.18, 0.6)}</text>`
   );
 
   y += 24;
@@ -295,6 +318,7 @@ function render(C, p) {
 <title>${esc(label)}</title>
 <defs>
   <clipPath id="pcard${p.file}${C.suffix}"><rect x="0" y="0" width="${W}" height="${H}" rx="12"/></clipPath>
+  ${fadeDefs(C, H)}
   <linearGradient id="ramp${C.suffix}" x1="0" y1="0" x2="1" y2="0">
     <stop offset="0" stop-color="${C.a1}"/>
     <stop offset="1" stop-color="${C.a2}"/>
@@ -324,7 +348,7 @@ function render(C, p) {
   ${motif}
   ${out.join("\n  ")}
 </g>
-<rect x="0.5" y="0.5" width="${W - 1}" height="${H - 1}" rx="11.5" fill="none" stroke="${C.text}" stroke-opacity="${C.border}"/>
+<rect x="0.5" y="0.5" width="${W - 1}" height="${H - 1}" rx="11.5" fill="none" stroke="${C.line2}" stroke-opacity="${C.border}"/>
 </svg>`;
 }
 

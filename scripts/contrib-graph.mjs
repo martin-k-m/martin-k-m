@@ -97,32 +97,49 @@ const fmt = (n) => n.toLocaleString("en-US");
 // The blue-to-purple accent is the brand and stays put; only the surface, the
 // text and the gridline weight change. Gridlines need more contrast on white:
 // 5% black is invisible where 5% white on near-black is not.
+// The website's warm editorial palette, shared with every other asset. The
+// olive ramp is the running total; the per-day rate keeps a distinct sage so
+// the dashed line reads as a different quantity, not a shade of the same one.
 const THEMES = {
   dark: {
     suffix: "",
-    bg: "#0A0A0C",
-    text: "#ECEDF1",
-    muted: "#6D6E79",
-    a1: "#4F8CFF",
-    a2: "#7C6CFF",
-    // Deliberately outside the blue-violet ramp the total uses, so the dashed
-    // line reads as a different quantity rather than a shade of the same one.
-    rate: "#4ECDC4",
-    grid: 0.05,
-    border: 0.06,
+    bg: "#15140e",
+    surface: "#1d1b13",
+    text: "#ece7d6",
+    muted: "#b6af98",
+    faint: "#8a836c",
+    line: "#2b291f",
+    line2: "#3a3729",
+    a1: "#8f854a",
+    a2: "#c9bb70",
+    // Deliberately outside the olive ramp the total uses, so the dashed line
+    // reads as a different quantity rather than a shade of the same one.
+    rate: "#83a795",
+    grid: 0.5,
+    gridpaper: 0.9,
+    border: 0.7,
   },
   light: {
     suffix: "-light",
-    bg: "#FFFFFF",
-    text: "#1F2328",
-    muted: "#59636E",
-    a1: "#4F8CFF",
-    a2: "#7C6CFF",
-    rate: "#0F9B90", // darker on white, where #4ECDC4 washes out
-    grid: 0.09,
-    border: 0.14,
+    bg: "#ece7d6",
+    surface: "#f4f0e3",
+    text: "#2b2820",
+    muted: "#55503f",
+    faint: "#746e59",
+    line: "#dbd4bf",
+    line2: "#cec6ac",
+    a1: "#a99e5e",
+    a2: "#6d6329",
+    rate: "#4f7a68", // darker on the cream ground
+    grid: 0.6,
+    gridpaper: 0.9,
+    border: 0.9,
   },
 };
+
+// Inter for the chart heading, matching the website. Numbers and labels stay in
+// JetBrains Mono. A system fallback stack follows so nothing is fetched.
+const SANS = "Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif";
 
 // ── Shared renderer ─────────────────────────────────────────────────────────
 // opts: { title, valueLabel, points:[{t,v}], secondary?:{points,label,peakLabel}, markPeak? }
@@ -153,8 +170,16 @@ function renderChart({ title, valueLabel, points, secondary, markPeak, hover }, 
   // Faint horizontal gridlines.
   const grid = [0.25, 0.5, 0.75, 1].map((f) => {
     const y = (padT + plotH * (1 - f)).toFixed(1);
-    return `<line x1="${padL}" y1="${y}" x2="${W - padR}" y2="${y}" stroke="${C.text}" stroke-opacity="${C.grid}"/>`;
+    return `<line x1="${padL}" y1="${y}" x2="${W - padR}" y2="${y}" stroke="${C.line2}" stroke-opacity="${C.grid}"/>`;
   }).join("");
+
+  // The shared grid paper behind everything, faded at the edges, so this chart
+  // sits on the same substrate as every other section.
+  const CELL = 40;
+  const paper = [];
+  for (let gx = -CELL; gx <= W + CELL; gx += CELL) paper.push(`<path d="M${gx} ${-CELL} V${H + CELL}"/>`);
+  for (let gy = -CELL; gy <= H + CELL; gy += CELL) paper.push(`<path d="M${-CELL} ${gy} H${W + CELL}"/>`);
+  const substrate = `<g mask="url(#fade${C.suffix})"><g stroke="${C.line}" stroke-opacity="${C.gridpaper}" stroke-width="1">${paper.join("")}</g></g>`;
 
   const endX = X(t1), endY = Y(points[points.length - 1].v);
 
@@ -215,7 +240,7 @@ function renderChart({ title, valueLabel, points, secondary, markPeak, hover }, 
     <line x1="${hx.toFixed(1)}" y1="${padT}" x2="${hx.toFixed(1)}" y2="${padT + plotH}" stroke="${C.muted}" stroke-opacity="0.7"/>
     <circle cx="${hx.toFixed(1)}" cy="${Y(p.v).toFixed(1)}" r="3.2" fill="${C.a2}" stroke="${C.bg}" stroke-width="1.5"/>
     <circle cx="${hx.toFixed(1)}" cy="${Y(p.v2).toFixed(1)}" r="3.2" fill="${C.rate}" stroke="${C.bg}" stroke-width="1.5"/>
-    <rect x="${bx.toFixed(1)}" y="${by}" width="${tw.toFixed(1)}" height="22" rx="5" fill="${C.bg}" stroke="${C.text}" stroke-opacity="0.25"/>
+    <rect x="${bx.toFixed(1)}" y="${by}" width="${tw.toFixed(1)}" height="22" rx="5" fill="${C.surface}" stroke="${C.line2}" stroke-opacity="0.9"/>
     <text x="${(bx + tw / 2).toFixed(1)}" y="${by + 15}" text-anchor="middle" font-family="${MONO}" font-size="11" fill="${C.text}">${label}</text>
   </g></g>`;
       })
@@ -233,11 +258,20 @@ function renderChart({ title, valueLabel, points, secondary, markPeak, hover }, 
       <stop offset="0" stop-color="${C.a1}"/>
       <stop offset="1" stop-color="${C.a2}"/>
     </linearGradient>
+    <radialGradient id="fadeg${C.suffix}" cx="50%" cy="50%" r="72%">
+      <stop offset="0" stop-color="#fff" stop-opacity="1"/>
+      <stop offset="0.62" stop-color="#fff" stop-opacity="1"/>
+      <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+    </radialGradient>
+    <mask id="fade${C.suffix}" maskUnits="userSpaceOnUse" x="0" y="0" width="${W}" height="${H}">
+      <rect width="${W}" height="${H}" fill="url(#fadeg${C.suffix})"/>
+    </mask>
   </defs>
   <rect width="${W}" height="${H}" rx="12" fill="${C.bg}"/>
-  <rect x="0.5" y="0.5" width="${W - 1}" height="${H - 1}" rx="11.5" fill="none" stroke="${C.text}" stroke-opacity="${C.border}"/>
+  ${substrate}
+  <rect x="0.5" y="0.5" width="${W - 1}" height="${H - 1}" rx="11.5" fill="none" stroke="${C.line2}" stroke-opacity="${C.border}"/>
   ${grid}
-  <text x="${padL}" y="27" font-family="'JetBrains Mono',ui-monospace,monospace" font-size="15" font-weight="600" fill="${C.text}">${title}</text>
+  <text x="${padL}" y="27" font-family="${SANS}" font-size="15" font-weight="600" fill="${C.text}">${title}</text>
   <text x="${W - padR}" y="27" text-anchor="end" font-family="'JetBrains Mono',ui-monospace,monospace" font-size="15" font-weight="600" fill="${C.a2}">${valueLabel}</text>
   ${legend}
   <path d="${area}" fill="url(#area)" opacity="0"><animate attributeName="opacity" from="0" to="1" dur="1.4s" begin="0.3s" fill="freeze"/></path>
