@@ -1,0 +1,27 @@
+name: CI
+
+# The generator scripts are tested inside the scheduled "Profile graphs"
+# workflow, but that runs on a cron — so a change that breaks a script is not
+# caught until the next scheduled run, up to half an hour later and only if it
+# publishes. This runs the same tests on every push and pull request that
+# touches the scripts, for immediate feedback.
+
+on:
+  push:
+    paths: ["scripts/**"]
+  pull_request:
+    paths: ["scripts/**"]
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "24"
+      # The scripts depend only on the Node standard library, so there is
+      # nothing to install; run the same test files the scheduled workflow does.
+      - name: Test the guard and the language map
+        run: node --test scripts/coverage-guard.test.mjs scripts/lang-map.test.mjs
