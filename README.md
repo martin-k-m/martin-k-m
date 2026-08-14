@@ -110,9 +110,51 @@ I'm a co-founder. Credda turns real, both-party-confirmed commitment history int
 
 <br/>
 
+<!-- No release badge yet: Arc is 1.0.0 in Cargo.toml but has no GitHub release,
+     so shields would render "no releases". Add the same badge twill carries once
+     the first tag is published. -->
+## Arc &nbsp;·&nbsp; [GitHub](https://github.com/martin-k-m/arc) &nbsp;·&nbsp; <code>v1.0.0</code> &nbsp;·&nbsp; <code>Rust</code>
+
+<div align="center">
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/arc.svg" />
+  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/arc-light.svg" />
+  <img src="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/arc-light.svg" width="100%" alt="Arc: an execution cache whose dependencies are observed rather than declared, with a task graph nobody wrote, that runs the command whenever it is unsure" />
+</picture>
+
+</div>
+
+An execution cache that sits between you and the commands you run. It watches what a
+command actually reads, and when none of that has changed it replays the previous
+result instead of running it again — language-agnostic, so `cargo test`, `pytest`,
+`npm test` and `make` are all just commands.
+
+On Linux the first run is *observed*: Arc traces every syscall of the process tree
+through one of two rootless backends, and from then on fingerprints only what the run
+genuinely depended on. That includes the cases a file-level tracer gets wrong — a
+config file that was **absent** and branched on, a directory that was **enumerated**,
+a `libc` outside the project, and an intermediate the command wrote and read back,
+which is not an input. Where reads cannot be observed it falls back to hashing the
+whole project, and `arc doctor` says which. **A partial trace never narrows**, a
+shared cache is untrusted and re-hashed on the way in, and anything Arc cannot prove
+is a hit gets executed.
+
+Those same observations become a task graph nobody had to write: one command's output
+being another's input *is* the edge, so `arc affected --run` executes exactly the work
+a change reaches, producers before consumers, independent branches at once. On top of
+that sit a verified remote cache, remote execution of misses on compatible workers,
+content-addressed toolchains that let a worker with no Rust installed run a Rust build,
+and `arc ci`, which works out what a branch changed and reuses everything the caches
+already hold.
+
+<sub>Rust, four crates, v1.0 — the CLI, <code>arc.toml</code>, <code>--json</code> output, the remote protocols and the stored formats are stable surfaces from here.</sub>
+
+<br/>
+
 ## Selected projects
 
-<sub>Beyond Credda and twill: small, dependency-light tools, one job each, with tests and CI, in the language that fits it.</sub>
+<sub>Beyond Credda, twill and Arc: small, dependency-light tools, one job each, with tests and CI, in the language that fits it.</sub>
 
 <table>
 <tr>
