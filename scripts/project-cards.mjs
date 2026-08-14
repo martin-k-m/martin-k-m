@@ -306,7 +306,7 @@ const PROJECTS = [
       ],
       [
         "Unsure means run",
-        "A partial trace never narrows, a shared cache is untrusted and re-hashed on the way in, and anything Arc cannot prove is a hit is executed. A fast wrong answer is worth nothing.",
+        "A partial trace never narrows, a shared cache is untrusted and re-hashed on the way in, and anything Arc cannot prove is a hit is executed. Being unsure is the ordinary case, and the answer to it is to run the command.",
       ],
     ],
     footer:

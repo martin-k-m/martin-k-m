@@ -127,28 +127,28 @@ I'm a co-founder. Credda turns real, both-party-confirmed commitment history int
 
 An execution cache that sits between you and the commands you run. It watches what a
 command actually reads, and when none of that has changed it replays the previous
-result instead of running it again — language-agnostic, so `cargo test`, `pytest`,
-`npm test` and `make` are all just commands.
+result instead of running the command again. It is language-agnostic, so `cargo test`,
+`pytest`, `npm test` and `make` are all just commands.
 
-On Linux the first run is *observed*: Arc traces every syscall of the process tree
-through one of two rootless backends, and from then on fingerprints only what the run
-genuinely depended on. That includes the cases a file-level tracer gets wrong — a
-config file that was **absent** and branched on, a directory that was **enumerated**,
-a `libc` outside the project, and an intermediate the command wrote and read back,
-which is not an input. Where reads cannot be observed it falls back to hashing the
-whole project, and `arc doctor` says which. **A partial trace never narrows**, a
-shared cache is untrusted and re-hashed on the way in, and anything Arc cannot prove
-is a hit gets executed.
+On Linux the first run is observed. Arc traces every syscall of the process tree
+through one of two rootless backends, and after that it fingerprints only what the run
+genuinely depended on. That covers the cases a file-level tracer gets wrong: a config
+file that was absent and branched on, a directory that was enumerated, a `libc`
+outside the project, and an intermediate the command wrote and read back, which is not
+an input. Where reads cannot be observed Arc falls back to hashing the whole project,
+and `arc doctor` says which. A partial trace never narrows, a shared cache is
+untrusted and re-hashed on the way in, and anything Arc cannot prove is a hit gets
+executed.
 
-Those same observations become a task graph nobody had to write: one command's output
-being another's input *is* the edge, so `arc affected --run` executes exactly the work
-a change reaches, producers before consumers, independent branches at once. On top of
-that sit a verified remote cache, remote execution of misses on compatible workers,
-content-addressed toolchains that let a worker with no Rust installed run a Rust build,
-and `arc ci`, which works out what a branch changed and reuses everything the caches
-already hold.
+Those same observations also give it a task graph nobody had to write. One command's
+output being another's input is the edge, so `arc affected --run` executes exactly the
+work a change reaches, producers before consumers, independent branches at once. On
+top of that sit a verified remote cache, remote execution of misses on compatible
+workers, content-addressed toolchains that let a worker with no Rust installed run a
+Rust build, and `arc ci`, which works out what a branch changed and reuses everything
+the caches already hold.
 
-<sub>Rust, four crates, v1.0 — the CLI, <code>arc.toml</code>, <code>--json</code> output, the remote protocols and the stored formats are stable surfaces from here.</sub>
+<sub>Rust, four crates, v1.0. The CLI, <code>arc.toml</code>, <code>--json</code> output, the remote protocols and the stored formats are stable surfaces from here.</sub>
 
 <br/>
 
