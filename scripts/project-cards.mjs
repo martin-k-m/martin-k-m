@@ -186,7 +186,57 @@ function shapeMotif(C, cx, cy) {
   </g>`;
 }
 
-const MOTIFS = { score: scoreMotif, shape: shapeMotif };
+/**
+ * Arc: the observed dependency set, and the change that falls outside it.
+ *
+ * Arc's whole argument is that a cache hit should be authorized by what a run
+ * genuinely read, not by what happens to sit in the directory. So the drawing
+ * is the narrowing itself: five paths in the project, three the trace actually
+ * observed, and an edit to one of the other two that is still a hit. Drawn as a
+ * verdict rather than a mechanism, for the same reason twill's motif shows the
+ * check passing rather than the checker running.
+ */
+function narrowMotif(C, cx, cy) {
+  const rows = [
+    ["build.sh", true],
+    ["input.txt", true],
+    ["plugins/", true],
+    ["docs/design.md", false],
+    ["notes.txt", false],
+  ];
+  const rowH = 19;
+  const size = 9;
+  const top = -(rows.length * rowH) / 2 - 16;
+
+  const observed = rows.filter(([, o]) => o).length;
+  const firstY = top;
+  const lastY = top + (observed - 1) * rowH;
+
+  const out = rows.map(([label, isInput], i) => {
+    const y = top + i * rowH;
+    const mark = isInput
+      ? `<rect x="-70" y="${y - 6}" width="6" height="6" rx="1.5" fill="url(#ramp${C.suffix})"/>`
+      : `<rect x="-70" y="${y - 6}" width="6" height="6" rx="1.5" fill="none" stroke="${C.line2}" stroke-opacity="${C.track}"/>`;
+    const fill = isInput ? C.text : C.faint;
+    return `${mark}
+    <text x="-56" y="${y}" font-family="${MONO}" font-size="${size}" fill="${fill}" textLength="${textW(label, size).toFixed(1)}" lengthAdjust="spacing">${esc(label)}</text>`;
+  });
+
+  // The brace marks off the rows that authorize a hit, so the two unmarked
+  // rows read as excluded on purpose rather than as rows that ran out of room.
+  const brace = `<path d="M-78 ${firstY - 6} H-84 V${lastY + 4} H-78" fill="none" stroke="url(#ramp${C.suffix})" stroke-width="1.2" stroke-opacity="0.8"/>`;
+
+  const capY = top + rows.length * rowH + 6;
+
+  return `<g transform="translate(${cx} ${cy})">
+    ${brace}
+    ${out.join("\n    ")}
+    <text x="-11" y="${capY}" text-anchor="middle" font-family="${MONO}" font-size="9" fill="url(#ramp${C.suffix})" letter-spacing="1.2">3 OF 5 OBSERVED</text>
+    <text x="-11" y="${capY + 18}" text-anchor="middle" font-family="${MONO}" font-size="10" fill="${C.text}">notes.txt edited · HIT</text>
+  </g>`;
+}
+
+const MOTIFS = { score: scoreMotif, shape: shapeMotif, narrow: narrowMotif };
 
 // ── The cards ───────────────────────────────────────────────────────────────
 
@@ -239,6 +289,29 @@ const PROJECTS = [
     ],
     footer: "source files end in .tw",
     motif: "shape",
+  },
+  {
+    file: "arc",
+    eyebrow: "SIDE PROJECT",
+    title: "Arc",
+    tagline: "An execution cache. Never repeat work Arc can prove is already done.",
+    features: [
+      [
+        "Dependencies observed, not declared",
+        "On Linux Arc traces every syscall of the process tree and records what a run genuinely depended on: files read, directories enumerated, paths looked for and not found, binaries executed. Only those invalidate the cache.",
+      ],
+      [
+        "A task graph nobody wrote",
+        "One command's output being another's input is the edge, so arc affected runs exactly the work a change reaches, producers before consumers, independent branches at once.",
+      ],
+      [
+        "Unsure means run",
+        "A partial trace never narrows, a shared cache is untrusted and re-hashed on the way in, and anything Arc cannot prove is a hit is executed. A fast wrong answer is worth nothing.",
+      ],
+    ],
+    footer:
+      "Rust · four crates · v1.0 · shared cache, remote execution, content-addressed toolchains",
+    motif: "narrow",
   },
 ];
 
