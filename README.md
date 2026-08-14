@@ -110,10 +110,7 @@ I'm a co-founder. Credda turns real, both-party-confirmed commitment history int
 
 <br/>
 
-<!-- No release badge yet: Arc is 1.0.0 in Cargo.toml but has no GitHub release,
-     so shields would render "no releases". Add the same badge twill carries once
-     the first tag is published. -->
-## Arc &nbsp;·&nbsp; [GitHub](https://github.com/martin-k-m/arc) &nbsp;·&nbsp; <code>v1.0.0</code> &nbsp;·&nbsp; <code>Rust</code>
+## Arc &nbsp;·&nbsp; [GitHub](https://github.com/martin-k-m/arc) &nbsp;·&nbsp; [![Release](https://img.shields.io/github/v/release/martin-k-m/arc?sort=semver&display_name=tag&label=&style=flat-square&color=4FB79B)](https://github.com/martin-k-m/arc/releases)
 
 <div align="center">
 
