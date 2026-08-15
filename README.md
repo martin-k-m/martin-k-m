@@ -86,8 +86,6 @@ I'm a co-founder. Credda turns real, both-party-confirmed commitment history int
 
 <br/>
 
-<!-- The repository is still named raster on github.com; the redirect keeps
-     these URLs working once it is renamed. -->
 ## twill &nbsp;·&nbsp; [GitHub](https://github.com/martin-k-m/twill) &nbsp;·&nbsp; [![Release](https://img.shields.io/github/v/release/martin-k-m/twill?sort=semver&display_name=tag&label=&style=flat-square&color=4FB79B)](https://github.com/martin-k-m/twill/releases)
 
 <div align="center">

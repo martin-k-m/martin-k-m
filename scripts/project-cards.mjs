@@ -284,7 +284,7 @@ const PROJECTS = [
       ],
       [
         "Deterministic and self-contained",
-        "One dependency-free binary, and parallelism never changes a result. The compiler is being rewritten in twill itself.",
+        "One dependency-free binary, and parallelism never changes a result. Since 1.4.0 the compiler is written in twill: it runs on the original Go version and reproduces its output at every stage, byte for byte.",
       ],
     ],
     footer: "source files end in .tw",
