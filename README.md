@@ -10,7 +10,7 @@
 [![Substack](https://img.shields.io/badge/Substack-FF6719?style=flat-square&logo=substack&logoColor=white)](https://martinkm.substack.com)
 [![Website](https://img.shields.io/badge/martin--k--m.github.io-2B2820?style=flat-square&logo=react&logoColor=white)](https://martin-k-m.github.io)
 
-Electrical engineering at UC Santa Cruz, co-founder of Credda. I build small, deterministic tools in whatever language fits, and I am writing one of my own.
+Electrical engineering at UC Santa Cruz, co-founder of Credda. I build systems software and try to break it before it ships: a Raft-replicated key-value store checked for linearizability under live network partitions, an execution cache that traces syscalls to work out what a build actually read, an LSM storage engine, and twill, a language whose compiler is written in itself.
 
 <div align="center">
 
@@ -147,13 +147,55 @@ the caches already hold.
 
 <br/>
 
+## quorum &nbsp;·&nbsp; [GitHub](https://github.com/martin-k-m/quorum)
+
+<div align="center">
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/quorum.svg" />
+  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/quorum-light.svg" />
+  <img src="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/quorum-light.svg" width="100%" alt="quorum: Raft consensus as a pure I/O-free state machine, a linearizability checker run against a live cluster under partitions, and a minority that refuses writes rather than diverge" />
+</picture>
+
+</div>
+
+A replicated key-value store on Raft, written from the protocol up rather than
+around a consensus library. Election and log replication are a deterministic
+state machine with no I/O and no clock, so an entire cluster runs inside one
+seeded simulator and any failing run replays exactly from its seed.
+
+The part worth reading is the checking. A Wing-Gong linearizability checker
+decides whether a recorded history of concurrent operations could have come from
+a single sequential store, and it runs against a live three-node cluster while
+the transport drops and partitions real traffic: **25 fault-injected schedules,
+3,000 operations, 0 violations**. Getting to that number meant fixing three
+genuine bugs it found first, including a partitioned leader that had not yet
+stepped down still answering reads from stale data, and a Raft log index reused
+for a different entry, which reported success to a caller whose write had
+actually been discarded.
+
+<sub>Go, no third-party runtime dependencies. Sibling to strata: where that is a storage engine correct on one machine, this is what makes a cluster of them agree.</sub>
+
+<br/>
+
 ## Selected projects
 
-<sub>Beyond Credda, twill and Arc: small, dependency-light tools, one job each, with tests and CI, in the language that fits it.</sub>
+<sub>Beyond Credda, twill, Arc and quorum: small, dependency-light tools, one job each, with tests and CI, in the language that fits it.</sub>
 
 <table>
 <tr>
-<td width="50%" valign="top">
+<td width="34%" valign="top">
+
+**Databases**
+
+<a href="https://github.com/martin-k-m/strata"><b>strata</b></a> · <code>Java</code><br/>
+An LSM-tree storage engine built from the write path up: a CRC-checked write-ahead log, SSTables with bloom filters and a sparse index, and leveled compaction. Recovery is proved by truncating the log at every byte offset.
+
+<a href="https://github.com/martin-k-m/quarry"><b>quarry</b></a> · <code>Python</code><br/>
+A SQL engine over CSV: a parser and an executor, standard library only. Its property-based fuzz suite found a real recursion overflow in deeply nested expressions. The other half of strata.
+
+</td>
+<td width="33%" valign="top">
 
 **Data**
 
@@ -167,7 +209,7 @@ Query CSV and JSONL from the terminal with a small clause language. Streaming, z
 Profile a CSV: inferred types, null rates, per-column stats and distributions.
 
 </td>
-<td width="50%" valign="top">
+<td width="33%" valign="top">
 
 **Developer infrastructure**
 
