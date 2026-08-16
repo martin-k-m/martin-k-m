@@ -12,78 +12,6 @@
 
 Electrical engineering at UC Santa Cruz, co-founder of Credda. I build systems software and try to break it before it ships: a Raft-replicated key-value store checked for linearizability under live network partitions, an execution cache that traces syscalls to work out what a build actually read, an LSM storage engine, and twill, a language whose compiler is written in itself.
 
-<div align="center">
-
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/languages.svg" />
-  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/languages-light.svg" />
-  <img src="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/languages-light.svg" width="100%" alt="Languages ranked by bytes of code" />
-</picture>
-
-<sub>Ranked by bytes of code · public, private and contributed repositories · Linguist-attributed</sub>
-
-<br/><br/>
-
-<a href="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/lang-history.svg">
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/lang-history.svg" />
-  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/lang-history-light.svg" />
-  <img src="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/lang-history-light.svg" width="100%" alt="Each language's share of the code, day by day over the last 3 months" />
-</picture>
-</a>
-
-<sub>Share of code, one point per day · rolling 3 months · reconstructed from each repository's tree as it stood that day · click, then hover for any day</sub>
-
-<br/><br/>
-
-<a href="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/contrib.svg">
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/contrib.svg" />
-  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/contrib-light.svg" />
-  <img src="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/contrib-light.svg" width="100%" alt="Contributions over the last 3 months, running total and per-day rate" />
-</picture>
-</a>
-
-<sub>Running total and contributions per day · rolling 3 months · click, then hover for any day</sub>
-
-<br/><br/>
-
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/constellation.svg" />
-  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/constellation-light.svg" />
-  <img src="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/constellation-light.svg" width="100%" alt="Every repository this account touches, sized by bytes of code, coloured by dominant language and clustered by owner" />
-</picture>
-
-<sub>Every repository, clustered by owner · area is bytes of code, colour is the dominant language · private repositories are drawn but never named</sub>
-
-</div>
-
-## Credda &nbsp;·&nbsp; [credda.io](https://credda.io) &nbsp;·&nbsp; [@martin](https://credda.io/profile/martin) &nbsp;·&nbsp; [GitHub](https://github.com/Credda-io)
-
-<div align="center">
-
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/Credda-io/.github/main/profile/assets/creddaseallockupdarktransparent.png">
-    <img alt="Credda" src="https://raw.githubusercontent.com/Credda-io/.github/main/profile/assets/creddaseallockuplighttransparent.png" width="420">
-  </picture>
-
-</div>
-
-I'm a co-founder. Credda turns real, both-party-confirmed commitment history into a verified
-**0–100 reliability score** that a person owns and carries across marketplaces, lenders, and clients.
-
-<div align="center">
-
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/credda.svg" />
-  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/credda-light.svg" />
-  <img src="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/credda-light.svg" width="100%" alt="Credda: deterministic scoring from an append-only ledger, portable as a signed W3C Verifiable Credential, built on commitments rather than reviews, with organizations" />
-</picture>
-
-</div>
-
-<sub>Early-stage and under active development. Anything the site marks <i>coming soon</i> is direction, not a shipped guarantee.</sub>
-
 <br/>
 
 ## twill &nbsp;·&nbsp; [GitHub](https://github.com/martin-k-m/twill) &nbsp;·&nbsp; [![Release](https://img.shields.io/github/v/release/martin-k-m/twill?sort=semver&display_name=tag&label=&style=flat-square&color=4FB79B)](https://github.com/martin-k-m/twill/releases)
@@ -105,6 +33,50 @@ I'm a co-founder. Credda turns real, both-party-confirmed commitment history int
 </picture>
 
 </div>
+
+Most machine-learning code is a general purpose language with a numeric framework
+bolted on top. twill goes the other way. Tensors are the built-in data type,
+differentiation is a language operation rather than a library call, and a static
+checker reads your shapes before anything executes, so a shape mistake is an error
+you see rather than a stack trace you get. Pricing a European call by Monte Carlo
+and taking its delta and vega by differentiating the pricer is a handful of lines,
+with no bumping and no second library.
+
+**As of v1.4.0 it is self-hosting.** The compiler written in twill compiles itself,
+and the binary it produces reproduces the original byte for byte.
+
+<sub>Go, no dependencies.</sub>
+
+<br/>
+
+## quorum &nbsp;·&nbsp; [GitHub](https://github.com/martin-k-m/quorum)
+
+<div align="center">
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/quorum.svg" />
+  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/quorum-light.svg" />
+  <img src="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/quorum-light.svg" width="100%" alt="quorum: Raft consensus as a pure I/O-free state machine, a linearizability checker run against a live cluster under partitions, and a minority that refuses writes rather than diverge" />
+</picture>
+
+</div>
+
+A replicated key-value store on Raft, written from the protocol up rather than
+around a consensus library. Election and log replication are a deterministic
+state machine with no I/O and no clock, so an entire cluster runs inside one
+seeded simulator and any failing run replays exactly from its seed.
+
+The part worth reading is the checking. A Wing-Gong linearizability checker
+decides whether a recorded history of concurrent operations could have come from
+a single sequential store, and it runs against a live three-node cluster while
+the transport drops and partitions real traffic: **25 fault-injected schedules,
+3,000 operations, 0 violations**. Getting to that number meant fixing three
+genuine bugs it found first, including a partitioned leader that had not yet
+stepped down still answering reads from stale data, and a Raft log index reused
+for a different entry, which reported success to a caller whose write had
+actually been discarded.
+
+<sub>Go, no third-party runtime dependencies. Sibling to strata: where that is a storage engine correct on one machine, this is what makes a cluster of them agree.</sub>
 
 <br/>
 
@@ -147,40 +119,37 @@ the caches already hold.
 
 <br/>
 
-## quorum &nbsp;·&nbsp; [GitHub](https://github.com/martin-k-m/quorum)
+## Credda &nbsp;·&nbsp; [credda.io](https://credda.io) &nbsp;·&nbsp; [@martin](https://credda.io/profile/martin) &nbsp;·&nbsp; [GitHub](https://github.com/Credda-io)
+
+<div align="center">
+
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/Credda-io/.github/main/profile/assets/creddaseallockupdarktransparent.png">
+    <img alt="Credda" src="https://raw.githubusercontent.com/Credda-io/.github/main/profile/assets/creddaseallockuplighttransparent.png" width="420">
+  </picture>
+
+</div>
+
+I'm a co-founder. Credda turns real, both-party-confirmed commitment history into a verified
+**0–100 reliability score** that a person owns and carries across marketplaces, lenders, and clients.
 
 <div align="center">
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/quorum.svg" />
-  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/quorum-light.svg" />
-  <img src="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/quorum-light.svg" width="100%" alt="quorum: Raft consensus as a pure I/O-free state machine, a linearizability checker run against a live cluster under partitions, and a minority that refuses writes rather than diverge" />
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/credda.svg" />
+  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/credda-light.svg" />
+  <img src="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/credda-light.svg" width="100%" alt="Credda: deterministic scoring from an append-only ledger, portable as a signed W3C Verifiable Credential, built on commitments rather than reviews, with organizations" />
 </picture>
 
 </div>
 
-A replicated key-value store on Raft, written from the protocol up rather than
-around a consensus library. Election and log replication are a deterministic
-state machine with no I/O and no clock, so an entire cluster runs inside one
-seeded simulator and any failing run replays exactly from its seed.
-
-The part worth reading is the checking. A Wing-Gong linearizability checker
-decides whether a recorded history of concurrent operations could have come from
-a single sequential store, and it runs against a live three-node cluster while
-the transport drops and partitions real traffic: **25 fault-injected schedules,
-3,000 operations, 0 violations**. Getting to that number meant fixing three
-genuine bugs it found first, including a partitioned leader that had not yet
-stepped down still answering reads from stale data, and a Raft log index reused
-for a different entry, which reported success to a caller whose write had
-actually been discarded.
-
-<sub>Go, no third-party runtime dependencies. Sibling to strata: where that is a storage engine correct on one machine, this is what makes a cluster of them agree.</sub>
+<sub>Early-stage and under active development. Anything the site marks <i>coming soon</i> is direction, not a shipped guarantee.</sub>
 
 <br/>
 
 ## Selected projects
 
-<sub>Beyond Credda, twill, Arc and quorum: small, dependency-light tools, one job each, with tests and CI, in the language that fits it.</sub>
+<sub>Beyond twill, quorum, Arc and Credda: small, dependency-light tools, one job each, with tests and CI, in the language that fits it.</sub>
 
 <table>
 <tr>
@@ -225,26 +194,6 @@ Blocks short-video feeds inside apps you otherwise keep. It holds no INTERNET pe
 </td>
 </tr>
 </table>
-
-<br/>
-
-## Tech
-
-<div align="center">
-
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/stack.svg" />
-  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/stack-light.svg" />
-  <img src="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/stack-light.svg" width="100%" alt="Stack: languages by measured share of bytes, and the declared frontend, backend, data and infrastructure tools" />
-</picture>
-
-<sub>Language chips carry their real share of the bytes, from the same data as the charts above · everything else is declared</sub>
-
-<br/>
-
-<a href="https://github.com/martin-k-m?tab=followers"><img src="https://img.shields.io/github/followers/martin-k-m?style=for-the-badge&logo=github&logoColor=white&label=Follow&labelColor=0A0A0C&color=C2410C" alt="Followers" /></a>
-
-</div>
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/footer.svg" />
