@@ -1,5 +1,5 @@
-// Generate dist/credda.svg, dist/twill.svg and their light twins: the two
-// project cards in the README.
+// Generate dist/credda.svg, dist/twill.svg, dist/arc.svg, dist/quorum.svg and
+// their light twins: the project cards in the README.
 //
 // The Credda section was a five-row HTML table (five separate <tbody> elements,
 // which is not what a tbody is for) and the twill section was a blockquote and
@@ -18,9 +18,12 @@
 // something there and would mean nothing on a profile banner. On Credda's own
 // card it means what it means on Credda: the ring is the product. twill gets
 // the shape check, which is the one thing its whole design argument rests on.
+// Arc gets the narrowed dependency set and quorum gets the partition, for the
+// same reason: each is the one claim its project would be worthless without.
 //
-// Same generator for both, because two cards maintained separately drift, and
-// this file already exists to stop the dark and light copies drifting.
+// One generator for all of them, because cards maintained separately drift, and
+// this file already exists to stop the dark and light copies drifting. A new
+// card is a PROJECTS entry plus a motif function, never a hand-edited SVG.
 
 import { mkdir, writeFile } from "node:fs/promises";
 
@@ -236,7 +239,57 @@ function narrowMotif(C, cx, cy) {
   </g>`;
 }
 
-const MOTIFS = { score: scoreMotif, shape: shapeMotif, narrow: narrowMotif };
+/**
+ * quorum: the partition, and which side of it is allowed to answer.
+ *
+ * Every other card draws the thing its project is arguing for, so this one
+ * draws the choice quorum makes when the network breaks. Five nodes, a
+ * partition through them, three on one side still committing and two on the
+ * other refusing rather than diverging. That is the CP corner of CAP stated as
+ * a picture: the minority is not slow or degraded, it is deliberately silent,
+ * which is the part a reader is most likely to assume works the other way.
+ *
+ * Drawn as the verdict, like the other two: no message arrows, no election in
+ * progress, just the state the cluster settles into and what each side is
+ * permitted to say from there.
+ */
+function quorumMotif(C, cx, cy) {
+  // Nudged right of the text column: TEXT_R stops at 604 in card coordinates,
+  // and the MAJORITY label is the widest thing on this side of the motif.
+  const majX = -66;
+  const minX = 34;
+  const divX = -16;
+  const r = 8.5;
+
+  const node = (x, y, live) =>
+    live
+      ? `<circle cx="${x}" cy="${y}" r="${r}" fill="url(#ramp${C.suffix})"/>`
+      : `<circle cx="${x}" cy="${y}" r="${r}" fill="${C.bg}" stroke="${C.line2}" stroke-opacity="${C.track}" stroke-width="1.6"/>`;
+
+  const majY = [-34, 0, 34];
+  const minY = [-17, 17];
+
+  // The majority is drawn as a connected set, because what makes it a majority
+  // is that its members can still reach each other. The minority is not.
+  const links = `<path d="M${majX} ${majY[0]} V${majY[2]}" fill="none" stroke="url(#ramp${C.suffix})" stroke-width="1.4" stroke-opacity="0.55"/>`;
+
+  const divider = `<path d="M${divX} -56 V56" fill="none" stroke="${C.line2}" stroke-opacity="${C.track}" stroke-width="1.2" stroke-dasharray="3 4"/>`;
+
+  const capY = 74;
+
+  return `<g transform="translate(${cx} ${cy})">
+    ${divider}
+    ${links}
+    ${majY.map((y) => node(majX, y, true)).join("\n    ")}
+    ${minY.map((y) => node(minX, y, false)).join("\n    ")}
+    <text x="${majX}" y="-52" text-anchor="middle" font-family="${MONO}" font-size="9" fill="url(#ramp${C.suffix})" letter-spacing="1.2">MAJORITY</text>
+    <text x="${minX}" y="-42" text-anchor="middle" font-family="${MONO}" font-size="9" fill="${C.faint}" letter-spacing="1.2">MINORITY</text>
+    <text x="-11" y="${capY}" text-anchor="middle" font-family="${MONO}" font-size="9" fill="url(#ramp${C.suffix})" letter-spacing="1.2">3 OF 5 · COMMITTED</text>
+    <text x="-11" y="${capY + 18}" text-anchor="middle" font-family="${MONO}" font-size="10" fill="${C.text}">the other 2 refuse</text>
+  </g>`;
+}
+
+const MOTIFS = { score: scoreMotif, shape: shapeMotif, narrow: narrowMotif, quorum: quorumMotif };
 
 // ── The cards ───────────────────────────────────────────────────────────────
 
@@ -312,6 +365,32 @@ const PROJECTS = [
     footer:
       "Rust · four crates · v1.0 · shared cache, remote execution, content-addressed toolchains",
     motif: "narrow",
+  },
+  {
+    file: "quorum",
+    eyebrow: "SIDE PROJECT",
+    title: "quorum",
+    tagline: "A linearizable replicated key-value store, built on Raft from the protocol up.",
+    features: [
+      [
+        "Consensus as a pure function",
+        "Leader election and log replication are a deterministic state machine with no I/O, no clock and no goroutines, driven only by Step and Tick, so a whole cluster runs inside one seeded simulator and a failing run is reproducible from its seed.",
+      ],
+      [
+        "Checked, not asserted",
+        "A Wing-Gong linearizability checker decides whether a recorded history could have come from a single sequential store, run against a live 3-node cluster under real partitions: 25 fault-injected schedules, 3,000 operations, 0 violations.",
+      ],
+      [
+        "The checker earned its keep",
+        "It found three real bugs before that number was honest, including a partitioned leader still answering reads from stale data, and a reused Raft index that reported success to the wrong caller for an entry that had been discarded.",
+      ],
+      [
+        "Correctness over availability",
+        "With a majority reachable it serves reads and writes; with only a minority it refuses them rather than diverge. Reads take the same barrier writes do, so an isolated node fails closed instead of answering wrong.",
+      ],
+    ],
+    footer: "Go · sibling to strata · go test -race ./...",
+    motif: "quorum",
   },
 ];
 
