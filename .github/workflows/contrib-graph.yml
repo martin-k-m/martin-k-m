@@ -1,61 +1,26 @@
-name: Profile graphs
+# Publishes the README's generated artwork to the assets branch: the banner, the
+# footer and the project cards.
+#
+# It used to publish four charts as well, on a twice-hourly schedule, and to
+# clone every repository to reconstruct the language history behind one of them.
+# The README stopped showing them, so the schedule, the clone cache, the
+# coverage guard around them and the credentialed steps that produced them are
+# all gone with them. What is left is static: it changes when a script changes,
+# which is what the push trigger is for. The scripts themselves are still in
+# scripts/ if the charts are ever wanted back.
+name: Profile artwork
 
 on:
-  schedule:
-    # Asks for twice an hour. Do not read that as a promise.
-    #
-    # Scheduled workflows on GitHub are best effort, and the gap between what
-    # the cron asks for and what arrives is large. Measured over the five days
-    # to 2026-08-03, a `7 * * * *` cron delivered 24 runs against the 132 it
-    # asked for — 18% — with a median gap of 5.4 hours and a worst gap of 8.8.
-    # Not one of them started on the minute requested; observed start minutes
-    # ranged across :01 to :52.
-    #
-    # Two mitigations, neither a fix. Asking twice an hour rather than once
-    # doubles the number of chances to be picked up. And both slots are away
-    # from the top of the hour, which is the most contended part of the queue
-    # because it is where almost everyone points their cron.
-    #
-    # The charts do not depend on this to stay correct. Their window is derived
-    # from the clock at render time, so it is right whenever it runs; the
-    # schedule only decides how stale the last point is allowed to get. For a
-    # refresh on demand, use the repository_dispatch below or run the workflow
-    # manually.
-    - cron: "23,53 * * * *"
-  # So any repository can ask for a refresh right after it pushes, rather than
-  # waiting for the next tick:
-  #   gh api repos/martin-k-m/martin-k-m/dispatches -f event_type=refresh-graphs
-  repository_dispatch:
-    types: [refresh-graphs]
   workflow_dispatch:
-    inputs:
-      allow_coverage_drop:
-        description: "Publish even after a large intentional drop in repo count"
-        type: boolean
-        default: false
   push:
     branches: [main]
     paths:
       - "scripts/banner.mjs"
-      - "scripts/stack.mjs"
       - "scripts/project-cards.mjs"
-      - "scripts/constellation.mjs"
-      - "scripts/repos.mjs"
-      - "scripts/contrib-graph.mjs"
-      - "scripts/lang-graph.mjs"
-      - "scripts/lang-history.mjs"
       - ".github/workflows/contrib-graph.yml"
 
 permissions:
   contents: write
-
-# Runners are UTC, and these charts are about one person's days. Left in UTC the
-# profile read a day behind for the first three hours of every local evening:
-# stamped with yesterday's date, and comparing against the day before that,
-# while being completely up to date. Every script formats and buckets days in
-# this zone instead. Change it here, in one place.
-env:
-  PROFILE_TZ: Europe/Helsinki
 
 jobs:
   build:
@@ -65,120 +30,11 @@ jobs:
       - uses: actions/setup-node@v7
         with:
           node-version: "24"
-      # The language history clones every repository to read its tree at each
-      # sample point. Restoring them between runs turns that into a fetch, which
-      # is what makes an hourly schedule reasonable rather than wasteful. The key
-      # rotates per run so the cache is always written; restore-keys means any
-      # recent one will do.
-      - name: Restore the repository clones
-        uses: actions/cache@v6
-        with:
-          path: ${{ runner.temp }}/lang-history-cache
-          key: lang-clones-${{ github.run_id }}
-          restore-keys: lang-clones-
-
-      # No API and no token: the content is static, and it is generated rather
-      # than committed so the dark and light copies cannot drift apart. It runs
-      # first because it is the one step that cannot fail for a credentials
-      # reason, so the header is published even on a run where the rest does not.
-      # The coverage guard decides whether a chart is allowed to publish, so it
-      # runs before anything that could be stopped by it. A guard nobody tests
-      # is a guard that quietly stops guarding.
-      - name: Test the guard and the language map
-        run: node --test scripts/coverage-guard.test.mjs scripts/lang-map.test.mjs
-
       - name: Generate the README banner
         run: node scripts/banner.mjs
 
-      # Static content, no API and no token, so it sits with the banner rather
-      # than with the charts: it publishes even on a run where every credentialed
-      # step fails.
       - name: Generate the project cards
         run: node scripts/project-cards.mjs
-
-      - name: Generate contribution SVGs
-        env:
-          GH_LOGIN: ${{ github.repository_owner }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: node scripts/contrib-graph.mjs
-      # This one clones every repository to read the tree as it stood at each
-      # day boundary, because the API has no historical language data. It needs
-      # a PROFILE_TOKEN secret — a PAT with `repo` scope — both to enumerate and
-      # to clone the private ones.
-      #
-      # It runs BEFORE the snapshot chart, which is the opposite of the order it
-      # was in and is not cosmetic. It writes dist/lang-daily.json, the day-over-
-      # day series the snapshot chart's arrows are computed from. Run the other
-      # way round the arrows are always a run behind, which on the first run
-      # means no arrows at all.
-      - name: Generate language history SVG
-        id: history
-        continue-on-error: true
-        env:
-          GH_LOGIN: ${{ github.repository_owner }}
-          GITHUB_TOKEN: ${{ secrets.PROFILE_TOKEN || secrets.GITHUB_TOKEN }}
-          ALLOW_COVERAGE_DROP: ${{ github.event.inputs.allow_coverage_drop == 'true' && '1' || '' }}
-        run: node scripts/lang-history.mjs
-
-      # Same PAT, same reason: the Actions GITHUB_TOKEN is scoped to this
-      # repository alone and cannot enumerate the owner's repositories, so
-      # without the secret the script refuses to render rather than publish a
-      # chart reading "1 language · 1 repo".
-      - name: Generate language SVG
-        id: lang
-        continue-on-error: true
-        env:
-          GH_LOGIN: ${{ github.repository_owner }}
-          GITHUB_TOKEN: ${{ secrets.PROFILE_TOKEN || secrets.GITHUB_TOKEN }}
-          ALLOW_COVERAGE_DROP: ${{ github.event.inputs.allow_coverage_drop == 'true' && '1' || '' }}
-        run: node scripts/lang-graph.mjs
-
-      # Same PAT and same reason as the language charts: it enumerates every
-      # repository the account touches, including the organization ones the
-      # Actions token cannot see. continue-on-error because a constellation is
-      # worth less than a run, and the preserve step below keeps the last one.
-      - name: Generate the constellation
-        id: constellation
-        continue-on-error: true
-        env:
-          GH_LOGIN: ${{ github.repository_owner }}
-          GITHUB_TOKEN: ${{ secrets.PROFILE_TOKEN || secrets.GITHUB_TOKEN }}
-        run: node scripts/constellation.mjs
-
-      # The publish step replaces the whole assets branch, so a chart that failed
-      # to regenerate would be deleted rather than left alone, breaking the README
-      # image. Pull the last published copy back down instead; whatever did run
-      # still updates.
-      - name: Preserve the last published charts
-        if: steps.lang.outcome != 'success' || steps.history.outcome != 'success' || steps.constellation.outcome != 'success'
-        run: |
-          echo "::warning::a chart did not regenerate — check the PROFILE_TOKEN secret (PAT with repo scope)"
-          for f in languages languages-light lang-history lang-history-light constellation constellation-light; do
-            [ -s "dist/$f.svg" ] && continue
-            curl -fsSL -o "dist/$f.svg" \
-              "https://raw.githubusercontent.com/${{ github.repository }}/assets/$f.svg" \
-              || echo "::warning::no published $f.svg to preserve"
-          done
-          # curl writes an empty file on failure, and an empty SVG renders as a
-          # broken image, which is worse than the file being absent.
-          find dist -name '*.svg' -empty -delete
-          # languages.json is the only state these charts carry between runs: it
-          # is what the day-over-day arrows are measured against. Publishing
-          # without it would silently reset every arrow and lose the history.
-          for j in languages lang-daily; do
-            [ -s "dist/$j.json" ] && continue
-            curl -fsSL -o "dist/$j.json" \
-              "https://raw.githubusercontent.com/${{ github.repository }}/assets/$j.json" \
-              || echo "::warning::no published $j.json to preserve"
-            [ -s "dist/$j.json" ] || rm -f "dist/$j.json"
-          done
-      # After the preserve step on purpose. The panel's language chips are read
-      # from dist/languages.json, and on a run where lang-graph failed that file
-      # only exists once the previous copy has been pulled back down. Running
-      # earlier would publish a panel with its measured row silently missing on
-      # exactly the runs where everything else was preserved intact.
-      - name: Generate the stack panel
-        run: node scripts/stack.mjs
 
       - name: Publish to the assets branch
         uses: crazy-max/ghaction-github-pages@v5
@@ -187,25 +43,3 @@ jobs:
           build_dir: dist
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      # The website reads these files at build time and bakes them into its
-      # HTML, so it only shows what was true when it last built. It rebuilds on
-      # a schedule as a floor, but that leaves it hours behind data that has
-      # just changed — so tell it the moment there is something new.
-      #
-      # Needs the PAT: the Actions GITHUB_TOKEN is scoped to this repository and
-      # cannot dispatch to another one. Not fatal if it is missing or the call
-      # fails, because the site's own schedule still catches up; a failed ping
-      # should not fail a run whose charts already published.
-      - name: Ask the website to rebuild
-        if: github.event_name != 'pull_request'
-        continue-on-error: true
-        env:
-          GH_TOKEN: ${{ secrets.PROFILE_TOKEN }}
-          SITE: ${{ github.repository_owner }}/${{ github.repository_owner }}.github.io
-        run: |
-          if [ -z "$GH_TOKEN" ]; then
-            echo "::warning::no PROFILE_TOKEN, the site will refresh on its own schedule"
-            exit 0
-          fi
-          gh api "repos/$SITE/dispatches" -f event_type=refresh-data             && echo "asked $SITE to rebuild"
