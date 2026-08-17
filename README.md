@@ -14,14 +14,14 @@ Electrical engineering at UC Santa Cruz, co-founder of Credda. I build systems s
 
 <br/>
 
-## twill &nbsp;·&nbsp; [GitHub](https://github.com/martin-k-m/twill) &nbsp;·&nbsp; [![Release](https://img.shields.io/github/v/release/martin-k-m/twill?sort=semver&display_name=tag&label=&style=flat-square&color=4FB79B)](https://github.com/martin-k-m/twill/releases)
+## twill &nbsp;·&nbsp; [GitHub](https://github.com/twill-lang/twill) &nbsp;·&nbsp; [![Release](https://img.shields.io/github/v/release/twill-lang/twill?sort=semver&display_name=tag&label=&style=flat-square&color=4FB79B)](https://github.com/twill-lang/twill/releases)
 
 <div align="center">
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/martin-k-m/twill/main/assets/twill-mark-glow.png" />
-  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/martin-k-m/twill/main/assets/twill-mark.png" />
-  <img src="https://raw.githubusercontent.com/martin-k-m/twill/main/assets/twill-mark.png" width="96" alt="twill" />
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/twill-lang/twill/main/assets/twill-mark-glow.png" />
+  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/twill-lang/twill/main/assets/twill-mark.png" />
+  <img src="https://raw.githubusercontent.com/twill-lang/twill/main/assets/twill-mark.png" width="96" alt="twill" />
 </picture>
 
 <br/><br/>
