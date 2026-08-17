@@ -14,7 +14,7 @@ Electrical engineering at UC Santa Cruz, co-founder of Credda. I build systems s
 
 <br/>
 
-## twill &nbsp;·&nbsp; [GitHub](https://github.com/twill-lang/twill) &nbsp;·&nbsp; [![Release](https://img.shields.io/github/v/release/twill-lang/twill?sort=semver&display_name=tag&label=&style=flat-square&color=4FB79B)](https://github.com/twill-lang/twill/releases)
+## twill &nbsp;·&nbsp; [twill-lang.github.io](https://twill-lang.github.io) &nbsp;·&nbsp; [GitHub](https://github.com/twill-lang/twill) &nbsp;·&nbsp; [![Release](https://img.shields.io/github/v/release/twill-lang/twill?sort=semver&display_name=tag&label=&style=flat-square&color=4FB79B)](https://github.com/twill-lang/twill/releases)
 
 <div align="center">
 
@@ -42,10 +42,68 @@ you see rather than a stack trace you get. Pricing a European call by Monte Carl
 and taking its delta and vega by differentiating the pricer is a handful of lines,
 with no bumping and no second library.
 
-**As of v1.4.0 it is self-hosting.** The compiler written in twill compiles itself,
-and the binary it produces reproduces the original byte for byte.
+**As of v1.5.0 the compiler written in twill runs.** The lexer, parser, checker,
+evaluator, tensor kernels, formatter and CLI are written in the language itself, and
+the whole tree executes on the Go bootstrap and reproduces the reference across every
+stage: `twill check` matched the Go command byte for byte on every corpus file, and
+`twill fmt` on every one it formats. It runs on the bootstrap rather than as its own
+Go-free binary; bootstrapping to a standalone twill-built compiler is the next step.
 
-<sub>Go, no dependencies.</sub>
+<sub>Go, no dependencies. An early prototype: interpreted, first-order reverse-mode autodiff, and a best-effort shape checker rather than a full type system.</sub>
+
+### The twill ecosystem
+
+<sub>Ten repositories under <a href="https://github.com/twill-lang">github.com/twill-lang</a>. Everything downstream of the compiler is written in twill itself, which is the same experiment run again: a real program against the systems subset, each with its own list of what the language is still missing.</sub>
+
+<table>
+<tr>
+<td width="34%" valign="top">
+
+**Language and tooling**
+
+<a href="https://github.com/twill-lang/twill"><b>twill</b></a><br/>
+The language and the reference implementation.
+
+<a href="https://github.com/twill-lang/spool"><b>spool</b></a><br/>
+The package manager, written in twill.
+
+<a href="https://github.com/twill-lang/loom"><b>loom</b></a><br/>
+Build and workspace tooling.
+
+<a href="https://github.com/twill-lang/bobbin"><b>bobbin</b></a><br/>
+Shared internals across the ecosystem.
+
+</td>
+<td width="33%" valign="top">
+
+**Data and modelling**
+
+<a href="https://github.com/twill-lang/warp"><b>warp</b></a><br/>
+Data pipelines and dataset loaders.
+
+<a href="https://github.com/twill-lang/skein"><b>skein</b></a><br/>
+Tokenisers with an offset map back to the source.
+
+<a href="https://github.com/twill-lang/heddle"><b>heddle</b></a><br/>
+Probabilistic programming and Bayesian inference: NUTS, HMC, ADVI.
+
+</td>
+<td width="33%" valign="top">
+
+**Serving and output**
+
+<a href="https://github.com/twill-lang/shuttle"><b>shuttle</b></a><br/>
+Inference and serving.
+
+<a href="https://github.com/twill-lang/selvedge"><b>selvedge</b></a><br/>
+Model serialisation and the model registry.
+
+<a href="https://github.com/twill-lang/weft"><b>weft</b></a><br/>
+Plotting and visualisation: terminal charts and SVG.
+
+</td>
+</tr>
+</table>
 
 <br/>
 
