@@ -10,7 +10,7 @@
 [![Substack](https://img.shields.io/badge/Substack-FF6719?style=flat-square&logo=substack&logoColor=white)](https://martinkm.substack.com)
 [![Website](https://img.shields.io/badge/martin--k--m.github.io-2B2820?style=flat-square&logo=react&logoColor=white)](https://martin-k-m.github.io)
 
-Electrical engineering at UC Santa Cruz, co-founder of Credda. I build systems software and try to break it before it ships: a Raft-replicated key-value store checked for linearizability under live network partitions, an execution cache that traces syscalls to work out what a build actually read, an LSM storage engine, and twill, a language whose compiler is written in itself.
+Electrical engineering at UC Santa Cruz, co-founder of Credda. I build systems software and try to break it before it ships: a Raft-replicated key-value store checked for linearizability under live network partitions, an execution cache that traces syscalls to work out what a build actually read, an LSM storage engine, and twill, a language whose compiler is written in itself. Alongside that, Scalar: open-source productivity infrastructure across nine repositories.
 
 <br/>
 
@@ -188,6 +188,84 @@ the caches already hold.
 
 <br/>
 
+## Scalar &nbsp;·&nbsp; [GitHub](https://github.com/scalar-app) &nbsp;·&nbsp; [Docs](https://github.com/scalar-app/docs)
+
+<div align="center">
+
+<img src="https://raw.githubusercontent.com/scalar-app/.github/main/profile/assets/scalar.png" width="96" alt="Scalar" />
+
+</div>
+
+**Your entire life has an inbox. Scalar turns it into a plan.**
+
+Open-source productivity infrastructure: email, calendar, coursework, tasks and files
+pulled into one action layer, so what needs doing arrives as a plan rather than a pile.
+The systems you already use stay the source of record, and every imported object keeps
+its provenance, so you can always get back to where a thing came from. Cross-platform,
+self-hostable, AGPL-3.0.
+
+The AI layer is deliberately the least powerful thing in the system. `@scalar/ai` is a
+plain TypeScript package with no database and no HTTP server: the API supplies the tools
+and owns authorization, so a Command turn returns an answer plus a set of changes a
+person approves, rather than applying them itself. Free-time arithmetic is computed
+rather than generated, because a model that invents an empty afternoon is worse than no
+scheduler at all.
+
+<sub><b>Stage 2.</b> The API, worker, SDK, design system and web client exist, and Google Calendar sync runs end to end; Today, Tasks and Spaces are built on the API. Inbox, Search, the calendar write path and most of Command are planned rather than shipped, and every documentation page states which it is.</sub>
+
+### The Scalar repositories
+
+<sub>Nine repositories under <a href="https://github.com/scalar-app">github.com/scalar-app</a>, one per concern, so the contract between them has to be written down rather than assumed.</sub>
+
+<table>
+<tr>
+<td width="34%" valign="top">
+
+**Clients**
+
+<a href="https://github.com/scalar-app/web"><b>web</b></a><br/>
+The web application. Next.js 16, React 19, TanStack Query.
+
+<a href="https://github.com/scalar-app/ui"><b>ui</b></a><br/>
+Design system: tokens, base styles, React primitives.
+
+<a href="https://github.com/scalar-app/website"><b>website</b></a><br/>
+The public site, in Astro.
+
+</td>
+<td width="33%" valign="top">
+
+**Services**
+
+<a href="https://github.com/scalar-app/api"><b>api</b></a><br/>
+Fastify, PostgreSQL, Redis. Owns the schema and the public contract.
+
+<a href="https://github.com/scalar-app/worker"><b>worker</b></a><br/>
+Integration synchronization and scheduled jobs.
+
+<a href="https://github.com/scalar-app/integrations"><b>integrations</b></a><br/>
+The provider framework: Google, Canvas.
+
+</td>
+<td width="33%" valign="top">
+
+**Contract and intelligence**
+
+<a href="https://github.com/scalar-app/sdk"><b>sdk</b></a><br/>
+Typed TypeScript client, mirroring the API contract.
+
+<a href="https://github.com/scalar-app/ai"><b>ai</b></a><br/>
+The intelligence behind Command: tools, prompts, one turn.
+
+<a href="https://github.com/scalar-app/docs"><b>docs</b></a><br/>
+Architecture, API, security, self-hosting, ADRs.
+
+</td>
+</tr>
+</table>
+
+<br/>
+
 ## Credda &nbsp;·&nbsp; [credda.io](https://credda.io) &nbsp;·&nbsp; [@martin](https://credda.io/profile/martin) &nbsp;·&nbsp; [GitHub](https://github.com/Credda-io)
 
 <div align="center">
@@ -259,6 +337,30 @@ Durable workflow orchestration for the JVM: retries, compensation and resume, wi
 
 <a href="https://github.com/martin-k-m/unscroll"><b>unscroll</b></a> · <code>Kotlin</code><br/>
 Blocks short-video feeds inside apps you otherwise keep. It holds no INTERNET permission, and CI fails the build if one reaches the merged manifest.
+
+</td>
+</tr>
+<tr>
+<td width="34%" valign="top">
+
+**Verification**
+
+<a href="https://github.com/martin-k-m/lincheck"><b>lincheck</b></a> · <code>Go</code><br/>
+quorum's linearizability checker, extracted so it can be pointed at someone else's system through a small adapter. An operation whose outcome the client never learned is treated as indeterminate rather than failed, because a write that timed out may still have committed; both directions are regression tests, because the earlier version got it wrong.
+
+</td>
+<td width="66%" valign="top" colspan="2">
+
+**Browser tools** <sub>— client-side, nothing you paste leaves the page</sub>
+
+<a href="https://github.com/martin-k-m/snare"><b>snare</b></a> · <code>TypeScript</code><br/>
+A regex workbench: live matching, a plain-English reading built from an actual parse rather than a lookup table, and backtracking analysis that flags nested unbounded repetition and ambiguous alternation before the pattern reaches a public endpoint.
+
+<a href="https://github.com/martin-k-m/cadence"><b>cadence</b></a> · <code>TypeScript</code><br/>
+Read a cron expression back in plain English, with the next 24 fire times in the timezone the schedule actually runs in, daylight saving included — and the last run too, because "did it fire?" is the other half of the question.
+
+<a href="https://github.com/martin-k-m/meridian"><b>meridian</b></a> · <code>TypeScript</code><br/>
+Meeting times across timezones, in each person's own local clock, ranked by fairness before average quality: a slot that suits four people and ruins the fifth is not a good meeting time.
 
 </td>
 </tr>
