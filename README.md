@@ -49,6 +49,15 @@ stage: `twill check` matched the Go command byte for byte on every corpus file, 
 `twill fmt` on every one it formats. It runs on the bootstrap rather than as its own
 Go-free binary; bootstrapping to a standalone twill-built compiler is the next step.
 
+**v1.6.0 is the completeness release.** Four things were true of twill before it and are
+not now: an `I64` was a float that held 53 bits, a `match` could silently fail to cover
+its cases, a systems-mode annotation was a comment, and two different mistakes in autodiff
+answered with a zero instead of an error. It also brings `twill lsp`, a language server
+whose hover reports the inferred type and shape, which in a tensor-first language is the
+question you actually have. Its second release candidate came entirely from moving the
+nine ecosystem repositories onto the first one and using them: none of what they hit was
+reachable from twill's own sources.
+
 <sub>Go, no dependencies. An early prototype: interpreted, first-order reverse-mode autodiff, and a best-effort shape checker rather than a full type system.</sub>
 
 ### The twill ecosystem
