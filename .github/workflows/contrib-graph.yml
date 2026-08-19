@@ -4,10 +4,11 @@
 # It used to publish four charts as well, on a twice-hourly schedule, and to
 # clone every repository to reconstruct the language history behind one of them.
 # The README stopped showing them, so the schedule, the clone cache, the
-# coverage guard around them and the credentialed steps that produced them are
-# all gone with them. What is left is static: it changes when a script changes,
-# which is what the push trigger is for. The scripts themselves are still in
-# scripts/ if the charts are ever wanted back.
+# coverage guard around them and the credentialed steps that produced them went
+# with them, and the five generators and their helpers have now gone too: they
+# were the only code left that reached the network or needed a token. Git has
+# them if the charts are ever wanted back. What is left is static and changes
+# when a script changes, which is what the push trigger is for.
 name: Profile artwork
 
 on:

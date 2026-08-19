@@ -1,16 +1,17 @@
 name: CI
 
-# The generator scripts are tested inside the scheduled "Profile graphs"
-# workflow, but that runs on a cron — so a change that breaks a script is not
-# caught until the next scheduled run, up to half an hour later and only if it
-# publishes. This runs the same tests on every push and pull request that
-# touches the scripts, for immediate feedback.
+# The artwork is published by a workflow that only runs on a push to main, so a
+# script that throws is not found until it has already failed to publish. This
+# runs the generators on every push and pull request that touches them, and
+# checks they produced the files the README asks for by name: the publish step
+# replaces the whole assets branch with dist/, so a file a script stops emitting
+# is a file that disappears from the README.
 
 on:
   push:
-    paths: ["scripts/**"]
+    paths: ["scripts/**", ".github/workflows/ci.yml", "README.md"]
   pull_request:
-    paths: ["scripts/**"]
+    paths: ["scripts/**", ".github/workflows/ci.yml", "README.md"]
   workflow_dispatch:
 
 jobs:
@@ -21,7 +22,21 @@ jobs:
       - uses: actions/setup-node@v7
         with:
           node-version: "24"
-      # The scripts depend only on the Node standard library, so there is
-      # nothing to install; run the same test files the scheduled workflow does.
-      - name: Test the guard and the language map
-        run: node --test scripts/coverage-guard.test.mjs scripts/lang-map.test.mjs
+
+      # The scripts depend only on the Node standard library and reach no
+      # network, so there is nothing to install and no token to hold.
+      - name: Generate the artwork
+        run: |
+          node scripts/banner.mjs
+          node scripts/project-cards.mjs
+
+      - name: Every asset the README names must exist
+        run: |
+          missing=0
+          for asset in $(grep -o 'assets/[a-z-]*\.svg' README.md | sed 's|assets/||' | sort -u); do
+            if [ ! -s "dist/$asset" ]; then
+              echo "README shows assets/$asset but nothing in dist/ produced it" >&2
+              missing=1
+            fi
+          done
+          exit $missing
