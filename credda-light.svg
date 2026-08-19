@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 459" width="820" height="459" role="img" aria-label="Credda: Portable trust infrastructure. Reputation should not reset every time you join a new platform. Deterministic. Yours to carry. Commitments, not reviews. Built for organizations">
+<title>Credda: Portable trust infrastructure. Reputation should not reset every time you join a new platform. Deterministic. Yours to carry. Commitments, not reviews. Built for organizations</title>
+<defs>
+  <clipPath id="pcardcredda-light"><rect x="0" y="0" width="820" height="459" rx="12"/></clipPath>
+  <radialGradient id="fadeg-light" cx="50%" cy="50%" r="72%">
+    <stop offset="0" stop-color="#fff" stop-opacity="1"/>
+    <stop offset="0.62" stop-color="#fff" stop-opacity="1"/>
+    <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+  </radialGradient>
+  <mask id="fade-light" maskUnits="userSpaceOnUse" x="0" y="0" width="820" height="459">
+    <rect width="820" height="459" fill="url(#fadeg-light)"/>
+  </mask>
+  <linearGradient id="ramp-light" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0" stop-color="#a99e5e"/>
+    <stop offset="1" stop-color="#6d6329"/>
+  </linearGradient>
+  <radialGradient id="pglow-light" cx="50%" cy="50%" r="50%">
+    <stop offset="0" stop-color="#a99e5e" stop-opacity="0.18"/>
+    <stop offset="0.65" stop-color="#a99e5e" stop-opacity="0.04"/>
+    <stop offset="1" stop-color="#a99e5e" stop-opacity="0"/>
+  </radialGradient>
+  <linearGradient id="crule-light" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0" stop-color="#2b2820" stop-opacity="0"/>
+    <stop offset="0.18" stop-color="#2b2820" stop-opacity="0.16"/>
+    <stop offset="0.82" stop-color="#2b2820" stop-opacity="0.16"/>
+    <stop offset="1" stop-color="#2b2820" stop-opacity="0"/>
+  </linearGradient>
+</defs>
+<style>
+  .grid { animation: drift 16s linear infinite; }
+  @keyframes drift { from { transform: translate(0,0); } to { transform: translate(40px,40px); } }
+  .breathe { animation: breathe 8s ease-in-out infinite; }
+  @keyframes breathe { 0%,100% { opacity:.55 } 50% { opacity:1 } }
+</style>
+<g clip-path="url(#pcardcredda-light)">
+  <rect width="820" height="459" fill="#ece7d6"/>
+  <g mask="url(#fade-light)"><g class="grid" stroke="#dbd4bf" stroke-opacity="0.9" stroke-width="1"><path d="M-40 -40 V499"/><path d="M0 -40 V499"/><path d="M40 -40 V499"/><path d="M80 -40 V499"/><path d="M120 -40 V499"/><path d="M160 -40 V499"/><path d="M200 -40 V499"/><path d="M240 -40 V499"/><path d="M280 -40 V499"/><path d="M320 -40 V499"/><path d="M360 -40 V499"/><path d="M400 -40 V499"/><path d="M440 -40 V499"/><path d="M480 -40 V499"/><path d="M520 -40 V499"/><path d="M560 -40 V499"/><path d="M600 -40 V499"/><path d="M640 -40 V499"/><path d="M680 -40 V499"/><path d="M720 -40 V499"/><path d="M760 -40 V499"/><path d="M800 -40 V499"/><path d="M840 -40 V499"/><path d="M-40 -40 H860"/><path d="M-40 0 H860"/><path d="M-40 40 H860"/><path d="M-40 80 H860"/><path d="M-40 120 H860"/><path d="M-40 160 H860"/><path d="M-40 200 H860"/><path d="M-40 240 H860"/><path d="M-40 280 H860"/><path d="M-40 320 H860"/><path d="M-40 360 H860"/><path d="M-40 400 H860"/><path d="M-40 440 H860"/><path d="M-40 480 H860"/></g></g>
+  <ellipse class="breathe" cx="698" cy="229.5" rx="230" ry="270" fill="url(#pglow-light)"/>
+  <g transform="translate(698 218.5)">
+    <g transform="rotate(129)">
+      <circle r="52" fill="none" stroke="#cec6ac" stroke-opacity="0.7" stroke-width="9" stroke-linecap="round" stroke-dasharray="254.8 326.7"/>
+      <circle r="52" fill="none" stroke="url(#ramp-light)" stroke-width="9" stroke-linecap="round" stroke-dasharray="188.4 326.7"/>
+      <circle cx="-46.10" cy="-24.07" r="4.5" fill="#ece7d6" stroke="url(#ramp-light)" stroke-width="2.5" opacity="1"/>
+    </g>
+    <text y="-6" text-anchor="middle" font-family="'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace" font-size="9" fill="#55503f" letter-spacing="1.6">SCORE</text>
+    <text y="16" text-anchor="middle" font-family="'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace" font-size="20" font-weight="700" fill="#2b2820">0-100</text>
+  </g>
+  <text x="28" y="44" font-family="'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace" font-size="10" font-weight="600" fill="#55503f" letter-spacing="1.6" opacity="1">CO-FOUNDER</text>
+  <text x="28" y="78" font-family="Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="26" font-weight="700" fill="url(#ramp-light)" opacity="1">Credda</text>
+  <text x="28" y="102" font-family="'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace" font-size="12" fill="#2b2820" textLength="576.0" lengthAdjust="spacing" opacity="1">Portable trust infrastructure. Reputation should not reset every time you join a</text>
+  <text x="28" y="120" font-family="'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace" font-size="12" fill="#2b2820" textLength="93.6" lengthAdjust="spacing" opacity="1">new platform.</text>
+  <g opacity="1">
+    <rect x="28" y="144" width="6" height="6" rx="1.5" fill="url(#ramp-light)"/>
+    <text x="44" y="152" font-family="'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace" font-size="12" font-weight="700" fill="#2b2820" textLength="93.6" lengthAdjust="spacing">Deterministic</text>
+  </g>
+  <text x="44" y="170" font-family="'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace" font-size="11" fill="#55503f" textLength="534.6" lengthAdjust="spacing" opacity="1">The score is a pure function of an append-only event ledger. Nothing is edited or</text>
+  <text x="44" y="185" font-family="'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace" font-size="11" fill="#55503f" textLength="554.4" lengthAdjust="spacing" opacity="1">removed, so the same events always produce the same score, and there is no lever for</text>
+  <text x="44" y="200" font-family="'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace" font-size="11" fill="#55503f" textLength="178.2" lengthAdjust="spacing" opacity="1">a human or a model to pull.</text>
+  <g opacity="1">
+    <rect x="28" y="221" width="6" height="6" rx="1.5" fill="url(#ramp-light)"/>
+    <text x="44" y="229" font-family="'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace" font-size="12" font-weight="700" fill="#2b2820" textLength="100.8" lengthAdjust="spacing">Yours to carry</text>
+  </g>
+  <text x="44" y="247" font-family="'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace" font-size="11" fill="#55503f" textLength="554.4" lengthAdjust="spacing" opacity="1">A score travels as a signed W3C Verifiable Credential with a did:web issuer, which a</text>
+  <text x="44" y="262" font-family="'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace" font-size="11" fill="#55503f" textLength="435.6" lengthAdjust="spacing" opacity="1">lender or a client can check without asking Credda for permission.</text>
+  <g opacity="1">
+    <rect x="28" y="283" width="6" height="6" rx="1.5" fill="url(#ramp-light)"/>
+    <text x="44" y="291" font-family="'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace" font-size="12" font-weight="700" fill="#2b2820" textLength="172.8" lengthAdjust="spacing">Commitments, not reviews</text>
+  </g>
+  <text x="44" y="309" font-family="'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace" font-size="11" fill="#55503f" textLength="554.4" lengthAdjust="spacing" opacity="1">The primitive is an agreement two parties confirmed, so the record is about what was</text>
+  <text x="44" y="324" font-family="'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace" font-size="11" fill="#55503f" textLength="323.4" lengthAdjust="spacing" opacity="1">delivered rather than how somebody felt about it.</text>
+  <g opacity="1">
+    <rect x="28" y="345" width="6" height="6" rx="1.5" fill="url(#ramp-light)"/>
+    <text x="44" y="353" font-family="'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace" font-size="12" font-weight="700" fill="#2b2820" textLength="165.6" lengthAdjust="spacing">Built for organizations</text>
+  </g>
+  <text x="44" y="371" font-family="'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace" font-size="11" fill="#55503f" textLength="541.2" lengthAdjust="spacing" opacity="1">Members, roles and invitations, so a reputation can belong to a company as well as</text>
+  <text x="44" y="386" font-family="'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace" font-size="11" fill="#55503f" textLength="79.2" lengthAdjust="spacing" opacity="1">to a person.</text>
+  <rect x="28" y="417" width="764" height="1.2" fill="url(#crule-light)"/>
+  <text x="28" y="439" font-family="'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace" font-size="10" fill="#55503f" opacity="1">React 19 · Vite 7 · Tailwind v4 · Express 5 · TypeScript · Prisma / PostgreSQL · Redis · AWS</text>
+</g>
+<rect x="0.5" y="0.5" width="819" height="458" rx="11.5" fill="none" stroke="#cec6ac" stroke-opacity="0.7"/>
+</svg>

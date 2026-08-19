@@ -1,0 +1,91 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 200" width="820" height="200" role="img" aria-label="Martin Muskov — Studying EE @ UCSC, Co-Founder @ Credda">
+<title>Martin Muskov — Studying EE @ UCSC, Co-Founder @ Credda</title>
+<defs>
+  <clipPath id="card-light"><rect x="0" y="0" width="820" height="200" rx="12"/></clipPath>
+  <radialGradient id="fadeg-light" cx="50%" cy="50%" r="72%">
+    <stop offset="0" stop-color="#fff" stop-opacity="1"/>
+    <stop offset="0.62" stop-color="#fff" stop-opacity="1"/>
+    <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+  </radialGradient>
+  <mask id="fade-light" maskUnits="userSpaceOnUse" x="0" y="0" width="820" height="200">
+    <rect width="820" height="200" fill="url(#fadeg-light)"/>
+  </mask>
+  <linearGradient id="ramp-light" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0" stop-color="#a99e5e"/>
+    <stop offset="1" stop-color="#6d6329"/>
+  </linearGradient>
+  <radialGradient id="glowA-light" cx="50%" cy="50%" r="50%">
+    <stop offset="0" stop-color="#a99e5e" stop-opacity="0.20"/>
+    <stop offset="0.65" stop-color="#a99e5e" stop-opacity="0.04"/>
+    <stop offset="1" stop-color="#a99e5e" stop-opacity="0"/>
+  </radialGradient>
+  <radialGradient id="glowB-light" cx="50%" cy="50%" r="50%">
+    <stop offset="0" stop-color="#6d6329" stop-opacity="0.22"/>
+    <stop offset="0.65" stop-color="#6d6329" stop-opacity="0.05"/>
+    <stop offset="1" stop-color="#6d6329" stop-opacity="0"/>
+  </radialGradient>
+  <linearGradient id="rule-light" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0" stop-color="#2b2820" stop-opacity="0"/>
+    <stop offset="0.18" stop-color="#2b2820" stop-opacity="0.16"/>
+    <stop offset="0.82" stop-color="#2b2820" stop-opacity="0.16"/>
+    <stop offset="1" stop-color="#2b2820" stop-opacity="0"/>
+  </linearGradient>
+</defs>
+<style>
+  .grid { animation: drift 16s linear infinite; }
+  @keyframes drift { from { transform: translate(0,0); } to { transform: translate(40px,40px); } }
+  .breathe { animation: breathe 8s ease-in-out infinite; }
+  @keyframes breathe { 0%,100% { opacity:.55 } 50% { opacity:1 } }
+</style>
+<g clip-path="url(#card-light)">
+  <rect width="820" height="200" fill="#ece7d6"/>
+  <g mask="url(#fade-light)"><g class="grid" stroke="#dbd4bf" stroke-opacity="0.9" stroke-width="1"><path d="M-40 -40 V240"/><path d="M0 -40 V240"/><path d="M40 -40 V240"/><path d="M80 -40 V240"/><path d="M120 -40 V240"/><path d="M160 -40 V240"/><path d="M200 -40 V240"/><path d="M240 -40 V240"/><path d="M280 -40 V240"/><path d="M320 -40 V240"/><path d="M360 -40 V240"/><path d="M400 -40 V240"/><path d="M440 -40 V240"/><path d="M480 -40 V240"/><path d="M520 -40 V240"/><path d="M560 -40 V240"/><path d="M600 -40 V240"/><path d="M640 -40 V240"/><path d="M680 -40 V240"/><path d="M720 -40 V240"/><path d="M760 -40 V240"/><path d="M800 -40 V240"/><path d="M840 -40 V240"/><path d="M-40 -40 H860"/><path d="M-40 0 H860"/><path d="M-40 40 H860"/><path d="M-40 80 H860"/><path d="M-40 120 H860"/><path d="M-40 160 H860"/><path d="M-40 200 H860"/><path d="M-40 240 H860"/></g></g>
+  <ellipse class="breathe" cx="120" cy="30" rx="360" ry="180" fill="url(#glowA-light)"/>
+  <ellipse class="breathe" cx="700" cy="100" rx="200" ry="150" fill="url(#glowB-light)" style="animation-delay:2s"/>
+
+  <text x="28" y="74" font-family="Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="34" font-weight="700" fill="url(#ramp-light)" opacity="1">Martin Muskov
+    
+  </text>
+  <text x="28" y="108" font-family="'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace" font-size="15" font-weight="500" fill="#55503f" textLength="396.0" lengthAdjust="spacing">Studying EE @ UCSC   ·   Co-Founder @ Credda</text><rect x="428.0" y="95" width="2" height="15" fill="#6d6329" opacity="1">
+    <animate attributeName="opacity" dur="1.06s" repeatCount="indefinite" values="1;1;0;0" keyTimes="0;0.5;0.5;1" calcMode="discrete"/>
+  </rect>
+  <g opacity="1">
+    
+    <rect x="28.0" y="130" width="96.8" height="24" rx="12" fill="#2b2820" fill-opacity="0.04" stroke="#cec6ac" stroke-opacity="0.6"/>
+    <text x="41.0" y="146" font-family="'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace" font-size="10" fill="#55503f" textLength="70.8" lengthAdjust="spacing">TYPESCRIPT</text>
+  </g><g opacity="1">
+    
+    <rect x="133.8" y="130" width="68.5" height="24" rx="12" fill="#2b2820" fill-opacity="0.04" stroke="#cec6ac" stroke-opacity="0.6"/>
+    <text x="146.8" y="146" font-family="'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace" font-size="10" fill="#55503f" textLength="42.5" lengthAdjust="spacing">PYTHON</text>
+  </g><g opacity="1">
+    
+    <rect x="211.3" y="130" width="54.3" height="24" rx="12" fill="#2b2820" fill-opacity="0.04" stroke="#cec6ac" stroke-opacity="0.6"/>
+    <text x="224.3" y="146" font-family="'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace" font-size="10" fill="#55503f" textLength="28.3" lengthAdjust="spacing">RUST</text>
+  </g><g opacity="1">
+    
+    <rect x="274.6" y="130" width="40.2" height="24" rx="12" fill="#2b2820" fill-opacity="0.04" stroke="#cec6ac" stroke-opacity="0.6"/>
+    <text x="287.6" y="146" font-family="'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace" font-size="10" fill="#55503f" textLength="14.2" lengthAdjust="spacing">GO</text>
+  </g>
+
+  <rect x="28" y="172" width="764" height="1.2" fill="url(#rule-light)"/>
+  <circle cy="172" r="2.6" fill="#a99e5e" opacity="0">
+    <animate attributeName="cx" from="28" to="792" dur="9s" begin="0.00s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" dur="9s" begin="0.00s" repeatCount="indefinite" values="0;1;1;0" keyTimes="0;0.06;0.9;1"/>
+  </circle><circle cy="172" r="2.6" fill="#a99e5e" opacity="0">
+    <animate attributeName="cx" from="28" to="792" dur="9s" begin="2.25s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" dur="9s" begin="2.25s" repeatCount="indefinite" values="0;1;1;0" keyTimes="0;0.06;0.9;1"/>
+  </circle><circle cy="172" r="2.6" fill="#a99e5e" opacity="0">
+    <animate attributeName="cx" from="28" to="792" dur="9s" begin="4.50s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" dur="9s" begin="4.50s" repeatCount="indefinite" values="0;1;1;0" keyTimes="0;0.06;0.9;1"/>
+  </circle><circle cy="172" r="2.6" fill="#a99e5e" opacity="0">
+    <animate attributeName="cx" from="28" to="792" dur="9s" begin="6.75s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" dur="9s" begin="6.75s" repeatCount="indefinite" values="0;1;1;0" keyTimes="0;0.06;0.9;1"/>
+  </circle>
+  <g><circle cx="700" cy="100" r="30" fill="none" stroke="#cec6ac" stroke-opacity="0.900" stroke-width="1"/><circle cx="700" cy="100" r="46" fill="none" stroke="#cec6ac" stroke-opacity="0.550" stroke-width="1"/><circle cx="700" cy="100" r="38" fill="none" stroke="#cec6ac" stroke-opacity="0.8" stroke-width="1" stroke-dasharray="2 8">
+    <animateTransform attributeName="transform" type="rotate" from="0 700 100" to="360 700 100" dur="30s" repeatCount="indefinite"/>
+  </circle><g transform="translate(678.00 78.00) scale(0.4400)" fill="none" stroke="url(#ramp-light)" stroke-width="7" stroke-linejoin="round" stroke-linecap="round" opacity="1"><animate attributeName="opacity" dur="7s" repeatCount="indefinite" values="0.7;1;0.7" keyTimes="0;0.5;1"/>
+    <path d="M20 79 V21 L50 55 L80 21 V79"/>
+  </g></g>
+</g>
+<rect x="0.5" y="0.5" width="819" height="199" rx="11.5" fill="none" stroke="#cec6ac" stroke-opacity="0.7"/>
+</svg>

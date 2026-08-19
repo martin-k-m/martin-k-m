@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 70" width="820" height="70" role="presentation" aria-hidden="true">
+<defs>
+  <linearGradient id="fr-light" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0" stop-color="#a99e5e"/>
+    <stop offset="1" stop-color="#6d6329"/>
+  </linearGradient>
+  <radialGradient id="ffadeg-light" cx="50%" cy="50%" r="70%">
+    <stop offset="0" stop-color="#fff" stop-opacity="1"/>
+    <stop offset="0.55" stop-color="#fff" stop-opacity="1"/>
+    <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+  </radialGradient>
+  <mask id="ffade-light" maskUnits="userSpaceOnUse" x="0" y="0" width="820" height="70">
+    <rect width="820" height="70" fill="url(#ffadeg-light)"/>
+  </mask>
+  <linearGradient id="frule-light" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0" stop-color="#cec6ac" stop-opacity="0"/>
+    <stop offset="0.5" stop-color="#cec6ac" stop-opacity="1"/>
+    <stop offset="1" stop-color="#cec6ac" stop-opacity="0"/>
+  </linearGradient>
+</defs>
+<g mask="url(#ffade-light)"><g stroke="#dbd4bf" stroke-opacity="0.9" stroke-width="1"><path d="M-40 -40 V110"/><path d="M0 -40 V110"/><path d="M40 -40 V110"/><path d="M80 -40 V110"/><path d="M120 -40 V110"/><path d="M160 -40 V110"/><path d="M200 -40 V110"/><path d="M240 -40 V110"/><path d="M280 -40 V110"/><path d="M320 -40 V110"/><path d="M360 -40 V110"/><path d="M400 -40 V110"/><path d="M440 -40 V110"/><path d="M480 -40 V110"/><path d="M520 -40 V110"/><path d="M560 -40 V110"/><path d="M600 -40 V110"/><path d="M640 -40 V110"/><path d="M680 -40 V110"/><path d="M720 -40 V110"/><path d="M760 -40 V110"/><path d="M800 -40 V110"/><path d="M840 -40 V110"/><path d="M-40 -40 H860"/><path d="M-40 0 H860"/><path d="M-40 40 H860"/><path d="M-40 80 H860"/></g></g>
+<rect x="40" y="34.4" width="336" height="1.2" fill="url(#frule-light)"/>
+<rect x="444" y="34.4" width="336" height="1.2" fill="url(#frule-light)"/>
+<circle cy="35" r="2.4" fill="url(#fr-light)" opacity="0">
+    <animate attributeName="cx" from="40" to="376" dur="6s" begin="0s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" dur="6s" begin="0s" repeatCount="indefinite" values="0;1;1;0" keyTimes="0;0.1;0.85;1"/>
+  </circle>
+<g transform="translate(395.00 20.00) scale(0.3000)" fill="none" stroke="url(#fr-light)" stroke-width="8" stroke-linejoin="round" stroke-linecap="round" opacity="1"><animate attributeName="opacity" dur="7s" repeatCount="indefinite" values="0.7;1;0.7" keyTimes="0;0.5;1"/>
+    <path d="M20 79 V21 L50 55 L80 21 V79"/>
+  </g>
+</svg>

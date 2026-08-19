@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 394" width="820" height="394" role="img" aria-label="Arc: An execution cache. Never repeat work Arc can prove is already done. Dependencies observed, not declared. A task graph nobody wrote. Unsure means run">
+<title>Arc: An execution cache. Never repeat work Arc can prove is already done. Dependencies observed, not declared. A task graph nobody wrote. Unsure means run</title>
+<defs>
+  <clipPath id="pcardarc-light"><rect x="0" y="0" width="820" height="394" rx="12"/></clipPath>
+  <radialGradient id="fadeg-light" cx="50%" cy="50%" r="72%">
+    <stop offset="0" stop-color="#fff" stop-opacity="1"/>
+    <stop offset="0.62" stop-color="#fff" stop-opacity="1"/>
+    <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+  </radialGradient>
+  <mask id="fade-light" maskUnits="userSpaceOnUse" x="0" y="0" width="820" height="394">
+    <rect width="820" height="394" fill="url(#fadeg-light)"/>
+  </mask>
+  <linearGradient id="ramp-light" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0" stop-color="#a99e5e"/>
+    <stop offset="1" stop-color="#6d6329"/>
+  </linearGradient>
+  <radialGradient id="pglow-light" cx="50%" cy="50%" r="50%">
+    <stop offset="0" stop-color="#a99e5e" stop-opacity="0.18"/>
+    <stop offset="0.65" stop-color="#a99e5e" stop-opacity="0.04"/>
+    <stop offset="1" stop-color="#a99e5e" stop-opacity="0"/>
+  </radialGradient>
+  <linearGradient id="crule-light" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0" stop-color="#2b2820" stop-opacity="0"/>
+    <stop offset="0.18" stop-color="#2b2820" stop-opacity="0.16"/>
+    <stop offset="0.82" stop-color="#2b2820" stop-opacity="0.16"/>
+    <stop offset="1" stop-color="#2b2820" stop-opacity="0"/>
+  </linearGradient>
+</defs>
+<style>
+  .grid { animation: drift 16s linear infinite; }
+  @keyframes drift { from { transform: translate(0,0); } to { transform: translate(40px,40px); } }
+  .breathe { animation: breathe 8s ease-in-out infinite; }
+  @keyframes breathe { 0%,100% { opacity:.55 } 50% { opacity:1 } }
+</style>
+<g clip-path="url(#pcardarc-light)">
+  <rect width="820" height="394" fill="#ece7d6"/>
+  <g mask="url(#fade-light)"><g class="grid" stroke="#dbd4bf" stroke-opacity="0.9" stroke-width="1"><path d="M-40 -40 V434"/><path d="M0 -40 V434"/><path d="M40 -40 V434"/><path d="M80 -40 V434"/><path d="M120 -40 V434"/><path d="M160 -40 V434"/><path d="M200 -40 V434"/><path d="M240 -40 V434"/><path d="M280 -40 V434"/><path d="M320 -40 V434"/><path d="M360 -40 V434"/><path d="M400 -40 V434"/><path d="M440 -40 V434"/><path d="M480 -40 V434"/><path d="M520 -40 V434"/><path d="M560 -40 V434"/><path d="M600 -40 V434"/><path d="M640 -40 V434"/><path d="M680 -40 V434"/><path d="M720 -40 V434"/><path d="M760 -40 V434"/><path d="M800 -40 V434"/><path d="M840 -40 V434"/><path d="M-40 -40 H860"/><path d="M-40 0 H860"/><path d="M-40 40 H860"/><path d="M-40 80 H860"/><path d="M-40 120 H860"/><path d="M-40 160 H860"/><path d="M-40 200 H860"/><path d="M-40 240 H860"/><path d="M-40 280 H860"/><path d="M-40 320 H860"/><path d="M-40 360 H860"/><path d="M-40 400 H860"/></g></g>
+  <ellipse class="breathe" cx="698" cy="197" rx="230" ry="237" fill="url(#pglow-light)"/>
+  <g transform="translate(698 186)">
+    <path d="M-78 -69.5 H-84 V-21.5 H-78" fill="none" stroke="url(#ramp-light)" stroke-width="1.2" stroke-opacity="0.8"/>
+    <rect x="-70" y="-69.5" width="6" height="6" rx="1.5" fill="url(#ramp-light)"/>
+    <text x="-56" y="-63.5" font-family="'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace" font-size="9" fill="#2b2820" textLength="43.2" lengthAdjust="spacing">build.sh</text>
+    <rect x="-70" y="-50.5" width="6" height="6" rx="1.5" fill="url(#ramp-light)"/>
+    <text x="-56" y="-44.5" font-family="'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace" font-size="9" fill="#2b2820" textLength="48.6" lengthAdjust="spacing">input.txt</text>
+    <rect x="-70" y="-31.5" width="6" height="6" rx="1.5" fill="url(#ramp-light)"/>
+    <text x="-56" y="-25.5" font-family="'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace" font-size="9" fill="#2b2820" textLength="43.2" lengthAdjust="spacing">plugins/</text>
+    <rect x="-70" y="-12.5" width="6" height="6" rx="1.5" fill="none" stroke="#cec6ac" stroke-opacity="0.7"/>
+    <text x="-56" y="-6.5" font-family="'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace" font-size="9" fill="#746e59" textLength="75.6" lengthAdjust="spacing">docs/design.md</text>
+    <rect x="-70" y="6.5" width="6" height="6" rx="1.5" fill="none" stroke="#cec6ac" stroke-opacity="0.7"/>
+    <text x="-56" y="12.5" font-family="'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace" font-size="9" fill="#746e59" textLength="48.6" lengthAdjust="spacing">notes.txt</text>
+    <text x="-11" y="37.5" text-anchor="middle" font-family="'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace" font-size="9" fill="url(#ramp-light)" letter-spacing="1.2">3 OF 5 OBSERVED</text>
+    <text x="-11" y="55.5" text-anchor="middle" font-family="'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace" font-size="10" fill="#2b2820">notes.txt edited · HIT</text>
+  </g>
+  <text x="28" y="44" font-family="'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace" font-size="10" font-weight="600" fill="#55503f" letter-spacing="1.6" opacity="1">SIDE PROJECT</text>
+  <text x="28" y="78" font-family="Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="26" font-weight="700" fill="url(#ramp-light)" opacity="1">Arc</text>
+  <text x="28" y="102" font-family="'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace" font-size="12" fill="#2b2820" textLength="489.6" lengthAdjust="spacing" opacity="1">An execution cache. Never repeat work Arc can prove is already done.</text>
+  <g opacity="1">
+    <rect x="28" y="126" width="6" height="6" rx="1.5" fill="url(#ramp-light)"/>
+    <text x="44" y="134" font-family="'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace" font-size="12" font-weight="700" fill="#2b2820" textLength="252.0" lengthAdjust="spacing">Dependencies observed, not declared</text>
+  </g>
+  <text x="44" y="152" font-family="'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace" font-size="11" fill="#55503f" textLength="501.6" lengthAdjust="spacing" opacity="1">On Linux Arc traces every syscall of the process tree and records what a run</text>
+  <text x="44" y="167" font-family="'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace" font-size="11" fill="#55503f" textLength="547.8" lengthAdjust="spacing" opacity="1">genuinely depended on: files read, directories enumerated, paths looked for and not</text>
+  <text x="44" y="182" font-family="'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace" font-size="11" fill="#55503f" textLength="382.8" lengthAdjust="spacing" opacity="1">found, binaries executed. Only those invalidate the cache.</text>
+  <g opacity="1">
+    <rect x="28" y="203" width="6" height="6" rx="1.5" fill="url(#ramp-light)"/>
+    <text x="44" y="211" font-family="'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace" font-size="12" font-weight="700" fill="#2b2820" textLength="180.0" lengthAdjust="spacing">A task graph nobody wrote</text>
+  </g>
+  <text x="44" y="229" font-family="'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace" font-size="11" fill="#55503f" textLength="554.4" lengthAdjust="spacing" opacity="1">One command's output being another's input is the edge, so arc affected runs exactly</text>
+  <text x="44" y="244" font-family="'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace" font-size="11" fill="#55503f" textLength="554.4" lengthAdjust="spacing" opacity="1">the work a change reaches, producers before consumers, independent branches at once.</text>
+  <g opacity="1">
+    <rect x="28" y="265" width="6" height="6" rx="1.5" fill="url(#ramp-light)"/>
+    <text x="44" y="273" font-family="'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace" font-size="12" font-weight="700" fill="#2b2820" textLength="115.2" lengthAdjust="spacing">Unsure means run</text>
+  </g>
+  <text x="44" y="291" font-family="'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace" font-size="11" fill="#55503f" textLength="547.8" lengthAdjust="spacing" opacity="1">A partial trace never narrows, a shared cache is untrusted and re-hashed on the way</text>
+  <text x="44" y="306" font-family="'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace" font-size="11" fill="#55503f" textLength="554.4" lengthAdjust="spacing" opacity="1">in, and anything Arc cannot prove is a hit is executed. Being unsure is the ordinary</text>
+  <text x="44" y="321" font-family="'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace" font-size="11" fill="#55503f" textLength="323.4" lengthAdjust="spacing" opacity="1">case, and the answer to it is to run the command.</text>
+  <rect x="28" y="352" width="764" height="1.2" fill="url(#crule-light)"/>
+  <text x="28" y="374" font-family="'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace" font-size="10" fill="#55503f" opacity="1">Rust · four crates · v1.0 · shared cache, remote execution, content-addressed toolchains</text>
+</g>
+<rect x="0.5" y="0.5" width="819" height="393" rx="11.5" fill="none" stroke="#cec6ac" stroke-opacity="0.7"/>
+</svg>

@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 379" width="820" height="379" role="img" aria-label="twill: A language built around differentiable tensor programs. Shape errors at check time. Differentiation as syntax. Deterministic and self-contained">
+<title>twill: A language built around differentiable tensor programs. Shape errors at check time. Differentiation as syntax. Deterministic and self-contained</title>
+<defs>
+  <clipPath id="pcardtwill"><rect x="0" y="0" width="820" height="379" rx="12"/></clipPath>
+  <radialGradient id="fadeg" cx="50%" cy="50%" r="72%">
+    <stop offset="0" stop-color="#fff" stop-opacity="1"/>
+    <stop offset="0.62" stop-color="#fff" stop-opacity="1"/>
+    <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+  </radialGradient>
+  <mask id="fade" maskUnits="userSpaceOnUse" x="0" y="0" width="820" height="379">
+    <rect width="820" height="379" fill="url(#fadeg)"/>
+  </mask>
+  <linearGradient id="ramp" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0" stop-color="#8f854a"/>
+    <stop offset="1" stop-color="#c9bb70"/>
+  </linearGradient>
+  <radialGradient id="pglow" cx="50%" cy="50%" r="50%">
+    <stop offset="0" stop-color="#8f854a" stop-opacity="0.18"/>
+    <stop offset="0.65" stop-color="#8f854a" stop-opacity="0.04"/>
+    <stop offset="1" stop-color="#8f854a" stop-opacity="0"/>
+  </radialGradient>
+  <linearGradient id="crule" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0" stop-color="#ece7d6" stop-opacity="0"/>
+    <stop offset="0.18" stop-color="#ece7d6" stop-opacity="0.16"/>
+    <stop offset="0.82" stop-color="#ece7d6" stop-opacity="0.16"/>
+    <stop offset="1" stop-color="#ece7d6" stop-opacity="0"/>
+  </linearGradient>
+</defs>
+<style>
+  .grid { animation: drift 16s linear infinite; }
+  @keyframes drift { from { transform: translate(0,0); } to { transform: translate(40px,40px); } }
+  .breathe { animation: breathe 8s ease-in-out infinite; }
+  @keyframes breathe { 0%,100% { opacity:.55 } 50% { opacity:1 } }
+</style>
+<g clip-path="url(#pcardtwill)">
+  <rect width="820" height="379" fill="#15140e"/>
+  <g mask="url(#fade)"><g class="grid" stroke="#2b291f" stroke-opacity="0.9" stroke-width="1"><path d="M-40 -40 V419"/><path d="M0 -40 V419"/><path d="M40 -40 V419"/><path d="M80 -40 V419"/><path d="M120 -40 V419"/><path d="M160 -40 V419"/><path d="M200 -40 V419"/><path d="M240 -40 V419"/><path d="M280 -40 V419"/><path d="M320 -40 V419"/><path d="M360 -40 V419"/><path d="M400 -40 V419"/><path d="M440 -40 V419"/><path d="M480 -40 V419"/><path d="M520 -40 V419"/><path d="M560 -40 V419"/><path d="M600 -40 V419"/><path d="M640 -40 V419"/><path d="M680 -40 V419"/><path d="M720 -40 V419"/><path d="M760 -40 V419"/><path d="M800 -40 V419"/><path d="M840 -40 V419"/><path d="M-40 -40 H860"/><path d="M-40 0 H860"/><path d="M-40 40 H860"/><path d="M-40 80 H860"/><path d="M-40 120 H860"/><path d="M-40 160 H860"/><path d="M-40 200 H860"/><path d="M-40 240 H860"/><path d="M-40 280 H860"/><path d="M-40 320 H860"/><path d="M-40 360 H860"/><path d="M-40 400 H860"/></g></g>
+  <ellipse class="breathe" cx="698" cy="189.5" rx="230" ry="230" fill="url(#pglow)"/>
+  <g transform="translate(698 178.5)">
+    
+    <rect x="-84" y="-26" width="62" height="52" rx="3" fill="#ece7d6" fill-opacity="0.04" stroke="#3a3729" stroke-opacity="0.6"/>
+    <text x="-53" y="4" text-anchor="middle" font-family="'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace" font-size="10" fill="#b6af98">3x4</text>
+    <text x="-12" y="4" text-anchor="middle" font-family="'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace" font-size="13" fill="#b6af98">@</text>
+    
+    <rect x="0" y="-26" width="62" height="52" rx="3" fill="#ece7d6" fill-opacity="0.04" stroke="#3a3729" stroke-opacity="0.6"/>
+    <text x="31" y="4" text-anchor="middle" font-family="'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace" font-size="10" fill="#b6af98">4x2</text>
+    <text x="-11" y="-38" text-anchor="middle" font-family="'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace" font-size="9" fill="url(#ramp)" letter-spacing="1.2">INNER 4 = 4</text>
+    <path d="M-22 -32 V-22 M22 -32 V-22 M-22 -32 H22" fill="none" stroke="url(#ramp)" stroke-width="1.2" stroke-opacity="0.8"/>
+    <text x="-11" y="48" text-anchor="middle" font-family="'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace" font-size="10" fill="#ece7d6">3x2 · checked</text>
+  </g>
+  <text x="28" y="44" font-family="'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace" font-size="10" font-weight="600" fill="#b6af98" letter-spacing="1.6" opacity="1">SIDE PROJECT</text>
+  <text x="28" y="78" font-family="Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="26" font-weight="700" fill="url(#ramp)" opacity="1">twill</text>
+  <text x="28" y="102" font-family="'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace" font-size="12" fill="#ece7d6" textLength="396.0" lengthAdjust="spacing" opacity="1">A language built around differentiable tensor programs.</text>
+  <g opacity="1">
+    <rect x="28" y="126" width="6" height="6" rx="1.5" fill="url(#ramp)"/>
+    <text x="44" y="134" font-family="'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace" font-size="12" font-weight="700" fill="#ece7d6" textLength="187.2" lengthAdjust="spacing">Shape errors at check time</text>
+  </g>
+  <text x="44" y="152" font-family="'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace" font-size="11" fill="#b6af98" textLength="534.6" lengthAdjust="spacing" opacity="1">A mismatched matmul is a compile error with the offending dimensions named, not a</text>
+  <text x="44" y="167" font-family="'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace" font-size="11" fill="#b6af98" textLength="257.4" lengthAdjust="spacing" opacity="1">stack trace from an hour into training.</text>
+  <g opacity="1">
+    <rect x="28" y="188" width="6" height="6" rx="1.5" fill="url(#ramp)"/>
+    <text x="44" y="196" font-family="'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace" font-size="12" font-weight="700" fill="#ece7d6" textLength="180.0" lengthAdjust="spacing">Differentiation as syntax</text>
+  </g>
+  <text x="44" y="214" font-family="'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace" font-size="11" fill="#b6af98" textLength="534.6" lengthAdjust="spacing" opacity="1">grad is an operator over a function, so a gradient is a language construct rather</text>
+  <text x="44" y="229" font-family="'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace" font-size="11" fill="#b6af98" textLength="290.4" lengthAdjust="spacing" opacity="1">than a tape you have to remember to install.</text>
+  <g opacity="1">
+    <rect x="28" y="250" width="6" height="6" rx="1.5" fill="url(#ramp)"/>
+    <text x="44" y="258" font-family="'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace" font-size="12" font-weight="700" fill="#ece7d6" textLength="230.4" lengthAdjust="spacing">Deterministic and self-contained</text>
+  </g>
+  <text x="44" y="276" font-family="'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace" font-size="11" fill="#b6af98" textLength="547.8" lengthAdjust="spacing" opacity="1">One dependency-free binary, and parallelism never changes a result. Since 1.4.0 the</text>
+  <text x="44" y="291" font-family="'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace" font-size="11" fill="#b6af98" textLength="547.8" lengthAdjust="spacing" opacity="1">compiler is written in twill: it runs on the original Go version and reproduces its</text>
+  <text x="44" y="306" font-family="'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace" font-size="11" fill="#b6af98" textLength="244.2" lengthAdjust="spacing" opacity="1">output at every stage, byte for byte.</text>
+  <rect x="28" y="337" width="764" height="1.2" fill="url(#crule)"/>
+  <text x="28" y="359" font-family="'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace" font-size="10" fill="#b6af98" opacity="1">source files end in .tw</text>
+</g>
+<rect x="0.5" y="0.5" width="819" height="378" rx="11.5" fill="none" stroke="#3a3729" stroke-opacity="0.5"/>
+</svg>
