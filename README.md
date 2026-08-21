@@ -10,7 +10,7 @@
 [![Substack](https://img.shields.io/badge/Substack-FF6719?style=flat-square&logo=substack&logoColor=white)](https://martinkm.substack.com)
 [![Website](https://img.shields.io/badge/martin--k--m.github.io-2B2820?style=flat-square&logo=react&logoColor=white)](https://martin-k-m.github.io)
 
-Electrical engineering at UC Santa Cruz, co-founder of Credda. I build systems software and try to break it before it ships: a Raft-replicated key-value store checked for linearizability under live network partitions, an execution cache that traces syscalls to work out what a build actually read, an LSM storage engine, and twill, a language whose compiler is written in itself. Alongside that, Scalar: open-source productivity infrastructure across nine repositories.
+Electrical engineering at UC Santa Cruz, co-founder of Credda. I build systems software and try to break it before it ships: a Raft-replicated key-value store checked for linearizability under live network partitions, an execution cache that traces syscalls to work out what a build actually read, an LSM storage engine, and twill, a language whose compiler is written in itself. Alongside that, Scalar: open-source productivity infrastructure across eleven repositories.
 
 <br/>
 
@@ -48,21 +48,35 @@ the whole tree executes on the Go bootstrap and reproduces the reference across 
 stage: `twill check` matched the Go command byte for byte on every corpus file, and
 `twill fmt` on every one it formats. It runs on the bootstrap rather than as its own
 Go-free binary; bootstrapping to a standalone twill-built compiler is the next step.
+That release is also what made the ecosystem run: nine sibling repositories had been
+written against twill and most of them did not work, and the dozen shared failures
+underneath that were each a place the language asked for something nobody would
+naturally write.
 
-**v1.6.0 is the completeness release.** Four things were true of twill before it and are
+**v1.6.0 was the completeness release.** Four things were true of twill before it and are
 not now: an `I64` was a float that held 53 bits, a `match` could silently fail to cover
 its cases, a systems-mode annotation was a comment, and two different mistakes in autodiff
-answered with a zero instead of an error. It also brings `twill lsp`, a language server
+answered with a zero instead of an error. It also brought `twill lsp`, a language server
 whose hover reports the inferred type and shape, which in a tensor-first language is the
 question you actually have. Its second release candidate came entirely from moving the
 nine ecosystem repositories onto the first one and using them: none of what they hit was
 reachable from twill's own sources.
 
+**The current release is v1.7.1.** v1.7.0 closed the two entries `docs/needs.md` had been
+calling the largest open questions, and closed them on both implementations rather than on
+the bootstrap alone: patterns became a tree, with nesting, literals and guards, and
+exhaustiveness checking that recurses into them and names the value that gets through; and
+user-defined generics, so `struct Box[T]` and `fn first[T](xs: Arr[T]) -> T` parse, check
+and run. v1.7.1 is a checker release. The Go bootstrap now carries dtypes, which the
+self-hosted checker already had, so the two agree character for character across 405 files
+of `std`, `src`, `examples` and `testdata`, and the one thing either of them reports as a
+warning rather than an error no longer refuses to run the program it is commenting on.
+
 <sub>Go, no dependencies. An early prototype: interpreted, first-order reverse-mode autodiff, and a best-effort shape checker rather than a full type system.</sub>
 
 ### The twill ecosystem
 
-<sub>Ten repositories under <a href="https://github.com/twill-lang">github.com/twill-lang</a>. Everything downstream of the compiler is written in twill itself, which is the same experiment run again: a real program against the systems subset, each with its own list of what the language is still missing.</sub>
+<sub>The ten repositories below, under <a href="https://github.com/twill-lang">github.com/twill-lang</a>, plus the site and the organization profile. Everything downstream of the compiler is written in twill itself, which is the same experiment run again: a real program against the systems subset, each with its own list of what the language is still missing.</sub>
 
 <table>
 <tr>
@@ -220,11 +234,11 @@ person approves, rather than applying them itself. Free-time arithmetic is compu
 rather than generated, because a model that invents an empty afternoon is worse than no
 scheduler at all.
 
-<sub><b>Stage 2.</b> The API, worker, SDK, design system and web client exist, and Google Calendar sync runs end to end; Today, Tasks and Spaces are built on the API. Inbox, Search, the calendar write path and most of Command are planned rather than shipped, and every documentation page states which it is.</sub>
+<sub><b>Stage 2.</b> The API, worker, integrations, SDK, design system and web client exist, and a Tauri 2 shell ships that same web app to macOS, Windows, Linux, iOS and Android. Google Calendar and Canvas are both implemented providers, and Today, Tasks, Spaces, Inbox, Search, Focus, Calendar and Command each have an API module and a screen. It is early: a route existing is not the same as it being finished, and the documentation is behind the code in places.</sub>
 
 ### The Scalar repositories
 
-<sub>Nine repositories under <a href="https://github.com/scalar-app">github.com/scalar-app</a>, one per concern, so the contract between them has to be written down rather than assumed.</sub>
+<sub>Eleven repositories under <a href="https://github.com/scalar-app">github.com/scalar-app</a>, one per concern, so the contract between them has to be written down rather than assumed.</sub>
 
 <table>
 <tr>
@@ -241,6 +255,9 @@ Design system: tokens, base styles, React primitives.
 <a href="https://github.com/scalar-app/website"><b>website</b></a><br/>
 The public site, in Astro.
 
+<a href="https://github.com/scalar-app/desktop"><b>desktop</b></a><br/>
+The Tauri 2 shell around the same web app: macOS, Windows, Linux, iOS and Android.
+
 </td>
 <td width="33%" valign="top">
 
@@ -254,6 +271,9 @@ Integration synchronization and scheduled jobs.
 
 <a href="https://github.com/scalar-app/integrations"><b>integrations</b></a><br/>
 The provider framework: Google, Canvas.
+
+<a href="https://github.com/scalar-app/infra"><b>infra</b></a><br/>
+Self-hosting: PostgreSQL, Redis and MinIO in compose files.
 
 </td>
 <td width="33%" valign="top">
@@ -298,6 +318,12 @@ I'm a co-founder. Credda turns real, both-party-confirmed commitment history int
 </picture>
 
 </div>
+
+The client surface is open source and published, even though the core is not:
+<a href="https://github.com/Credda-io/credda-go"><b>credda-go</b></a>, a stdlib-only Go client,
+<a href="https://github.com/Credda-io/credda-js"><b>credda-js</b></a> (<code>@credda/js</code>) with React hooks and offline credential verification,
+<a href="https://github.com/Credda-io/credda-cli"><b>credda-cli</b></a> (<code>@credda/cli</code>),
+and <a href="https://github.com/Credda-io/credda-mcp"><b>credda-mcp</b></a> (<code>@credda/mcp-server</code>), which puts the trust layer in front of an agent over MCP.
 
 <sub>Early-stage and under active development. Anything the site marks <i>coming soon</i> is direction, not a shipped guarantee.</sub>
 
@@ -360,13 +386,13 @@ quorum's linearizability checker, extracted so it can be pointed at someone else
 </td>
 <td width="66%" valign="top" colspan="2">
 
-**Browser tools** <sub>— client-side, nothing you paste leaves the page</sub>
+**Browser tools** <sub>· client-side, nothing you paste leaves the page</sub>
 
 <a href="https://github.com/martin-k-m/snare"><b>snare</b></a> · <code>TypeScript</code><br/>
 A regex workbench: live matching, a plain-English reading built from an actual parse rather than a lookup table, and backtracking analysis that flags nested unbounded repetition and ambiguous alternation before the pattern reaches a public endpoint.
 
 <a href="https://github.com/martin-k-m/cadence"><b>cadence</b></a> · <code>TypeScript</code><br/>
-Read a cron expression back in plain English, with the next 24 fire times in the timezone the schedule actually runs in, daylight saving included — and the last run too, because "did it fire?" is the other half of the question.
+Read a cron expression back in plain English, with the next 24 fire times in the timezone the schedule actually runs in, daylight saving included, and the last run too, because "did it fire?" is the other half of the question.
 
 <a href="https://github.com/martin-k-m/meridian"><b>meridian</b></a> · <code>TypeScript</code><br/>
 Meeting times across timezones, in each person's own local clock, ranked by fairness before average quality: a slot that suits four people and ruins the fifth is not a good meeting time.
