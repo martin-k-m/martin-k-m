@@ -42,7 +42,7 @@ you see rather than a stack trace you get. Pricing a European call by Monte Carl
 and taking its delta and vega by differentiating the pricer is a handful of lines,
 with no bumping and no second library.
 
-**As of v1.5.0 the compiler written in twill runs.** The lexer, parser, checker,
+**As of v1.4.0 the compiler written in twill runs.** The lexer, parser, checker,
 evaluator, tensor kernels, formatter and CLI are written in the language itself, and
 the whole tree executes on the Go bootstrap and reproduces the reference across every
 stage: `twill check` matched the Go command byte for byte on every corpus file, and
