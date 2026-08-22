@@ -370,9 +370,6 @@ Throwaway, isolated development environments described by one config file, gone 
 <a href="https://github.com/martin-k-m/tandem"><b>tandem</b></a> · <code>Java</code><br/>
 Durable workflow orchestration for the JVM: retries, compensation and resume, with no runtime dependencies.
 
-<a href="https://github.com/martin-k-m/unscroll"><b>unscroll</b></a> · <code>Kotlin</code><br/>
-Blocks short-video feeds inside apps you otherwise keep. It holds no INTERNET permission, and CI fails the build if one reaches the merged manifest.
-
 </td>
 </tr>
 <tr>
