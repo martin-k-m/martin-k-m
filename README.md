@@ -1,16 +1,17 @@
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/banner.svg" />
   <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/banner-light.svg" />
-  <img src="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/banner-light.svg" width="100%" alt="Martin Muskov, studying EE at UCSC and co-founder at Credda" />
+  <img src="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/banner-light.svg" width="100%" alt="Martin Muskov, studying EE at UCSC, co-founder at Credda and founder at CodeReef" />
 </picture>
 
 [![Credda](https://img.shields.io/badge/Credda-C2410C?style=flat-square&logo=verifiedbadge&logoColor=white)](https://credda.io)
+[![CodeReef](https://img.shields.io/badge/CodeReef-0F766E?style=flat-square&logo=github&logoColor=white)](https://codereef.app)
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-0A66C2?style=flat-square&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/martin-muskov/)
 [![Email](https://img.shields.io/badge/marmu1407@gmail.com-EA4335?style=flat-square&logo=gmail&logoColor=white)](mailto:marmu1407@gmail.com)
 [![Substack](https://img.shields.io/badge/Substack-FF6719?style=flat-square&logo=substack&logoColor=white)](https://martinkm.substack.com)
 [![Website](https://img.shields.io/badge/martin--k--m.github.io-2B2820?style=flat-square&logo=react&logoColor=white)](https://martin-k-m.github.io)
 
-Electrical engineering at UC Santa Cruz, co-founder of Credda. I build systems software and try to break it before it ships: a Raft-replicated key-value store checked for linearizability under live network partitions, an execution cache that traces syscalls to work out what a build actually read, an LSM storage engine, and twill, a language whose compiler is written in itself. Alongside that, Scalar: open-source productivity infrastructure across eleven repositories.
+Electrical engineering at UC Santa Cruz, co-founder of Credda and founder of CodeReef. I build systems software and try to break it before it ships: a Raft-replicated key-value store checked for linearizability under live network partitions, an execution cache that traces syscalls to work out what a build actually read, an LSM storage engine, and twill, a language whose compiler is written in itself. CodeReef is the same instinct pointed at bug reports: reproduce the failure and cite the command, or say you could not. Alongside that, Scalar: open-source productivity infrastructure across eleven repositories.
 
 <br/>
 
@@ -45,6 +46,50 @@ The client surface is open source and published, even though the core is not:
 and <a href="https://github.com/Credda-io/credda-mcp"><b>credda-mcp</b></a> (<code>@credda/mcp-server</code>), which puts the trust layer in front of an agent over MCP.
 
 <sub>Early-stage and under active development. Anything the site marks <i>coming soon</i> is direction, not a shipped guarantee.</sub>
+
+<br/>
+
+## CodeReef &nbsp;·&nbsp; [codereef.app](https://codereef.app) &nbsp;·&nbsp; [GitHub](https://github.com/codereefai) &nbsp;·&nbsp; [Engine](https://github.com/codereefai/core) &nbsp;·&nbsp; [Benchmark](https://github.com/codereefai/bench)
+
+<div align="center">
+
+<img src="https://raw.githubusercontent.com/codereefai/core/codereef/packages/design/brand/codereef-disc.png" width="96" alt="CodeReef" />
+
+</div>
+
+**Something broke. CodeReef finds out what.** A reported issue arrives and CodeReef investigates it
+independently: it prepares an environment, reproduces the reported failure, captures the failure
+signature as evidence, diagnoses a cause where the evidence supports one, and reports all of it.
+I'm the founder.
+
+**It does not write code, and that is a decision rather than a gap.** A lot of agents will generate
+a patch for a bug report, and the patch may fix a symptom, rewrite working code, or simply assert
+the bug is gone. CodeReef's invariant is the opposite: every material claim in a report cites a
+recorded artifact: a command that ran, its exit code, its normalised failure signature, and the
+file and line it came from. A claim with nothing behind it is not made. `REPRODUCED_NOT_DIAGNOSED`
+is a real terminal state rather than a prompt to invent a story, and "we could not turn your report
+into a command" and "we ran a command and your defect was not there" are separate outcomes with
+separate exit codes, because they are opposite claims. The GitHub App permission set is read-only.
+
+The Fixer and the Verifier are built and tested and held off the V1 path. The reason is measured:
+across every CodeReef database in the tree there were **0 patches and 0 verification runs**, so
+"writes a fix" was unevidenced rather than weakly evidenced. `WITHHELD_PATCH_PATH_STATES` names
+every file, state and transition that came out and the five ordered steps that put them back.
+There is deliberately no runtime switch, because a flag would put an unevidenced claim one
+environment variable away from a customer.
+
+**Measured on repositories it did not choose:** [`bench/external/scorecard.json`](https://github.com/codereefai/bench/blob/codereef/external/scorecard.json)
+grades 11 issues from camelcase, deepmerge, picomatch, node-semver and yaml. One of those pins a
+commit that is a descendant of its own fix, so the defect is absent from the tree under test and no
+run can reproduce it; over the 10 where the defect is present the result is **6 right failures**,
+against **7 of 7** in-house. Read it as an upper bound rather than an average: those five libraries
+were picked for needing no database, no browser and no credentials, the sibling corpus walked 45
+repositories and rejected 40, and five of the six confirmations are a single expression on a pure
+function returning the wrong value.
+
+<sub>TypeScript engine, a Rust sandbox, a Python API. Early: no authentication, no billing, no
+multi-tenancy, and no signal source that is not a forge. <a href="https://github.com/codereefai/core">core</a>
+and <a href="https://github.com/codereefai/bench">bench</a> are public; the console and the sandbox are not yet.</sub>
 
 <br/>
 
@@ -331,33 +376,24 @@ Architecture, API, security, self-hosting, ADRs.
 
 ## Selected projects
 
-<sub>Beyond twill, quorum, Arc and Credda: small, dependency-light tools, one job each, with tests and CI, in the language that fits it.</sub>
+<sub>Beyond CodeReef, twill, quorum, Arc and Credda. Trimmed to the ones worth opening: everything
+else, including the CSV tools and the browser tools, is on <a href="https://github.com/martin-k-m?tab=repositories">the repositories tab</a>,
+which is always current in a way an edited list is not.</sub>
 
 <table>
 <tr>
 <td width="34%" valign="top">
 
-**Databases**
+**Databases and data**
 
 <a href="https://github.com/martin-k-m/strata"><b>strata</b></a> · <code>Java</code><br/>
-An LSM-tree storage engine built from the write path up: a CRC-checked write-ahead log, SSTables with bloom filters and a sparse index, and leveled compaction. Recovery is proved by truncating the log at every byte offset.
+An LSM-tree storage engine built from the write path up: a CRC-checked write-ahead log, SSTables with bloom filters and a sparse index, and leveled compaction. Recovery is proved by truncating the log at every byte offset and showing a reopen always yields a clean prefix.
 
 <a href="https://github.com/martin-k-m/quarry"><b>quarry</b></a> · <code>Python</code><br/>
 A SQL engine over CSV: a parser and an executor, standard library only. Its property-based fuzz suite found a real recursion overflow in deeply nested expressions. The other half of strata.
 
-</td>
-<td width="33%" valign="top">
-
-**Data**
-
 <a href="https://github.com/martin-k-m/drift"><b>drift</b></a> · <code>Rust</code><br/>
-Diff two tables by key rather than by line position, so re-ordering or re-exporting a file is not a diff.
-
-<a href="https://github.com/martin-k-m/sift"><b>sift</b></a> · <code>Python</code><br/>
-Query CSV and JSONL from the terminal with a small clause language. Streaming, zero dependencies.
-
-<a href="https://github.com/martin-k-m/csvpeek"><b>csvpeek</b></a> · <code>Python</code><br/>
-Profile a CSV: inferred types, null rates, per-column stats and distributions.
+Diff two tables by key rather than by line position, so re-ordering or re-exporting a file is not a diff. Published as <code>drift-tabular</code>.
 
 </td>
 <td width="33%" valign="top">
@@ -370,29 +406,20 @@ Throwaway, isolated development environments described by one config file, gone 
 <a href="https://github.com/martin-k-m/tandem"><b>tandem</b></a> · <code>Java</code><br/>
 Durable workflow orchestration for the JVM: retries, compensation and resume, with no runtime dependencies.
 
-</td>
-</tr>
-<tr>
-<td width="34%" valign="top">
-
-**Verification**
-
 <a href="https://github.com/martin-k-m/lincheck"><b>lincheck</b></a> · <code>Go</code><br/>
 quorum's linearizability checker, extracted so it can be pointed at someone else's system through a small adapter. An operation whose outcome the client never learned is treated as indeterminate rather than failed, because a write that timed out may still have committed; both directions are regression tests, because the earlier version got it wrong.
 
 </td>
-<td width="66%" valign="top" colspan="2">
+<td width="33%" valign="top">
 
-**Browser tools** <sub>· client-side, nothing you paste leaves the page</sub>
+**Simulation**
 
-<a href="https://github.com/martin-k-m/snare"><b>snare</b></a> · <code>TypeScript</code><br/>
-A regex workbench: live matching, a plain-English reading built from an actual parse rather than a lookup table, and backtracking analysis that flags nested unbounded repetition and ambiguous alternation before the pattern reaches a public endpoint.
+<a href="https://poliarchitect.me"><b>PoliArchitect</b></a> · <code>TypeScript</code><br/>
+A political and economic sandbox where players roleplay power brokers (politicians, oligarchs, media moguls, commanders, revolutionaries) competing for influence in a fictional 2020s world.
 
-<a href="https://github.com/martin-k-m/cadence"><b>cadence</b></a> · <code>TypeScript</code><br/>
-Read a cron expression back in plain English, with the next 24 fire times in the timezone the schedule actually runs in, daylight saving included, and the last run too, because "did it fire?" is the other half of the question.
+The design goal is interconnection rather than breadth: a budget choice moves GDP, which moves employment, which moves approval, which moves elections, which moves party dynamics, which decides which bills pass, which sets the next budget.
 
-<a href="https://github.com/martin-k-m/meridian"><b>meridian</b></a> · <code>TypeScript</code><br/>
-Meeting times across timezones, in each person's own local clock, ranked by fairness before average quality: a slot that suits four people and ruins the fifth is not a good meeting time.
+Authoritative state lives in Postgres and a tick engine advances the world on a schedule. Player actions are queued as intents rather than applied as immediate mutations, so the simulation stays the only thing that writes the world. <sub>Private repository; the site is the public surface.</sub>
 
 </td>
 </tr>

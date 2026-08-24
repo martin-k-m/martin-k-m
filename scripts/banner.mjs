@@ -24,7 +24,7 @@ import { mkdir, writeFile } from "node:fs/promises";
 const NAME = "Martin Muskov";
 
 // The lines the old typing embed cycled through, reproduced natively below.
-const ROLES = ["Studying EE @ UCSC", "Co-Founder @ Credda"];
+const ROLES = ["Studying EE @ UCSC", "Co-Founder @ Credda", "Founder @ CodeReef"];
 
 const CHIPS = ["TYPESCRIPT", "PYTHON", "RUST", "GO"];
 
@@ -173,9 +173,9 @@ const CARET_KEYS = "0;0.16;0.44;0.5;0.66;0.94;1";
 
 // The old role line typed one line, cleared it, typed the other, using a clip
 // whose width animated from 0. That clip is a reveal: its base width for the
-// idle line is 0, so a renderer without SMIL shows only one role, and a
-// rasterizer that freezes the first frame shows none. Both roles are real
-// information, so the line is now a single static string that names both, with
+// idle line is 0, so a renderer without SMIL shows only the first role, and a
+// rasterizer that freezes the first frame shows none. Every role is real
+// information, so the line is now a single static string that names them all, with
 // no clip and no reveal. The one piece of motion left is the caret blink, which
 // is decorative — its absence hides nothing.
 const ROLE_LINE = ROLES.join("   ·   ");
