@@ -11,7 +11,7 @@
 [![Substack](https://img.shields.io/badge/Substack-FF6719?style=flat-square&logo=substack&logoColor=white)](https://martinkm.substack.com)
 [![Website](https://img.shields.io/badge/martin--k--m.github.io-2B2820?style=flat-square&logo=react&logoColor=white)](https://martin-k-m.github.io)
 
-Electrical engineering at UC Santa Cruz, co-founder of Credda and founder of CodeReef. I build systems software and try to break it before it ships: a Raft-replicated key-value store checked for linearizability under live network partitions, an execution cache that traces syscalls to work out what a build actually read, an LSM storage engine, and twill, a language whose compiler is written in itself. CodeReef is the same instinct pointed at bug reports: reproduce the failure and cite the command, or say you could not. Alongside that, Scalar: open-source productivity infrastructure across eleven repositories.
+Electrical engineering at UC Santa Cruz, co-founder of Credda and founder of CodeReef. I build systems software and try to break it before it ships: a Raft-replicated key-value store checked for linearizability under live network partitions, an execution cache that traces syscalls to work out what a build actually read, an LSM storage engine, and twill, a language whose compiler is written in itself. CodeReef is the same instinct pointed at production: watch a company's live and QA environments, reproduce the failure that is actually hurting them, and open the pull request that fixes it. Alongside that, Scalar: open-source productivity infrastructure across eleven repositories.
 
 <br/>
 
@@ -53,30 +53,32 @@ and <a href="https://github.com/Credda-io/credda-mcp"><b>credda-mcp</b></a> (<co
 
 <div align="center">
 
-<img src="https://raw.githubusercontent.com/codereefai/core/codereef/packages/design/brand/codereef-disc.png" width="96" alt="CodeReef" />
+<img src="https://raw.githubusercontent.com/codereefai/.github/main/profile/assets/codereef-disc.png" width="96" alt="CodeReef" />
 
 </div>
 
-**Something broke. CodeReef finds out what.** A reported issue arrives and CodeReef investigates it
-independently: it prepares an environment, reproduces the reported failure, captures the failure
-signature as evidence, diagnoses a cause where the evidence supports one, and reports all of it.
-I'm the founder.
+**Something broke in production. CodeReef ships the fix.** CodeReef watches a company's
+production and QA environments, and when a real failure appears it takes the whole problem end to
+end: it prepares an environment, reproduces the failure, captures the signature as evidence,
+diagnoses the cause, writes the patch, proves the patch with a test that fails before it and passes
+after, and opens a pull request carrying all of it. A human reviews a diff, not a bug report. I'm
+the founder.
 
-**It does not write code, and that is a decision rather than a gap.** A lot of agents will generate
-a patch for a bug report, and the patch may fix a symptom, rewrite working code, or simply assert
-the bug is gone. CodeReef's invariant is the opposite: every material claim in a report cites a
-recorded artifact: a command that ran, its exit code, its normalised failure signature, and the
-file and line it came from. A claim with nothing behind it is not made. `REPRODUCED_NOT_DIAGNOSED`
-is a real terminal state rather than a prompt to invent a story, and "we could not turn your report
-into a command" and "we ran a command and your defect was not there" are separate outcomes with
-separate exit codes, because they are opposite claims. The GitHub App permission set is read-only.
+**The hard part is not writing the patch, it is being right about the cause.** Plenty of agents will
+generate a diff from a stack trace, and the diff often silences a symptom, rewrites working code, or
+just asserts the bug is gone. CodeReef's invariant is that every material claim in a pull request
+cites a recorded artifact: a command that ran, its exit code, its normalised failure signature, and
+the file and line it came from. A claim with nothing behind it is not made, and a patch that cannot
+be shown to turn a failing reproduction into a passing one is not proposed. The benchmark's sharpest
+case is a crash with two possible edits where the two-line one at the crash site is wrong: it
+converts a loud 500 into a customer silently told that 42 units in stock are 0. Finding the layer
+below the stack trace is the product.
 
-The Fixer and the Verifier are built and tested and held off the V1 path. The reason is measured:
-across every CodeReef database in the tree there were **0 patches and 0 verification runs**, so
-"writes a fix" was unevidenced rather than weakly evidenced. `WITHHELD_PATCH_PATH_STATES` names
-every file, state and transition that came out and the five ordered steps that put them back.
-There is deliberately no runtime switch, because a flag would put an unevidenced claim one
-environment variable away from a customer.
+**Status, plainly.** Signal intake, reproduction and evidence capture run today; reproduction is at
+**7 of 7** in-house. The Fixer, the Verifier and pull-request authoring are built and tested and are
+being brought onto the main path behind a measured cause-localisation rate, because a patch aimed at
+the wrong line is worse than no patch. Anything above that is not yet a shipped guarantee, and this
+paragraph moves as the numbers do.
 
 **Measured on repositories it did not choose:** [`bench/external/scorecard.json`](https://github.com/codereefai/bench/blob/codereef/external/scorecard.json)
 grades 11 issues from camelcase, deepmerge, picomatch, node-semver and yaml. One of those pins a
