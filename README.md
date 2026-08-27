@@ -184,6 +184,16 @@ question you actually have. Its second release candidate came entirely from movi
 nine ecosystem repositories onto the first one and using them: none of what they hit was
 reachable from twill's own sources.
 
+**v1.7 closed the middle, and v1.7.1 closed the gap between the halves.** 1.7 added the
+pattern language and user-defined generics, the two entries `docs/needs.md` had been calling
+the largest open questions, and added them to both implementations rather than to the
+bootstrap alone. 1.7.1 is the one worth quoting: the Go checker learned dtypes, and the two
+checkers now agree **character for character across 405 files** of `std`, `src`, `examples`
+and `testdata/cases`, with no new diagnostic on any program that never mentioned a dtype.
+Two implementations of the same checker that disagree on nothing is the only real evidence
+that a self-hosted language means what it says. A dtype widening also stopped halting the
+program, because a warning that exits non-zero is an error wearing the wrong word.
+
 **The current release is v1.7.1.** v1.7.0 closed the two entries `docs/needs.md` had been
 calling the largest open questions, and closed them on both implementations rather than on
 the bootstrap alone: patterns became a tree, with nesting, literals and guards, and
@@ -350,13 +360,14 @@ its provenance, so you can always get back to where a thing came from. Cross-pla
 self-hostable, AGPL-3.0.
 
 The AI layer is deliberately the least powerful thing in the system. `@scalar/ai` is a
-plain TypeScript package with no database and no HTTP server: the API supplies the tools
-and owns authorization, so a Command turn returns an answer plus a set of changes a
-person approves, rather than applying them itself. Free-time arithmetic is computed
+plain TypeScript package with no database and no HTTP server, and that is checkable rather
+than asserted: it declares two dependencies, the model SDK and a schema validator. The API
+supplies the tools and owns authorization, so a Command turn returns an answer plus a set of
+changes a person approves, rather than applying them itself. Free-time arithmetic is computed
 rather than generated, because a model that invents an empty afternoon is worse than no
 scheduler at all.
 
-<sub><b>Stage 2.</b> The API, worker, integrations, SDK, design system and web client exist, and a Tauri 2 shell ships that same web app to macOS, Windows, Linux, iOS and Android. Google Calendar and Canvas are both implemented providers, and Today, Tasks, Spaces, Inbox, Search, Focus, Calendar and Command each have an API module and a screen. It is early: a route existing is not the same as it being finished, and the documentation is behind the code in places.</sub>
+<sub><b>Stage 2.</b> The API, worker, integrations, SDK, design system and web client exist, and a Tauri 2 shell ships that same web app to macOS, Windows, Linux, iOS and Android. The API is 18 modules; the web client is ten signed-in screens, among them Today, Tasks, Spaces, Inbox, Search, Focus, Calendar and Ask. Those two lists do not line up one to one and are not meant to: Calendar is a screen served by the events, planner and timeline modules, and Command is a module reached through the Ask screen. Google Calendar and Canvas are the two implemented providers, registered in one file so adding a third is a file and a line rather than a change to the API or the worker. It is early: a route existing is not the same as it being finished, and the documentation is behind the code in places.</sub>
 
 ### The Scalar repositories
 
