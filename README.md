@@ -49,7 +49,7 @@ and <a href="https://github.com/Credda-io/credda-mcp"><b>credda-mcp</b></a> (<co
 
 <br/>
 
-## CodeReef &nbsp;·&nbsp; [codereef.app](https://codereef.app) &nbsp;·&nbsp; [GitHub](https://github.com/codereefai) &nbsp;·&nbsp; [Engine](https://github.com/codereefai/core) &nbsp;·&nbsp; [Benchmark](https://github.com/codereefai/bench)
+## CodeReef &nbsp;·&nbsp; [codereef.app](https://codereef.app) &nbsp;·&nbsp; [GitHub](https://github.com/codereefai) &nbsp;·&nbsp; [Action](https://github.com/codereefai/action) &nbsp;·&nbsp; [Benchmark](https://github.com/codereefai/bench)
 
 <div align="center">
 
@@ -74,24 +74,42 @@ case is a crash with two possible edits where the two-line one at the crash site
 converts a loud 500 into a customer silently told that 42 units in stock are 0. Finding the layer
 below the stack trace is the product.
 
-**Status, plainly.** Signal intake, reproduction and evidence capture run today; reproduction is at
-**7 of 7** in-house. The Fixer, the Verifier and pull-request authoring are built and tested and are
-being brought onto the main path behind a measured cause-localisation rate, because a patch aimed at
-the wrong line is worse than no patch. Anything above that is not yet a shipped guarantee, and this
-paragraph moves as the numbers do.
+**It finds exposures on the same terms.** A customer does not experience "a bug" and "a
+vulnerability" as different products; both are things that are wrong, and both should arrive fixed.
+Nine vulnerability classes are detected by rule during an investigation, each finding carrying the
+file, the line, the source text and what the rule matched, so a reviewer can judge the rule and not
+only the verdict. It reports what it saw in the files it opened and says so: that is not an audit,
+and a report that let silence read as an all-clear would be making the strongest claim in the
+product out of the weakest evidence for it.
+
+**Status, plainly.** Signal intake, reproduction, evidence capture and diagnosis run today. On the
+in-house corpus reproduction is **7 of 7**, the cause is correctly located in **5 of 5** defect
+cases, and **8 of 9** cases pass end to end with nothing errored. Cause localisation was **1 of 5**
+in August and was the real blocker: a patch aimed at the wrong line is worse than no patch, so the
+Fixer, the Verifier and pull-request authoring are built, tested, and held off the main path until a
+model-backed run exists to measure them. That is one API key, not a piece of work. Anything above
+that line is not yet a shipped guarantee, and this paragraph moves as the numbers do.
 
 **Measured on repositories it did not choose:** [`bench/external/scorecard.json`](https://github.com/codereefai/bench/blob/codereef/external/scorecard.json)
-grades 11 issues from camelcase, deepmerge, picomatch, node-semver and yaml. One of those pins a
-commit that is a descendant of its own fix, so the defect is absent from the tree under test and no
-run can reproduce it; over the 10 where the defect is present the result is **6 right failures**,
-against **7 of 7** in-house. Read it as an upper bound rather than an average: those five libraries
-were picked for needing no database, no browser and no credentials, the sibling corpus walked 45
-repositories and rejected 40, and five of the six confirmations are a single expression on a pure
-function returning the wrong value.
+grades 19 real issues from camelcase, deepmerge, picomatch, node-semver, yaml, js-yaml, chalk,
+braces and query-string. Every one has the defect present at the pinned commit, all 19 reproductions
+executed and captured a signature, and the result is **9 right failures** with **0 false
+successes**.
 
-<sub>TypeScript engine, a Rust sandbox, a Python API. Early: no authentication, no billing, no
-multi-tenancy, and no signal source that is not a forge. <a href="https://github.com/codereefai/core">core</a>
-and <a href="https://github.com/codereefai/bench">bench</a> are public; the console and the sandbox are not yet.</sub>
+Two things about that number. It is lower than the **7 of 7** in-house, which is what an honest
+corpus is for: the in-house cases were written here and the external ones were not. And it is a
+lower rate than the 6 of 10 this section quoted in August, because the corpus grew from 11 cases to
+19 and the new ones are harder, not because anything regressed. The figure that matters most is the
+zero: across 19 runs it never once claimed a defect that was not there. Read the rest as an upper
+bound anyway, since those nine libraries were picked for needing no database, no browser and no
+credentials, and the sibling corpus walked 45 repositories and rejected 40.
+
+<sub>TypeScript engine, a Rust sandbox, a Python API. Authentication, the organisation boundary
+(a predicate inside every query, not a filter around it), a licensing and metering layer, and Sentry
+intake alongside the forge all exist; this line used to say none of them did, and stayed that way
+after they landed. Still pre-release, and the fix stage is the part that is not shipped.
+<a href="https://github.com/codereefai/bench">bench</a> is public; the engine, the console and the
+sandbox are not.</sub>
 
 <br/>
 
