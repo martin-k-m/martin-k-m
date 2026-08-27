@@ -456,7 +456,7 @@ Architecture, API, security, self-hosting, ADRs.
 
 ## Selected projects
 
-<sub>Beyond CodeReef, twill, quorum, Arc and Credda. Trimmed to the ones worth opening: everything
+<sub>Beyond Credda, CodeReef, twill, Scalar, quorum and Arc. Trimmed to the ones worth opening: everything
 else, including the CSV tools and the browser tools, is on <a href="https://github.com/martin-k-m?tab=repositories">the repositories tab</a>,
 which is always current in a way an edited list is not.</sub>
 
