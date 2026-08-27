@@ -26,8 +26,10 @@ Electrical engineering at UC Santa Cruz, co-founder of Credda and founder of Cod
 
 </div>
 
-I'm a co-founder. Credda turns real, both-party-confirmed commitment history into a verified
-**0–100 reliability score** that a person owns and carries across marketplaces, lenders, and clients.
+I'm a co-founder. Credda turns real, both-party-confirmed outcome history into a
+**0–100 reliability record** that a person owns and carries across marketplaces, lenders, and
+clients. Your track record is stuck wherever you earned it, in a shape that platform controls, and
+it does not come with you when you leave. Credda gets it out.
 
 <div align="center">
 
@@ -39,13 +41,34 @@ I'm a co-founder. Credda turns real, both-party-confirmed commitment history int
 
 </div>
 
-The client surface is open source and published, even though the core is not:
+**The formula is published, not proprietary.** A pure function turns the ledger into the record:
+no human and no model can nudge a number, there is no manual override and no adjudicated appeal.
+Five weighted factors summing to `1.00`, and six bands a record is earned upward through. It is
+served live at [`/api/v1/scoring/model`](https://api.credda.io/api/v1/scoring/model), currently
+**formula 5.6**, so it goes stale loudly rather than quietly. Publishing it costs nothing, because
+the hard part was never the maths: it is getting a density of outcomes somebody else was willing to
+confirm.
+
+**Three lines the product does not cross.** An outcome counts as verified only when someone other
+than the subject witnessed it, so self-reported activity lands in the ledger and never counts. A
+record cannot be bought: billing is live and self-serve, and every trust capability is free forever,
+with the paid tiers holding advisory and cosmetic features only. And Credda never returns a verdict
+on a person: it verifies evidence and records it, and what to do about that is the reader's call.
+That last one was left out deliberately and is not being added later.
+
+The client surface is open source and published, even though the core is not. All four are MIT:
 <a href="https://github.com/Credda-io/credda-go"><b>credda-go</b></a>, a stdlib-only Go client,
 <a href="https://github.com/Credda-io/credda-js"><b>credda-js</b></a> (<code>@credda/js</code>) with React hooks and offline credential verification,
 <a href="https://github.com/Credda-io/credda-cli"><b>credda-cli</b></a> (<code>@credda/cli</code>),
 and <a href="https://github.com/Credda-io/credda-mcp"><b>credda-mcp</b></a> (<code>@credda/mcp-server</code>), which puts the trust layer in front of an agent over MCP.
+A record exports as a W3C Verifiable Credential that verifies offline against a <code>did:web</code>
+issuer, with SD-JWT selective disclosure so a holder can prove a band without surrendering a history.
 
-<sub>Early-stage and under active development. Anything the site marks <i>coming soon</i> is direction, not a shipped guarantee.</sub>
+<sub>Early, and specific about it: the scoring service, web app, credential fabric and developer
+platform are live, self-serve checkout is open, and we publish no user counts, customer names,
+revenue or funding. Security and compliance readiness work is in progress and Credda is not
+certified against any framework until an auditor says so. Three public endpoints answer what is
+actually true in production, and where one disagrees with this paragraph, the endpoint is right.</sub>
 
 <br/>
 
