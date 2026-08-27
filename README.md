@@ -290,11 +290,26 @@ The part worth reading is the checking. A Wing-Gong linearizability checker
 decides whether a recorded history of concurrent operations could have come from
 a single sequential store, and it runs against a live three-node cluster while
 the transport drops and partitions real traffic: **25 fault-injected schedules,
-3,000 operations, 0 violations**. Getting to that number meant fixing three
-genuine bugs it found first, including a partitioned leader that had not yet
-stepped down still answering reads from stale data, and a Raft log index reused
-for a different entry, which reported success to a caller whose write had
-actually been discarded.
+3,000 operations, 0 violations**.
+
+Three distinct bugs stood between that number and honesty, and the order they came
+in is the point. The first was **in the checker itself**: two operations timestamped
+at the same instant were treated as blocking each other, a false deadlock that made a
+real linearization unreachable. Only once the checker could be trusted did it find the
+two real ones. A partitioned leader that had not yet been told to step down kept
+answering reads from data the majority had already moved past, fixed by making a read
+commit a no-op through replication first, so an isolated node's read never returns
+rather than returning wrong. And the map resolving a caller's request was keyed on log
+index alone, which Raft reuses, so a truncated entry's caller was resolved by a later
+unrelated commit and told their discarded write had succeeded. A checker you have not
+debugged is a checker whose green is worth nothing.
+
+That checker has since been generalised into
+<a href="https://github.com/martin-k-m/lincheck"><b>lincheck</b></a>, which points the same
+search at somebody else's system through a small adapter and enforces the two soundness
+rules this one had to learn: an operation whose outcome the client never saw is
+indeterminate rather than failed, and a timed-out write that later commits must still be
+placeable, or it erases the evidence of the violation it caused.
 
 <sub>Go, no third-party runtime dependencies. Sibling to strata: where that is a storage engine correct on one machine, this is what makes a cluster of them agree.</sub>
 
@@ -322,8 +337,9 @@ result instead of running the command again. It is language-agnostic, so `cargo 
 `pytest`, `npm test` and `make` are all just commands.
 
 On Linux the first run is observed. Arc traces every syscall of the process tree
-through one of two rootless backends, and after that it fingerprints only what the run
-genuinely depended on. That covers the cases a file-level tracer gets wrong: a config
+through one of two backends, `linux-seccomp` where it is available and `linux-ptrace`
+otherwise, and after that it fingerprints only what the run genuinely depended on.
+Neither needs privileges: no `sudo`, no capability, no daemon. That covers the cases a file-level tracer gets wrong: a config
 file that was absent and branched on, a directory that was enumerated, a `libc`
 outside the project, and an intermediate the command wrote and read back, which is not
 an input. Where reads cannot be observed Arc falls back to hashing the whole project,
@@ -338,6 +354,16 @@ top of that sit a verified remote cache, remote execution of misses on compatibl
 workers, content-addressed toolchains that let a worker with no Rust installed run a
 Rust build, and `arc ci`, which works out what a branch changed and reuses everything
 the caches already hold.
+
+**The bug log is the part I would show someone first.** `docs/BUGS.md` has twelve
+entries, and the file says out loud that twelve is a thin history it would rather keep
+thin and true than pad. Every fixed one names the commit that fixed it and the test that
+keeps it fixed. Two are open, carry no root cause, and say so, and the work since v1.0.0
+has largely been *failed* reproductions of them, written down as failures rather than
+quietly dropped. The pattern across nearly all twelve is why the file exists: the failure
+was silent. Arc kept caching, kept hitting, kept reporting success, and simply stopped
+doing the one thing it exists to do. A cache that fails loudly is a bad afternoon; a
+cache that fails quietly hands you a wrong answer and a green tick.
 
 <sub>Rust, four crates, v1.0. The CLI, <code>arc.toml</code>, <code>--json</code> output, the remote protocols and the stored formats are stable surfaces from here.</sub>
 
