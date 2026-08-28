@@ -13,10 +13,11 @@
 // belongs and lets each project carry a motif that means something about the
 // project rather than a border that means nothing.
 //
-// THE MOTIFS ARE NOT DECORATION. banner.mjs deliberately refused Credda's score
-// ring on the personal header, on the grounds that it is a number that means
-// something there and would mean nothing on a profile banner. On Credda's own
-// card it means what it means on Credda: the ring is the product. twill gets
+// THE MOTIFS ARE NOT DECORATION. Credda's card draws the same test run twice,
+// once on each side of the patch, because that pair is the product: a fix that
+// cannot be shown to turn a failing run into a passing one is not proposed.
+// (This card used to draw a score ring, which was the right instrument for the
+// product Credda used to be and means nothing about this one.) twill gets
 // the shape check, which is the one thing its whole design argument rests on.
 // Arc gets the narrowed dependency set and quorum gets the partition, for the
 // same reason: each is the one claim its project would be worthless without.
@@ -137,33 +138,37 @@ function fadeDefs(C, H) {
 
 // ── Motifs ──────────────────────────────────────────────────────────────────
 
-/** Credda: the score ring, swept to a real band rather than a round number. */
-function scoreMotif(C, cx, cy) {
-  const r = 52;
-  const circ = 2 * Math.PI * r;
-  // 0.78 of the circle, gap at the bottom, so it reads as a gauge with a start
-  // and an end rather than a pie chart of something. Same sweep the website's
-  // card uses, so the two drawings of the same object agree.
-  const sweep = 0.78;
-  const score = 73.92;
-  const dash = circ * sweep * (score / 100);
-
-  // Where the swept arc ends: the dash starts at 3 o'clock and runs clockwise,
-  // so the tip sits at (dash / circ) of a turn from there, in the same rotated
-  // frame as the arc. A small marker rides it, so the gauge names its current
-  // value with a point on the ring rather than only a length of colour.
-  const tipA = (dash / circ) * 2 * Math.PI;
-  const tipX = (r * Math.cos(tipA)).toFixed(2);
-  const tipY = (r * Math.sin(tipA)).toFixed(2);
+/**
+ * Credda: the test that fails before the fix and passes after it.
+ *
+ * This replaced a score ring reading "SCORE 0-100", which drew the product
+ * Credda used to be. The ring was the right instrument for that product and is
+ * the wrong one for this: nothing here is a number between two bounds. What the
+ * engine actually produces is a pair of runs over the same check, one on each
+ * side of a patch, and the claim is the difference between them. So the motif
+ * is that pair.
+ *
+ * Colour is doing work rather than decorating: the two rows are the only place
+ * on this card where an outcome is being asserted, and the ramp is reserved for
+ * the one that passed. The row above it stays muted, because a failing run is
+ * not an error on Credda's part -- it is the evidence.
+ */
+function proofMotif(C, cx, cy) {
+  // 104 wide, the same footprint the score ring occupied, so the card's right
+  // column is unchanged. The labels are short for the same reason: MOTIF_W is
+  // 188 and a label that overruns it is drawn outside the card and clipped.
+  const w = 104;
+  const row = (y, mark, label, on) => `
+    <rect x="${-w / 2}" y="${y}" width="${w}" height="28" rx="5" fill="${C.text}" fill-opacity="0.04" stroke="${on ? `url(#ramp${C.suffix})` : C.line2}" stroke-opacity="${on ? 1 : C.track}"/>
+    <text x="${-w / 2 + 11}" y="${y + 19}" font-family="${MONO}" font-size="13" font-weight="700" fill="${on ? `url(#ramp${C.suffix})` : C.faint}">${mark}</text>
+    <text x="${-w / 2 + 29}" y="${y + 19}" font-family="${MONO}" font-size="11" fill="${on ? C.text : C.muted}">${esc(label)}</text>`;
 
   return `<g transform="translate(${cx} ${cy})">
-    <g transform="rotate(129)">
-      <circle r="${r}" fill="none" stroke="${C.line2}" stroke-opacity="${C.track}" stroke-width="9" stroke-linecap="round" stroke-dasharray="${(circ * sweep).toFixed(1)} ${circ.toFixed(1)}"/>
-      <circle r="${r}" fill="none" stroke="url(#ramp${C.suffix})" stroke-width="9" stroke-linecap="round" stroke-dasharray="${dash.toFixed(1)} ${circ.toFixed(1)}"/>
-      <circle cx="${tipX}" cy="${tipY}" r="4.5" fill="${C.bg}" stroke="url(#ramp${C.suffix})" stroke-width="2.5" opacity="1"/>
-    </g>
-    <text y="-6" text-anchor="middle" font-family="${MONO}" font-size="9" fill="${C.muted}" letter-spacing="1.6">SCORE</text>
-    <text y="16" text-anchor="middle" font-family="${MONO}" font-size="20" font-weight="700" fill="${C.text}">0-100</text>
+    <text y="-44" text-anchor="middle" font-family="${MONO}" font-size="9" fill="${C.muted}" letter-spacing="1.4">THE SAME TEST</text>
+    ${row(-30, "\u00d7", "before", false)}
+    <line x1="0" y1="-2" x2="0" y2="12" stroke="${C.line2}" stroke-opacity="${C.track}" stroke-width="1.5"/>
+    ${row(12, "\u2713", "after", true)}
+    <text y="58" text-anchor="middle" font-family="${MONO}" font-size="9" fill="${C.muted}" letter-spacing="1.4">NEVER MERGED</text>
   </g>`;
 }
 
@@ -289,7 +294,7 @@ function quorumMotif(C, cx, cy) {
   </g>`;
 }
 
-const MOTIFS = { score: scoreMotif, shape: shapeMotif, narrow: narrowMotif, quorum: quorumMotif };
+const MOTIFS = { proof: proofMotif, shape: shapeMotif, narrow: narrowMotif, quorum: quorumMotif };
 
 // ── The cards ───────────────────────────────────────────────────────────────
 
@@ -299,27 +304,27 @@ const PROJECTS = [
     eyebrow: "CO-FOUNDER",
     title: "Credda",
     tagline:
-      "Portable trust infrastructure. Reputation should not reset every time you join a new platform.",
+      "Bugs and vulnerabilities, fixed. A fix you can check, proposed as a pull request rather than merged for you.",
     features: [
       [
-        "Deterministic",
-        "The score is a pure function of an append-only event ledger. Nothing is edited or removed, so the same events always produce the same score, and there is no lever for a human or a model to pull.",
+        "Reproduced before diagnosed",
+        "A run makes the reported failure happen and captures its signature before anything is said about the cause. A patch for a failure nobody made happen is a guess with a diff attached.",
       ],
       [
-        "Yours to carry",
-        "A score travels as a signed W3C Verifiable Credential with a did:web issuer, which a lender or a client can check without asking Credda for permission.",
+        "The cause, not the crash site",
+        "The top stack frame is where the program noticed, which is often not where it went wrong. A guard at the crash site silences the symptom and leaves the defect in.",
       ],
       [
-        "Commitments, not reviews",
-        "The primitive is an agreement two parties confirmed, so the record is about what was delivered rather than how somebody felt about it.",
+        "Proved, not asserted",
+        "The patch travels with a test that fails before it and passes after, and every material claim cites the command that ran, its exit code and the file and line it came from.",
       ],
       [
-        "Built for organizations",
-        "Members, roles and invitations, so a reputation can belong to a company as well as to a person.",
+        "A defect and an exposure are one thing",
+        "Vulnerabilities take the same path as bugs, because both are something that is wrong and both should arrive fixed. A person reviews the diff; Credda never merges.",
       ],
     ],
-    footer: "React 19 · Vite 7 · Tailwind v4 · Express 5 · TypeScript · Prisma / PostgreSQL · Redis · AWS",
-    motif: "score",
+    footer: "TypeScript engine · Rust sandbox · Python API · Docker · GitHub Actions",
+    motif: "proof",
   },
   {
     file: "twill",

@@ -12,7 +12,7 @@
 // the content, staged reveals, chips, and packets running along a rule. The
 // motifs inside it are this repository's own — the blue-to-purple ramp and the
 // pulsing endpoint that contrib-graph.mjs already draws — rather than Credda's
-// score ring, which is a number that means something there and would mean
+// own motif, which means something there and would mean
 // nothing here.
 //
 // No API, no token, no network. Content is static; it is a script rather than a
@@ -24,7 +24,7 @@ import { mkdir, writeFile } from "node:fs/promises";
 const NAME = "Martin Muskov";
 
 // The lines the old typing embed cycled through, reproduced natively below.
-const ROLES = ["Studying EE @ UCSC", "Co-Founder @ Credda", "Founder @ CodeReef"];
+const ROLES = ["Studying EE @ UCSC", "Co-Founder @ Credda"];
 
 const CHIPS = ["TYPESCRIPT", "PYTHON", "RUST", "GO"];
 

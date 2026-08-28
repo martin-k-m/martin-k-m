@@ -1,101 +1,61 @@
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/banner.svg" />
   <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/banner-light.svg" />
-  <img src="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/banner-light.svg" width="100%" alt="Martin Muskov, studying EE at UCSC, co-founder at Credda and founder at CodeReef" />
+  <img src="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/banner-light.svg" width="100%" alt="Martin Muskov, studying EE at UCSC, co-founder at Credda" />
 </picture>
 
 [![Credda](https://img.shields.io/badge/Credda-C2410C?style=flat-square&logo=verifiedbadge&logoColor=white)](https://credda.io)
-[![CodeReef](https://img.shields.io/badge/CodeReef-0F766E?style=flat-square&logo=github&logoColor=white)](https://codereef.app)
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-0A66C2?style=flat-square&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/martin-muskov/)
 [![Email](https://img.shields.io/badge/marmu1407@gmail.com-EA4335?style=flat-square&logo=gmail&logoColor=white)](mailto:marmu1407@gmail.com)
 [![Substack](https://img.shields.io/badge/Substack-FF6719?style=flat-square&logo=substack&logoColor=white)](https://martinkm.substack.com)
 [![Website](https://img.shields.io/badge/martin--k--m.github.io-2B2820?style=flat-square&logo=react&logoColor=white)](https://martin-k-m.github.io)
 
-Electrical engineering at UC Santa Cruz, co-founder of Credda and founder of CodeReef. I build systems software and try to break it before it ships: a Raft-replicated key-value store checked for linearizability under live network partitions, an execution cache that traces syscalls to work out what a build actually read, an LSM storage engine, and twill, a language whose compiler is written in itself. CodeReef is the same instinct pointed at production: watch a company's live and QA environments, reproduce the failure that is actually hurting them, and open the pull request that fixes it. Alongside that, Scalar: open-source productivity infrastructure across eleven repositories.
+Electrical engineering at UC Santa Cruz, co-founder of Credda. I build systems software and try to break it before it ships: a Raft-replicated key-value store checked for linearizability under live network partitions, an execution cache that traces syscalls to work out what a build actually read, an LSM storage engine, and twill, a language whose compiler is written in itself. Credda is the same instinct pointed at other people's code: reproduce the failure that is actually hurting them, find what caused it, and propose the fix as a pull request somebody reviews. Alongside that, Scalar: open-source productivity infrastructure across eleven repositories.
 
 <br/>
 
-## Credda &nbsp;·&nbsp; [credda.io](https://credda.io) &nbsp;·&nbsp; [@martin](https://credda.io/profile/martin) &nbsp;·&nbsp; [GitHub](https://github.com/Credda-io)
+## Credda &nbsp;·&nbsp; [credda.io](https://credda.io) &nbsp;·&nbsp; [GitHub](https://github.com/Credda-io) &nbsp;·&nbsp; [Action](https://github.com/Credda-io/action)
 
 <div align="center">
 
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/Credda-io/.github/main/profile/assets/creddaseallockupdarktransparent.png">
-    <img alt="Credda" src="https://raw.githubusercontent.com/Credda-io/.github/main/profile/assets/creddaseallockuplighttransparent.png" width="420">
+    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/Credda-io/.github/main/profile/assets/credda-lockup-white.png">
+    <img alt="Credda" src="https://raw.githubusercontent.com/Credda-io/.github/main/profile/assets/credda-lockup-black.png" width="420">
   </picture>
 
 </div>
 
-I'm a co-founder. Credda turns real, both-party-confirmed outcome history into a
-**0–100 reliability record** that a person owns and carries across marketplaces, lenders, and
-clients. Your track record is stuck wherever you earned it, in a shape that platform controls, and
-it does not come with you when you leave. Credda gets it out.
+**Something is broken. Credda proposes the fix.** You label a bug report or a vulnerability, and
+Credda takes the whole problem end to end: it prepares an environment, reproduces the reported
+failure, captures the signature as evidence, diagnoses what actually caused it, writes the patch,
+proves the patch with a test that fails before it and passes after, and opens a pull request
+carrying all of it. A human reviews a diff rather than a bug report, and Credda never merges. I'm a
+co-founder.
 
 <div align="center">
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/credda.svg" />
   <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/credda-light.svg" />
-  <img src="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/credda-light.svg" width="100%" alt="Credda: deterministic scoring from an append-only ledger, portable as a signed W3C Verifiable Credential, built on commitments rather than reviews, with organizations" />
+  <img src="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/credda-light.svg" width="100%" alt="Credda: reproduced before diagnosed, the cause rather than the crash site, proved with a test that fails before the fix and passes after, and a defect and an exposure treated as one thing" />
 </picture>
 
 </div>
 
-**The formula is published, not proprietary.** A pure function turns the ledger into the record:
-no human and no model can nudge a number, there is no manual override and no adjudicated appeal.
-Five weighted factors summing to `1.00`, and six bands a record is earned upward through. It is
-served live at [`/api/v1/scoring/model`](https://api.credda.io/api/v1/scoring/model), currently
-**formula 5.6**, so it goes stale loudly rather than quietly. Publishing it costs nothing, because
-the hard part was never the maths: it is getting a density of outcomes somebody else was willing to
-confirm.
-
-**Three lines the product does not cross.** An outcome counts as verified only when someone other
-than the subject witnessed it, so self-reported activity lands in the ledger and never counts. A
-record cannot be bought: billing is live and self-serve, and every trust capability is free forever,
-with the paid tiers holding advisory and cosmetic features only. And Credda never returns a verdict
-on a person: it verifies evidence and records it, and what to do about that is the reader's call.
-That last one was left out deliberately and is not being added later.
-
-The client surface is open source and published, even though the core is not. All four are MIT:
-<a href="https://github.com/Credda-io/credda-go"><b>credda-go</b></a>, a stdlib-only Go client,
-<a href="https://github.com/Credda-io/credda-js"><b>credda-js</b></a> (<code>@credda/js</code>) with React hooks and offline credential verification,
-<a href="https://github.com/Credda-io/credda-cli"><b>credda-cli</b></a> (<code>@credda/cli</code>),
-and <a href="https://github.com/Credda-io/credda-mcp"><b>credda-mcp</b></a> (<code>@credda/mcp-server</code>), which puts the trust layer in front of an agent over MCP.
-A record exports as a W3C Verifiable Credential that verifies offline against a <code>did:web</code>
-issuer, with SD-JWT selective disclosure so a holder can prove a band without surrendering a history.
-
-<sub>Early, and specific about it: the scoring service, web app, credential fabric and developer
-platform are live, self-serve checkout is open, and we publish no user counts, customer names,
-revenue or funding. Security and compliance readiness work is in progress and Credda is not
-certified against any framework until an auditor says so. Three public endpoints answer what is
-actually true in production, and where one disagrees with this paragraph, the endpoint is right.</sub>
-
-<br/>
-
-## CodeReef &nbsp;·&nbsp; [codereef.app](https://codereef.app) &nbsp;·&nbsp; [GitHub](https://github.com/codereefai) &nbsp;·&nbsp; [Action](https://github.com/codereefai/action) &nbsp;·&nbsp; [Benchmark](https://github.com/codereefai/bench)
-
-<div align="center">
-
-<img src="https://raw.githubusercontent.com/codereefai/.github/main/profile/assets/codereef-disc.png" width="96" alt="CodeReef" />
-
-</div>
-
-**Something broke in production. CodeReef ships the fix.** CodeReef watches a company's
-production and QA environments, and when a real failure appears it takes the whole problem end to
-end: it prepares an environment, reproduces the failure, captures the signature as evidence,
-diagnoses the cause, writes the patch, proves the patch with a test that fails before it and passes
-after, and opens a pull request carrying all of it. A human reviews a diff, not a bug report. I'm
-the founder.
-
 **The hard part is not writing the patch, it is being right about the cause.** Plenty of agents will
 generate a diff from a stack trace, and the diff often silences a symptom, rewrites working code, or
-just asserts the bug is gone. CodeReef's invariant is that every material claim in a pull request
-cites a recorded artifact: a command that ran, its exit code, its normalised failure signature, and
-the file and line it came from. A claim with nothing behind it is not made, and a patch that cannot
-be shown to turn a failing reproduction into a passing one is not proposed. The benchmark's sharpest
-case is a crash with two possible edits where the two-line one at the crash site is wrong: it
-converts a loud 500 into a customer silently told that 42 units in stock are 0. Finding the layer
-below the stack trace is the product.
+just asserts the bug is gone. Credda's invariant is that every material claim cites a recorded
+artifact: a command that ran, its exit code, its normalised failure signature, and the file and line
+it came from. A claim with nothing behind it is not made, and a patch that cannot be shown to turn a
+failing reproduction into a passing one is not proposed. The sharpest case in the benchmark is a
+crash with two possible edits where the two-line one at the crash site is wrong: it converts a loud
+500 into a customer silently told that 42 units in stock are 0. Finding the layer below the stack
+trace is the product.
+
+**Reproduction is the gate, not a step.** A patch for a failure nobody made happen is a guess with a
+diff attached, so nothing is said about a cause until a run has made the reported failure happen and
+captured its signature. Where no runnable check can be derived from a report, the run says so rather
+than guessing, and a reproduction is never asserted over a failure that is not the reported one.
 
 **It finds exposures on the same terms.** A customer does not experience "a bug" and "a
 vulnerability" as different products; both are things that are wrong, and both should arrive fixed.
@@ -105,34 +65,17 @@ only the verdict. It reports what it saw in the files it opened and says so: tha
 and a report that let silence read as an all-clear would be making the strongest claim in the
 product out of the weakest evidence for it.
 
-**Status, plainly.** Signal intake, reproduction, evidence capture and diagnosis run today. On the
-in-house corpus reproduction is **7 of 7**, the cause is correctly located in **5 of 5** defect
-cases, and **8 of 9** cases pass end to end with nothing errored. Cause localisation was **1 of 5**
-in August and was the real blocker: a patch aimed at the wrong line is worse than no patch, so the
-Fixer, the Verifier and pull-request authoring are built, tested, and held off the main path until a
-model-backed run exists to measure them. That is one API key, not a piece of work. Anything above
-that line is not yet a shipped guarantee, and this paragraph moves as the numbers do.
-
-**Measured on repositories it did not choose:** [`bench/external/scorecard.json`](https://github.com/codereefai/bench/blob/codereef/external/scorecard.json)
-grades 19 real issues from camelcase, deepmerge, picomatch, node-semver, yaml, js-yaml, chalk,
-braces and query-string. Every one has the defect present at the pinned commit, all 19 reproductions
-executed and captured a signature, and the result is **9 right failures** with **0 false
-successes**.
-
-Two things about that number. It is lower than the **7 of 7** in-house, which is what an honest
-corpus is for: the in-house cases were written here and the external ones were not. And it is a
-lower rate than the 6 of 10 this section quoted in August, because the corpus grew from 11 cases to
-19 and the new ones are harder, not because anything regressed. The figure that matters most is the
-zero: across 19 runs it never once claimed a defect that was not there. Read the rest as an upper
-bound anyway, since those nine libraries were picked for needing no database, no browser and no
-credentials, and the sibling corpus walked 45 repositories and rejected 40.
-
-<sub>TypeScript engine, a Rust sandbox, a Python API. Authentication, the organisation boundary
-(a predicate inside every query, not a filter around it), a licensing and metering layer, and Sentry
-intake alongside the forge all exist; this line used to say none of them did, and stayed that way
-after they landed. Still pre-release, and the fix stage is the part that is not shipped.
-<a href="https://github.com/codereefai/bench">bench</a> is public; the engine, the console and the
-sandbox are not.</sub>
+<sub>Pre-release, and specific about it: signal intake, reproduction, evidence capture and diagnosis
+run today, and the fix stage lands with the model-backed release. Anything above that line describes
+what the product is for rather than a shipped guarantee. A TypeScript engine, a Rust sandbox and a
+Python API, run from a GitHub Action against a checkout in your own CI, so source never leaves your
+runner. The client surface is open source and MIT even though the engine is not:
+<a href="https://github.com/Credda-io/credda-go"><b>credda-go</b></a>, a stdlib-only Go client,
+<a href="https://github.com/Credda-io/credda-js"><b>credda-js</b></a> (<code>@credda/js</code>),
+<a href="https://github.com/Credda-io/credda-cli"><b>credda-cli</b></a> (<code>@credda/cli</code>),
+and <a href="https://github.com/Credda-io/credda-mcp"><b>credda-mcp</b></a> (<code>@credda/mcp-server</code>),
+which reads what Credda found over MCP. We publish no user counts, customer names, revenue or
+funding.</sub>
 
 <br/>
 
@@ -456,7 +399,7 @@ Architecture, API, security, self-hosting, ADRs.
 
 ## Selected projects
 
-<sub>Beyond Credda, CodeReef, twill, Scalar, quorum and Arc. Trimmed to the ones worth opening: everything
+<sub>Beyond Credda, twill, Scalar, quorum and Arc. Trimmed to the ones worth opening: everything
 else, including the CSV tools and the browser tools, is on <a href="https://github.com/martin-k-m?tab=repositories">the repositories tab</a>,
 which is always current in a way an edited list is not.</sub>
 
