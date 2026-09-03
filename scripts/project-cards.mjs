@@ -348,55 +348,6 @@ const PROJECTS = [
     footer: "source files end in .tw",
     motif: "shape",
   },
-  {
-    file: "arc",
-    eyebrow: "SIDE PROJECT",
-    title: "Arc",
-    tagline: "An execution cache. Never repeat work Arc can prove is already done.",
-    features: [
-      [
-        "Dependencies observed, not declared",
-        "On Linux Arc traces every syscall of the process tree and records what a run genuinely depended on: files read, directories enumerated, paths looked for and not found, binaries executed. Only those invalidate the cache.",
-      ],
-      [
-        "A task graph nobody wrote",
-        "One command's output being another's input is the edge, so arc affected runs exactly the work a change reaches, producers before consumers, independent branches at once.",
-      ],
-      [
-        "Unsure means run",
-        "A partial trace never narrows, a shared cache is untrusted and re-hashed on the way in, and anything Arc cannot prove is a hit is executed. Being unsure is the ordinary case, and the answer to it is to run the command.",
-      ],
-    ],
-    footer:
-      "Rust · four crates · v1.0 · shared cache, remote execution, content-addressed toolchains",
-    motif: "narrow",
-  },
-  {
-    file: "quorum",
-    eyebrow: "SIDE PROJECT",
-    title: "quorum",
-    tagline: "A linearizable replicated key-value store, built on Raft from the protocol up.",
-    features: [
-      [
-        "Consensus as a pure function",
-        "Leader election and log replication are a deterministic state machine with no I/O, no clock and no goroutines, driven only by Step and Tick, so a whole cluster runs inside one seeded simulator and a failing run is reproducible from its seed.",
-      ],
-      [
-        "Checked, not asserted",
-        "A Wing-Gong linearizability checker decides whether a recorded history could have come from a single sequential store, run against a live 3-node cluster under real partitions: 25 fault-injected schedules, 3,000 operations, 0 violations.",
-      ],
-      [
-        "The checker earned its keep",
-        "It found three real bugs before that number was honest, including a partitioned leader still answering reads from stale data, and a reused Raft index that reported success to the wrong caller for an entry that had been discarded.",
-      ],
-      [
-        "Correctness over availability",
-        "With a majority reachable it serves reads and writes; with only a minority it refuses them rather than diverge. Reads take the same barrier writes do, so an isolated node fails closed instead of answering wrong.",
-      ],
-    ],
-    footer: "Go · sibling to strata · go test -race ./...",
-    motif: "quorum",
-  },
 ];
 
 function render(C, p) {
