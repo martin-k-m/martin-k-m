@@ -26,9 +26,7 @@ jobs:
       # The scripts depend only on the Node standard library and reach no
       # network, so there is nothing to install and no token to hold.
       - name: Generate the artwork
-        run: |
-          node scripts/banner.mjs
-          node scripts/project-cards.mjs
+        run: node scripts/profile.mjs
 
       - name: Every asset the README names must exist
         run: |

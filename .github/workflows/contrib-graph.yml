@@ -1,14 +1,15 @@
-# Publishes the README's generated artwork to the assets branch: the banner, the
-# footer and the project cards.
+# Publishes the README's generated artwork to the assets branch.
 #
 # It used to publish four charts as well, on a twice-hourly schedule, and to
 # clone every repository to reconstruct the language history behind one of them.
 # The README stopped showing them, so the schedule, the clone cache, the
 # coverage guard around them and the credentialed steps that produced them went
 # with them, and the five generators and their helpers have now gone too: they
-# were the only code left that reached the network or needed a token. Git has
-# them if the charts are ever wanted back. What is left is static and changes
-# when a script changes, which is what the push trigger is for.
+# were the only code left that reached the network or needed a token.
+#
+# The banner and the project cards went the same way when the README became one
+# panel. Git has all of it if any of it is wanted back. What is left is static
+# and changes when a script changes, which is what the push trigger is for.
 name: Profile artwork
 
 on:
@@ -16,8 +17,7 @@ on:
   push:
     branches: [main]
     paths:
-      - "scripts/banner.mjs"
-      - "scripts/project-cards.mjs"
+      - "scripts/profile.mjs"
       - ".github/workflows/contrib-graph.yml"
 
 permissions:
@@ -31,11 +31,8 @@ jobs:
       - uses: actions/setup-node@v7
         with:
           node-version: "24"
-      - name: Generate the README banner
-        run: node scripts/banner.mjs
-
-      - name: Generate the project cards
-        run: node scripts/project-cards.mjs
+      - name: Generate the profile panel
+        run: node scripts/profile.mjs
 
       - name: Publish to the assets branch
         uses: crazy-max/ghaction-github-pages@v5
