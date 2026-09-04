@@ -1,8 +1,4 @@
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/profile.svg" />
-  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/profile-light.svg" />
-  <img src="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/profile-light.svg" width="100%" alt="Martin Muskov — electrical engineering at UC Santa Cruz, co-founder of Credda. Credda ships the fix for something that broke in production: it reproduces the failure, diagnoses the cause, writes the patch and proves it with a test, and proposes rather than merges. twill is a language where tensors are the primitive, shape errors are caught before the program runs, differentiation is syntax, and the compiler is written in twill. Then arc, quorum, strata, scalar, quarry, lincheck, capsule, drift, tandem and poliarchitect, one line each." />
-</picture>
+<img src="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/profile.svg" width="100%" alt="Martin Muskov — electrical engineering at UC Santa Cruz, co-founder of Credda. Credda ships the fix for something that broke in production: it reproduces the failure, diagnoses the cause, writes the patch and proves it with a test, and proposes rather than merges. twill is a language where tensors are the primitive, shape errors are caught before the program runs, differentiation is syntax, and the compiler is written in twill. Then arc, quorum, strata, scalar, quarry, lincheck, capsule, drift, tandem and poliarchitect, one line each." />
 
 <br/>
 
@@ -12,16 +8,3 @@
 [![Email](https://img.shields.io/badge/marmu1407@gmail.com-EA4335?style=flat-square&logo=gmail&logoColor=white)](mailto:marmu1407@gmail.com)
 [![Substack](https://img.shields.io/badge/Substack-FF6719?style=flat-square&logo=substack&logoColor=white)](https://martinkm.substack.com)
 [![Website](https://img.shields.io/badge/martin--k--m.github.io-2B2820?style=flat-square&logo=react&logoColor=white)](https://martin-k-m.github.io)
-
-<sub>
-An image cannot carry a link, so the ones worth following are here:
-<a href="https://credda.io">credda.io</a> ·
-<a href="https://github.com/Credda-io">Credda-io</a> ·
-<a href="https://twill-lang.github.io">twill</a> ·
-<a href="https://github.com/martin-k-m/arc">arc</a> ·
-<a href="https://github.com/martin-k-m/quorum">quorum</a> ·
-<a href="https://github.com/martin-k-m/strata">strata</a> ·
-<a href="https://github.com/scalar-app">Scalar</a> ·
-<a href="https://poliarchitect.me">PoliArchitect</a> ·
-<a href="https://github.com/martin-k-m?tab=repositories">everything else</a>
-</sub>
