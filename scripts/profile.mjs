@@ -111,7 +111,7 @@ out.push(prompt(PAD, y, "whoami"));
 y += 26;
 out.push(line(PAD, y, "Martin Muskov", { size: 22, cls: "fg", weight: 700 }));
 y += 24;
-out.push(line(PAD, y, "electrical engineering at UC Santa Cruz, co-founder of Credda", { size: 13, cls: "mid" }));
+out.push(line(PAD, y, "CTO @ Credda, Inc.  ·  electrical engineering at UC Santa Cruz", { size: 13, cls: "mid" }));
 y += 19;
 out.push(line(PAD, y, "systems software, and trying to break it before it ships", { size: 13, cls: "dim" }));
 
@@ -159,7 +159,7 @@ out.push(
       "every material claim cites a recorded artifact",
       "it proposes, and never merges",
     ],
-    meta: "co-founder  ·  credda.io  ·  github.com/Credda-io",
+    meta: "chief technology officer  ·  credda.io  ·  github.com/Credda-io",
   }),
 );
 
