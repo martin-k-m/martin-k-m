@@ -9,24 +9,12 @@
 //
 // ── Two things the format decides for you ──────────────────────────────────
 //
-// Two files, one drawing. The colours are CSS custom properties now, so the
-// pair is emitted from one set of shapes and cannot drift the way two
-// hand-maintained files would.
-//
-// It is a pair rather than a single file with a `prefers-color-scheme` block,
-// and that is a fact about GitHub rather than a preference. A README image is
-// an <img>, and an SVG loaded that way resolves its own media queries against
-// the *browser's* setting, not against the theme GitHub is painting the page
-// in. Somebody reading a dark GitHub on a light desktop would get a cream card
-// in a dark page. `<picture>` with two `prefers-color-scheme` sources is what
-// GitHub's markdown honours, and it follows the site's own theme.
-//
-// And each file is unconditionally its own theme, with no media query inside
-// it. Keeping one looked harmless and was not: `<picture>` hands the browser
-// the file GitHub's theme chose, and a `prefers-color-scheme` rule inside that
-// file then overrides it from the browser's setting. A dark GitHub on a light
-// desktop got the dark file, which promptly repainted itself cream. Caught by
-// looking at the two of them side by side with the browser forced to light.
+// One file, one theme. A terminal does not follow the desktop's light mode; it
+// is a dark panel whatever the page around it is doing, and that is the point
+// of the drawing. So there is no light variant and no `prefers-color-scheme`
+// anywhere -- neither in the SVG nor behind a <picture> in the README. That
+// also removes the whole class of bug the pair had, where the theme GitHub
+// chose and the theme the file painted itself could disagree.
 //
 // Nothing that carries information animates. GitHub serves README images
 // through its proxy and renders them in an <img>: CSS animation runs there,
@@ -82,28 +70,18 @@ function check(x, y, s) {
   );
 }
 
-// The palette is this repository's own -- the cream-and-olive the website and
-// the old banner already used -- arranged the way Credda's terminal panel is:
-// one ground, three weights of ink, and a single accent that only ever marks
-// the prompt, the ticks and the caret.
-const DARK = [
-  "  --bg: #0f0f0e;",
-  "  --edge: #2a2a26;",
-  "  --hair: #1e1e1b;",
-  "  --fg: #ece7d6;",
-  "  --mid: #a8a290;",
-  "  --dim: #7c7767;",
-  "  --accent: #c9bb70;",
-].join("\n");
-
-const LIGHT = [
-  "  --bg: #f4f0e3;",
-  "  --edge: #d8d2bd;",
-  "  --hair: #e2ddcb;",
-  "  --fg: #23211a;",
-  "  --mid: #55503f;",
-  "  --dim: #7a7460;",
-  "  --accent: #6d6329;",
+// The palette is a terminal's: one near-black ground, three weights of a
+// slightly warm off-white ink, and a single phosphor-green accent that only
+// ever marks the prompt, the ticks and the caret. Nothing else is coloured, so
+// the accent always means "the machine said this".
+const THEME = [
+  "  --bg: #0b0f0e;",
+  "  --edge: #1f2724;",
+  "  --hair: #161d1b;",
+  "  --fg: #e3ebe5;",
+  "  --mid: #a2b2a9;",
+  "  --dim: #6d7c75;",
+  "  --accent: #7ec98f;",
 ].join("\n");
 
 const out = [];
@@ -246,14 +224,13 @@ y += 26;
 
 const H = y;
 
-function render(theme) {
-  const light = theme === "light";
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-labelledby="title desc" fill="none">
+function render() {
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-labelledby="title desc" fill="none">
 <title id="title">Martin Muskov — Credda, twill, and everything else</title>
 <desc id="desc">A terminal panel. whoami gives the name and what the work is; credda and twill each get a paragraph and three claims; then ten other projects, one line each.</desc>
 <style>
 :root {
-${light ? LIGHT : DARK}
+${THEME}
 }
 .card { fill: var(--bg); stroke: var(--edge); stroke-width: 1; }
 .rule { stroke: var(--edge); stroke-width: 1; }
@@ -279,12 +256,8 @@ ${light ? LIGHT : DARK}
 ${out.join("\n").replace('height="H"', `height="${H - 1}"`)}
 </svg>
 `;
-  return svg;
 }
 
 await mkdir(new URL("../dist/", import.meta.url), { recursive: true });
-for (const theme of ["dark", "light"]) {
-  const name = theme === "light" ? "profile-light.svg" : "profile.svg";
-  await writeFile(new URL(`../dist/${name}`, import.meta.url), render(theme), "utf8");
-  console.log(`dist/${name}  ${W}x${H}`);
-}
+await writeFile(new URL("../dist/profile.svg", import.meta.url), render(), "utf8");
+console.log(`dist/profile.svg  ${W}x${H}`);
