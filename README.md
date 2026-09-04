@@ -252,7 +252,7 @@ quorum's linearizability checker, extracted so it can be pointed at someone else
 **Everything else**
 
 <a href="https://github.com/scalar-app"><b>Scalar</b></a> · <code>TypeScript</code><br/>
-Open-source productivity infrastructure across eleven repositories: email, calendar, coursework, tasks and files pulled into one action layer, so what needs doing arrives as a plan rather than a pile. The systems you already use stay the source of record. The AI layer is deliberately the least powerful thing in it: a Command turn returns an answer and a set of changes a person approves, rather than applying them itself. Self-hostable, AGPL-3.0.
+Open-source productivity infrastructure across eleven repositories: email, calendar, coursework, tasks and files pulled into one action layer, so what needs doing arrives as a plan rather than a pile. The systems you already use stay the source of record. The AI layer is deliberately the least powerful thing in it: a Command turn returns an answer and a set of changes a person approves, rather than applying them itself. The same rule governs the one thing it writes outside itself, which is a calendar: only when asked at the time, and only ever touching events it created. Workspaces are shareable with roles, and everything in one downloads as a file that states what it withholds and why. Self-hostable, AGPL-3.0.
 
 <a href="https://poliarchitect.me"><b>PoliArchitect</b></a> · <code>TypeScript</code><br/>
 A political and economic sandbox where players roleplay power brokers (politicians, oligarchs, media moguls, commanders, revolutionaries) competing for influence in a fictional 2020s world.
