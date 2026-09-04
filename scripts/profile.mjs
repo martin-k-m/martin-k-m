@@ -111,7 +111,7 @@ out.push(prompt(PAD, y, "whoami"));
 y += 26;
 out.push(line(PAD, y, "Martin Muskov", { size: 22, cls: "fg", weight: 700 }));
 y += 24;
-out.push(line(PAD, y, "CTO @ Credda, Inc.  ·  electrical engineering at UC Santa Cruz", { size: 13, cls: "mid" }));
+out.push(line(PAD, y, "SWE & CTO @ Credda  ·  EE/CS @ UCSC", { size: 13, cls: "mid" }));
 y += 19;
 out.push(line(PAD, y, "systems software, and trying to break it before it ships", { size: 13, cls: "dim" }));
 
