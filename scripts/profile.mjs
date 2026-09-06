@@ -178,7 +178,11 @@ out.push(
       "differentiation is syntax, not a library",
       "one deterministic binary, no dependencies",
     ],
-    meta: "v1.9.0  ·  10 repositories  ·  twill-lang.github.io",
+    // No version number and no repository count here. This panel is regenerated
+    // when THIS repository is pushed, not when twill releases, so any number in
+    // it is stale by default: it said v1.9.0 while twill was on 1.12.0, three
+    // releases later. What is written instead is what does not rot.
+    meta: "self-hosting  ·  twill-lang.github.io  ·  github.com/twill-lang",
   }),
 );
 
