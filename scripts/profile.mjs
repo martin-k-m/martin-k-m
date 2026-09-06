@@ -196,7 +196,6 @@ const ROWS = [
   ["arc/", "Rust", "an execution cache that traces what a build really read"],
   ["quorum/", "Go", "a Raft key-value store, checked for linearizability"],
   ["strata/", "Java", "an LSM storage engine, recovery proved byte by byte"],
-  ["scalar/", "TS", "self-hosted productivity infrastructure, 11 repositories"],
   ["quarry/", "Python", "a SQL engine over CSV, standard library only"],
   ["lincheck/", "Go", "quorum's linearizability checker, made pointable"],
   ["capsule/", "Go", "throwaway dev environments from one config file"],
