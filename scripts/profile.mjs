@@ -276,6 +276,7 @@ t += typeTime("ls ~/everything-else") + 0.3;
 y += 28;
 
 const ROWS = [
+  ["oracle/", "Twill", "a small language model, written from scratch in twill"],
   ["arc/", "Rust", "an execution cache that traces what a build really read"],
   ["quorum/", "Go", "a Raft key-value store, checked for linearizability"],
   ["strata/", "Java", "an LSM storage engine, recovery proved byte by byte"],
