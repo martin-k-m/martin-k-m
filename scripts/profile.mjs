@@ -253,7 +253,7 @@ out.push(
       "A language where tensors are the primitive and a shape mistake is an",
       "error you see before the program runs. Most numeric code is a general",
       "language with a framework bolted on; this is the other direction. The",
-      "compiler is written in twill, and ten libraries downstream of it are too.",
+      "compiler is written in twill, and nine libraries downstream of it are too.",
     ],
     checks: [
       "shape and unit errors caught at check time",
@@ -326,7 +326,7 @@ const H = y;
 function render() {
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-labelledby="title desc" fill="none">
 <title id="title">Martin Muskov — Credda, twill, and everything else</title>
-<desc id="desc">A terminal panel that boots: it types each command and streams the reply. whoami gives the name and what the work is; credda and twill each get a paragraph and three claims; then ten other projects, one line each. The finished panel is the resting state, so nothing here depends on the animation running.</desc>
+<desc id="desc">A terminal panel that boots: it types each command and streams the reply. whoami gives the name and what the work is; credda and twill each get a paragraph and three claims; then nine other projects, one line each. The finished panel is the resting state, so nothing here depends on the animation running.</desc>
 <style>
 :root {
 ${THEME}
