@@ -177,7 +177,7 @@ y += 26;
 out.push(reveal(t, line(PAD, y, "Martin Muskov", { size: 22, cls: "fg", weight: 700 })));
 t += 0.1;
 y += 24;
-out.push(reveal(t, line(PAD, y, "SWE & AI/ML  ·  CTO @ Credda  ·  EE/CS @ UCSC", { size: 13, cls: "mid" })));
+out.push(reveal(t, line(PAD, y, "SWE & AI/ML  ·  Lead SWE @ Credda  ·  EE/CS @ UCSC", { size: 13, cls: "mid" })));
 t += 0.08;
 y += 19;
 out.push(reveal(t, line(PAD, y, "systems software, and trying to break it before it ships", { size: 13, cls: "dim" })));
@@ -241,7 +241,7 @@ out.push(
       "every material claim cites a recorded artifact",
       "it proposes, and never merges",
     ],
-    meta: "co-founder & chief technology officer  ·  since Apr 2026  ·  credda.io  ·  github.com/Credda-io",
+    meta: "lead software engineer  ·  co-founder & CTO  ·  since Apr 2026  ·  credda.io  ·  github.com/Credda-io",
   }),
 );
 
@@ -285,7 +285,6 @@ const ROWS = [
   ["capsule/", "Go", "throwaway dev environments from one config file"],
   ["drift/", "Rust", "diff two tables by key rather than by line"],
   ["tandem/", "Java", "durable workflow orchestration for the JVM"],
-  ["poliarchitect/", "TS", "a political economy sandbox, ticked on a schedule"],
 ];
 
 const NAME_COL = PAD;
