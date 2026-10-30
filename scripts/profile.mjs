@@ -177,7 +177,7 @@ y += 26;
 out.push(reveal(t, line(PAD, y, "Martin Muskov", { size: 22, cls: "fg", weight: 700 })));
 t += 0.1;
 y += 24;
-out.push(reveal(t, line(PAD, y, "SWE & AI/ML  ·  Lead SWE @ Credda  ·  EE/CS @ UCSC", { size: 13, cls: "mid" })));
+out.push(reveal(t, line(PAD, y, "SWE & AI/ML  ·  CTO @ Credda  ·  EE/CS @ UCSC", { size: 13, cls: "mid" })));
 t += 0.08;
 y += 19;
 out.push(reveal(t, line(PAD, y, "systems software, and trying to break it before it ships", { size: 13, cls: "dim" })));
@@ -241,7 +241,7 @@ out.push(
       "every material claim cites a recorded artifact",
       "it proposes, and never merges",
     ],
-    meta: "lead software engineer  ·  co-founder & CTO  ·  since Apr 2026  ·  credda.io  ·  github.com/Credda-io",
+    meta: "co-founder & CTO  ·  since Apr 2026  ·  credda.io  ·  github.com/Credda-io",
   }),
 );
 
