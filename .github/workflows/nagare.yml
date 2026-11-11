@@ -1,0 +1,43 @@
+# Draws a year of GitHub activity as an ink river (https://github.com/monex00/nagare)
+# and commits it to nagare/nagare.svg on main, which the README shows.
+#
+# It runs nightly, by hand, and once when this file changes, so the image exists
+# as soon as the workflow lands. Its own commit touches only the SVG, and pushes
+# made with the built-in token start no workflows, so it cannot trigger itself.
+#
+# The action is pinned to a commit rather than @main: it runs with write access
+# to this repository, so it should only change when this file says so.
+name: nagare
+
+on:
+  schedule:
+    - cron: "17 0 * * *"
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: [".github/workflows/nagare.yml"]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: nagare
+  cancel-in-progress: false
+
+jobs:
+  draw:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: monex00/nagare@aa72e450767bbc847277e5d9d378cfbbf23c6346
+        with:
+          # A NAGARE_TOKEN secret (fine-grained, read-only) adds private work as
+          # an unlabelled current; without it only public activity is drawn.
+          token: ${{ secrets.NAGARE_TOKEN || github.token }}
+      - name: Commit the redrawn river
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add nagare/nagare.svg
+          git diff --cached --quiet || git commit -m "Redraw nagare"
+          git push
