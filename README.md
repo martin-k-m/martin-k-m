@@ -1,8 +1,9 @@
-<img src="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/profile.svg" width="100%" alt="Martin Muskov — lead software engineer, CTO and co-founder at Credda, Inc., studying electrical engineering and computer science at UC Santa Cruz. Credda ships the fix for something that broke in production: it reproduces the failure, diagnoses the cause, writes the patch and proves it with a test, and proposes rather than merges. twill is a language where tensors are the primitive, shape errors are caught before the program runs, differentiation is syntax, and the compiler is written in twill. Then oracle, arc, quorum, strata, quarry, lincheck, capsule, drift and tandem, one line each." />
+<img src="https://raw.githubusercontent.com/martin-k-m/martin-k-m/assets/profile.svg" width="100%" alt="Martin Muskov — CTO and co-founder at Credda, Inc., software and data engineer at Quarter, studying electrical engineering with a minor in computer engineering at UC Santa Cruz. Credda ships the fix for something that broke in production: it reproduces the failure, diagnoses the cause, writes the patch and proves it with a test, and proposes rather than merges. twill is a language where tensors are the primitive, shape errors are caught before the program runs, differentiation is syntax, and the compiler is written in twill. Then oracle, arc, quorum, strata, quarry, lincheck, capsule, drift and tandem, one line each." />
 
 <br/>
 
 [![Credda](https://img.shields.io/badge/Credda-C2410C?style=flat-square&logo=verifiedbadge&logoColor=white)](https://credda.io)
+[![Quarter](https://img.shields.io/badge/Quarter-6050DC?style=flat-square)](https://quarterfi.com)
 [![twill](https://img.shields.io/badge/twill-4FB79B?style=flat-square&logo=go&logoColor=white)](https://twill-lang.github.io)
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-0A66C2?style=flat-square&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/martin-muskov/)
 [![Email](https://img.shields.io/badge/martinkmuskov@gmail.com-EA4335?style=flat-square&logo=gmail&logoColor=white)](mailto:martinkmuskov@gmail.com)
