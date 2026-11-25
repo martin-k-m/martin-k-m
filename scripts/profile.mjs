@@ -177,7 +177,7 @@ y += 26;
 out.push(reveal(t, line(PAD, y, "Martin Muskov", { size: 22, cls: "fg", weight: 700 })));
 t += 0.1;
 y += 24;
-out.push(reveal(t, line(PAD, y, "CTO @ Credda  ·  SWE @ Quarter  ·  EE/CE @ UCSC", { size: 13, cls: "mid" })));
+out.push(reveal(t, line(PAD, y, "CTO @ Credda  ·  Data Platform @ Quarter  ·  EE/CE @ UCSC", { size: 13, cls: "mid" })));
 t += 0.08;
 y += 19;
 out.push(reveal(t, line(PAD, y, "systems software, and trying to break it before it ships", { size: 13, cls: "dim" })));
