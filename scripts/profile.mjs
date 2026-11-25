@@ -241,7 +241,7 @@ out.push(
       "every material claim cites a recorded artifact",
       "it proposes, and never merges",
     ],
-    meta: "co-founder & CTO  ·  since Apr 2026  ·  credda.io  ·  github.com/Credda-io",
+    meta: "CTO since May 2026, engineer since Apr 2026  ·  credda.io  ·  github.com/Credda-io",
   }),
 );
 
